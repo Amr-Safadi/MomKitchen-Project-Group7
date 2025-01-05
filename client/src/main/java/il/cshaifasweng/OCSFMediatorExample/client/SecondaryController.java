@@ -36,8 +36,10 @@ public class SecondaryController {
         this.mealsArrayList=list;
         System.out.println("meals are being initialized");
 
-        while (mealsArrayList.size() > 0) {
-            mealsList.getItems().add((mealsArrayList.remove(0).toString()));
+        ArrayList<Meals> temp = new ArrayList<>();
+        temp.addAll(mealsArrayList);
+        while (temp.size() > 0) {
+            mealsList.getItems().add((temp.remove(0).toString()));
 
         }
 
