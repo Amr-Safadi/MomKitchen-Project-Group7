@@ -5,6 +5,8 @@ import org.greenrobot.eventbus.EventBus;
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 
+import java.util.ArrayList;
+
 public class SimpleClient extends AbstractClient {
 	
 	private static SimpleClient client = null;
@@ -17,6 +19,12 @@ public class SimpleClient extends AbstractClient {
 	protected void handleMessageFromServer(Object msg) {
 		if (msg.getClass().equals(Warning.class)) {
 			EventBus.getDefault().post(new WarningEvent((Warning) msg));
+		}
+
+		//sending meals to listview
+		if (msg.getClass().equals(ArrayList.class)) {
+			System.out.println("Received ArrayList message");
+			EventBus.getDefault().post(msg);
 		}
 
 	}
