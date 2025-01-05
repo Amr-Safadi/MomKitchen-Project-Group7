@@ -57,31 +57,33 @@ public class SimpleServer extends AbstractServer {
 		}
 		
 	}
-
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
-		String msgString = msg.toString();
-		if (msgString.startsWith("#warning")) {
-			Warning warning = new Warning("Warning from server!");
+		//Update Meal
+		if (msg instanceof Meals) {
+			Meals updatedMeal = (Meals) msg;
+			updateMeal(updatedMeal);
+			ArrayList<Meals> mealsArrayList = getAllMeals();
+			// Notify the client of the successful update
 			try {
-				client.sendToClient(warning);
-				System.out.format("Sent warning to client %s\n", client.getInetAddress().getHostAddress());
+				client.sendToClient(mealsArrayList);
+				System.out.println("Meal updated.");
+				// by sending the meals array again we force the client to update the the listview with the new meals
 			} catch (IOException e) {
+				System.out.println("Error updating the meal");
+				e.printStackTrace();
+			}
+		} //Initialize Meals
+		else if (msg.toString().startsWith("#Meals Request")) {
+			try {
+				ArrayList<Meals> mealsArrayList = getAllMeals();
+				client.sendToClient(mealsArrayList);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		if (msgString.startsWith("#Meals Request")) {
-			try {
-				ArrayList<Meals>mealsArrayList = getAllMeals();
-				//client.sendToClient(mealsArrayList);
-				sendToAllClients(mealsArrayList);
-			} catch (Exception e) {
-				System.out.println("ERROR SimpleServer Meals Request Handling "); //debugging tool
-                throw new RuntimeException(e);
-            }
-        }
-
 	}
+
 
 	// a function to give intial values to meals database
 	private static void populateInitialData(Session session) {
@@ -147,6 +149,40 @@ public class SimpleServer extends AbstractServer {
 		return count;
 	}
 
+	public void updateMeal(Meals updatedMeal) {
+		try (Session session = getSessionFactory().openSession()) {
+			// Start a transaction
+			Transaction transaction = session.beginTransaction();
+
+			// Fetch the meal from the database
+			Meals existingMeal = session.get(Meals.class, updatedMeal.getId());
+
+			if (existingMeal != null) {
+				// Update fields only if they are not null (to allow partial updates)
+				if (updatedMeal.getName() != null) {
+					existingMeal.setName(updatedMeal.getName());
+				}
+				if (updatedMeal.getIngredients() != null) {
+					existingMeal.setIngredients(updatedMeal.getIngredients());
+				}
+				if (updatedMeal.getPreferences() != null) {
+					existingMeal.setPreferences(updatedMeal.getPreferences());
+				}
+				if (updatedMeal.getPrice() != 0) {  // Assuming 0 is not a valid price
+					existingMeal.setPrice(updatedMeal.getPrice());
+				}
+
+				// Save changes
+				session.merge(existingMeal);
+				transaction.commit();
+				System.out.println("Meal updated successfully.");
+			} else {
+				System.out.println("Meal not found.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 
 
