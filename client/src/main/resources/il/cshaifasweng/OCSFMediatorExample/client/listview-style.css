@@ -1,0 +1,17 @@
+/* listview-style.css */
+
+/* Make the ListView cells have a semi-transparent background */
+.list-cell {
+    -fx-background-color: rgba(255, 255, 255, 0.8); /* Light white background with 80% opacity */
+    -fx-background-radius: 10px; /* Rounded corners */
+    -fx-padding: 10px; /* Add padding around the text */
+    -fx-border-color: #ddd; /* Optional: Light border for a clean card effect */
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 5); /* Soft shadow for depth */
+    -fx-text-fill: #333; /* Dark text color for readability */
+}
+
+/* Adjust spacing between ListView cells */
+.list-view {
+    -fx-cell-spacing: 10px;
+}
