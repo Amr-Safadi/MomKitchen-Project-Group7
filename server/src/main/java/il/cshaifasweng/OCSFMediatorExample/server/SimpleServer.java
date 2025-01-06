@@ -4,11 +4,9 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
