@@ -53,6 +53,7 @@ public class PrimaryController {
         // Set the new scene
         Scene scene = new Scene(secondaryRoot);
         stage.setScene(scene);
+        stage.setTitle("Menu");
         stage.show();
     }
 
@@ -62,6 +63,10 @@ public class PrimaryController {
         assert branchListView != null : "fx:id=\"branchListView\" was not injected: check your FXML file 'primary.fxml'.";
         assert branchesLabel != null : "fx:id=\"branchesLabel\" was not injected: check your FXML file 'primary.fxml'.";
 
+        javafx.application.Platform.runLater(() -> {
+            Stage currentStage = (Stage) branchesLabel.getScene().getWindow();
+            currentStage.setTitle("MomKitchen");
+        });
     }
 
 }

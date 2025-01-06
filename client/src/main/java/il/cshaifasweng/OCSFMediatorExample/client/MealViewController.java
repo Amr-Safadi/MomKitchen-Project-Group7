@@ -93,6 +93,7 @@ public class MealViewController {
         // Set the new scene
         Scene scene = new Scene(secondaryRoot);
         stage.setScene(scene);
+        stage.setTitle("Menu");
         stage.show();
     }
 
