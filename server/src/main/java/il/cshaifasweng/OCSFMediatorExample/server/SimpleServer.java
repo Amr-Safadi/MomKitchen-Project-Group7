@@ -60,7 +60,8 @@ public class SimpleServer extends AbstractServer {
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		//Update Meal
-		if (msg instanceof Meals) {
+		if (msg.getClass() == Meals.class) {
+			System.out.println("reached the handlemessage in server");
 			Meals updatedMeal = (Meals) msg;
 			updateMeal(updatedMeal);
 			ArrayList<Meals> mealsArrayList = getAllMeals();
@@ -69,7 +70,7 @@ public class SimpleServer extends AbstractServer {
 				client.sendToClient(mealsArrayList);
 				System.out.println("Meal updated.");
 				// by sending the meals array again we force the client to update the the listview with the new meals
-			} catch (IOException e) {
+			} catch (Exception e) {
 				System.out.println("Error updating the meal");
 				e.printStackTrace();
 			}
