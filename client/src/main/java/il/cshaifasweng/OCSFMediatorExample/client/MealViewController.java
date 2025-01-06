@@ -42,7 +42,7 @@ public class MealViewController {
     }
 
     public void btnEditHandler (ActionEvent event) {
-        printMeal();
+
 
         txtPrdctPrice.setEditable(true);
         //txtPrdctName.setEditable(true);
