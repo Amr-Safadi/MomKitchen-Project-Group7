@@ -1,6 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import java.awt.event.ActionEvent;
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -12,10 +12,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+
+import javax.swing.text.html.ImageView;
 
 public class PrimaryController {
 
+    public javafx.scene.image.ImageView branchHaifaIm;
     @FXML
     private ResourceBundle resources;
 
@@ -31,8 +35,9 @@ public class PrimaryController {
     @FXML
     private Label branchesLabel;
 
+
     @FXML
-    private void handleBranchBtn(javafx.event.ActionEvent actionEvent) {
+    private void handleBranchBtn(MouseEvent actionEvent) {
         // Load the secondary screen FXML
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Secondary.fxml"));
         Parent secondaryRoot = null;
@@ -48,6 +53,7 @@ public class PrimaryController {
         // Set the new scene
         Scene scene = new Scene(secondaryRoot);
         stage.setScene(scene);
+        stage.setTitle("Menu");
         stage.show();
     }
 
@@ -57,6 +63,10 @@ public class PrimaryController {
         assert branchListView != null : "fx:id=\"branchListView\" was not injected: check your FXML file 'primary.fxml'.";
         assert branchesLabel != null : "fx:id=\"branchesLabel\" was not injected: check your FXML file 'primary.fxml'.";
 
+        javafx.application.Platform.runLater(() -> {
+            Stage currentStage = (Stage) branchesLabel.getScene().getWindow();
+            currentStage.setTitle("MomKitchen");
+        });
     }
 
 }

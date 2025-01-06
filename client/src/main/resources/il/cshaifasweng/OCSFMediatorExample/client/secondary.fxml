@@ -5,15 +5,26 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SecondaryController">
+<?import java.lang.String?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" style="-fx-background-image: url('imgaes/background.jpg');
+           -fx-background-size: cover;
+           -fx-background-repeat: no-repeat;
+           -fx-background-position: center;" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SecondaryController">
    <top>
-      <Label fx:id="mealsLabel" text="Meals :" textAlignment="CENTER" BorderPane.alignment="CENTER">
+      <Label fx:id="mealsLabel" text="Menu :" textAlignment="CENTER" BorderPane.alignment="CENTER">
          <font>
             <Font name="Arial Rounded MT Bold" size="19.0" />
          </font>
       </Label>
    </top>
    <center>
-      <ListView fx:id="mealsList" onMouseClicked="#handleMenuBtn" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="mealsList" onMouseClicked="#handleMenuBtn" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"
+                style="-fx-background-color: transparent;
+                       -fx-border-color: transparent;
+                       -fx-control-inner-background: transparent;">
+         <stylesheets>
+            <String fx:value="/il/cshaifasweng/OCSFMediatorExample/client/listview-style.css" />
+         </stylesheets>
+      </ListView>
    </center>
 </BorderPane>

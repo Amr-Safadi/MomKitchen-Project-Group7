@@ -45,6 +45,9 @@ public class SecondaryController {
             mealsArrayList = list;
             System.out.println("Meals are being initialized");
 
+            System.out.println(getClass().getResource("listview-style.css"));
+
+
             mealsList.getItems().clear(); // Clear the current items in the ListView
             for (Meals meal : mealsArrayList) {
                 mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
