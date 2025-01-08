@@ -11,17 +11,23 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.Subscribe;
 
+
 import java.io.IOException;
+
+import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class MealViewController {
 
+    Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/background.jpg")));
     SimpleClient client = SimpleClient.getClient();
 
     private Meals meal;
+
 
     @FXML
     private GridPane gridMeal;
@@ -36,9 +42,28 @@ public class MealViewController {
     @FXML private Button btnEdit;
     @FXML private Button btnDone;
     @FXML private Button btnBack;
+    @FXML private AnchorPane AnchorPane;
 
    @FXML
     void initialize() {
+
+
+       // Create and set the background image at the root StackPane level
+       BackgroundImage background = new BackgroundImage(
+               backgroundImage,
+               BackgroundRepeat.NO_REPEAT,
+               BackgroundRepeat.NO_REPEAT,
+               BackgroundPosition.CENTER,
+               new BackgroundSize(
+                       BackgroundSize.AUTO,
+                       BackgroundSize.AUTO,
+                       true,
+                       true,
+                       true,
+                       false
+               )
+       );
+       AnchorPane.setBackground(new Background(background));
     }
 
     public void btnEditHandler (ActionEvent event) {
@@ -78,23 +103,7 @@ public class MealViewController {
     }
 
     public void btnBackHandler (ActionEvent event) {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Secondary.fxml"));
-        Parent secondaryRoot = null;
-        try {
-            secondaryRoot = loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Get the current stage from the button
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-        // Set the new scene
-        Scene scene = new Scene(secondaryRoot);
-        stage.setScene(scene);
-        stage.setTitle("Menu");
-        stage.show();
+        switchScreen("Menu List");
     }
 
     public void setMeal(Meals meal) {
