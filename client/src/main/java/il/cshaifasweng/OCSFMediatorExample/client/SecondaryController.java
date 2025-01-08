@@ -1,6 +1,5 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,15 +14,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import javafx.scene.input.MouseEvent;
 
-
 public class SecondaryController {
 
     SimpleClient client = SimpleClient.getClient();
+
+    @FXML
+    private BorderPane borderPane;
 
     @FXML
     private ResourceBundle resources;
@@ -37,7 +40,9 @@ public class SecondaryController {
     @FXML
     private ListView<String> mealsList;
 
-    public static ArrayList<Meals> mealsArrayList =new ArrayList<>();
+    Image backgroundImage = new Image(String.valueOf(SecondaryController.class.getResource("/Images/background.jpg")));
+
+    public static ArrayList<Meals> mealsArrayList = new ArrayList<>();
 
     @Subscribe
     public void initializeListView(ArrayList<Meals> list) {
@@ -53,7 +58,6 @@ public class SecondaryController {
             System.out.println("mealsList Initialized - SecondaryController"); // Debugging tool
         });
     }
-
 
     public void handleMenuBtn(MouseEvent event) {
         if (event.getClickCount() == 2) { // Double-click to open the new screen
@@ -105,13 +109,9 @@ public class SecondaryController {
         }
     }
 
-
-
-
-
     @FXML
     void initialize() {
-         EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
         try {
             client.sendToServer("#Meals Request");
         } catch (IOException e) {
@@ -120,6 +120,27 @@ public class SecondaryController {
         assert mealsLabel != null : "fx:id=\"mealsLabel\" was not injected: check your FXML file 'secondary.fxml'.";
         assert mealsList != null : "fx:id=\"mealsList\" was not injected: check your FXML file 'secondary.fxml'.";
 
-    }
+        // Create and set the background image at the root StackPane level
+        BackgroundImage background = new BackgroundImage(
+                backgroundImage,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(
+                        BackgroundSize.AUTO,
+                        BackgroundSize.AUTO,
+                        true,
+                        true,
+                        true,
+                        false
+                )
+        );
 
+        // Ensure the background is applied to the entire scene
+        if (borderPane.getParent() instanceof StackPane) {
+            ((StackPane) borderPane.getParent()).setBackground(new Background(background));
+        } else {
+            System.out.println("BorderPane is not wrapped in a StackPane.");
+        }
+    }
 }

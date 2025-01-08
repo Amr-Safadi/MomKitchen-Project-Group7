@@ -65,7 +65,6 @@ public class SimpleServer extends AbstractServer {
 			ArrayList<Meals> mealsArrayList = getAllMeals();
 			// Notify the client of the successful update
 			try {
-				//client.sendToClient(mealsArrayList);
 				sendToAllClients(mealsArrayList);
 				System.out.println("Meal updated.");
 				// by sending the meals array again we force the client to update the the listview with the new meals

@@ -21,16 +21,19 @@ public class App extends Application {
 
     private static Scene scene;
     private SimpleClient client;
+    private static Stage appStage;
 
     @Override
     public void start(Stage stage) throws IOException {
+        appStage = stage;
     	// EventBus.getDefault().register(this);
     	client = SimpleClient.getClient();
     	client.openConnection();
 
         System.out.println("client connected");
 
-        scene = new Scene(loadFXML("primary"), 640, 480);
+        scene = new Scene(loadFXML("primary"), 600, 520);
+
         stage.setScene(scene);
         stage.show();
     }
@@ -43,7 +46,54 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
     }
-    
+    public static void setWindowTitle(String title) {
+        appStage.setTitle(title);
+    }
+    public static void setContent(String pageName) throws IOException {
+        Parent root = loadFXML(pageName);
+        scene = new Scene(root);
+        appStage.setScene(scene);
+        appStage.show();
+    }
+    public static void switchScreen (String screenName) {
+        switch (screenName) {
+            case "Menu List":
+                Platform.runLater(() -> {
+                    setWindowTitle("Menu List");
+                    try {
+                        setContent("secondary");
+                    } catch (IOException e) {
+                        System.out.println("Error loading screen - app - switchScreen function - Menu List");
+                        e.printStackTrace();
+                    }
+                });
+                break;
+
+            case "Meal View":
+                Platform.runLater(() -> {
+                    setWindowTitle("Meal View");
+                    try {
+                        setContent("MealView");
+                    } catch (IOException e) {
+                        System.out.println("Error loading screen - app - switchScreen function - Meal View");
+                        e.printStackTrace();
+                    }
+                });
+                break;
+
+            case "Primary":
+                Platform.runLater(() -> {
+                    setWindowTitle("MomKitchen");
+                    try {
+                        setContent("primary");
+                    } catch (IOException e) {
+                        System.out.println("Error loading screen - app - switchScreen function - Primary");
+                        e.printStackTrace();
+                    }
+                });
+                break;
+        }
+    }
     
 
     @Override
