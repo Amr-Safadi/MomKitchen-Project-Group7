@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
@@ -57,15 +58,17 @@ public class SimpleServer extends AbstractServer {
 	}
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
+		String msgStr = msg.toString();
+
 		//Update Meal
-		if (msg.getClass() == Meals.class) {
+		if (msgStr.equals("#Update Meal")) {
 			System.out.println("reached the handle meal update in server");
-			Meals updatedMeal = (Meals) msg;
+			Meals updatedMeal = (Meals) (((Message)msg).getObject()) ; // msg -> Message and then we take its object(updated meal) object -> Meals
 			updateMeal(updatedMeal);
 			ArrayList<Meals> mealsArrayList = getAllMeals();
 			// Notify the client of the successful update
 			try {
-				sendToAllClients(mealsArrayList);
+				sendToAllClients(new Message(mealsArrayList ,"#Initialize Meals"));
 				System.out.println("Meal updated.");
 				// by sending the meals array again we force the client to update the the listview with the new meals
 			} catch (Exception e) {
@@ -73,10 +76,10 @@ public class SimpleServer extends AbstractServer {
 				e.printStackTrace();
 			}
 		} //Initialize Meals
-		else if (msg.toString().startsWith("#Meals Request")) {
+		else if (msgStr.startsWith("#Meals Request")) {
 			try {
 				ArrayList<Meals> mealsArrayList = getAllMeals();
-				client.sendToClient(mealsArrayList);
+				client.sendToClient(new Message(mealsArrayList ,"#Initialize Meals") );
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

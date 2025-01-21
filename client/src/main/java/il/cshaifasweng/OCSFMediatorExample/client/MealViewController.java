@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -93,7 +94,7 @@ public class MealViewController {
         meal.setPrice(Double.parseDouble(priceInput));
 
         try {
-            client.sendToServer(meal);
+            client.sendToServer(new Message(meal , "#Update Meal"));
         } catch (IOException e) {
             System.out.println("Error sending the updated meal to server - MealViewController");
             throw new RuntimeException(e);
