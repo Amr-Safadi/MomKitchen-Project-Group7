@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,8 @@ import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import javafx.scene.input.MouseEvent;
+
+import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class SecondaryController {
 
@@ -45,23 +48,26 @@ public class SecondaryController {
     public static ArrayList<Meals> mealsArrayList = new ArrayList<>();
 
     @Subscribe
-    public void initializeListView(ArrayList<Meals> list) {
-        Platform.runLater(() -> {
-            mealsArrayList = list;
-            System.out.println("Meals are being initialized");
+    public void initializeListView(Message msg) {
+        if (msg.toString().equals("#Initialize Meals")) { // Use .equals() for string comparison
 
-            mealsList.getItems().clear(); // Clear the current items in the ListView
-            for (Meals meal : mealsArrayList) {
-                mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
-            }
+            Platform.runLater(() -> {
+                System.out.println("Meals are being initialized");
+                mealsArrayList = (ArrayList<Meals>) msg.getObject(); // assign the list
 
-            System.out.println("mealsList Initialized - SecondaryController"); // Debugging tool
-        });
+                mealsList.getItems().clear(); // Clear the current items in the ListView
+                for (Meals meal : mealsArrayList) {
+                    mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
+                }
+
+                System.out.println("mealsList Initialized - SecondaryController"); // Debugging tool
+            });
+        }
     }
 
     public void handleMenuBtn(MouseEvent event) {
         if (event.getClickCount() == 2) { // Double-click to open the new screen
-            String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem(); // Get the selected item (e.g., "Meal Name - $20.00")
+            String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem(); // Get the selected item
 
             if (selectedMealInfo != null) {
                 String selectedMealName = selectedMealInfo.split(" - ")[0]; // Extract the name before the dash
@@ -113,7 +119,7 @@ public class SecondaryController {
     void initialize() {
         EventBus.getDefault().register(this);
         try {
-            client.sendToServer("#Meals Request");
+            client.sendToServer(new Message("#Meals Request")); //**//
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
