@@ -21,6 +21,9 @@ public class PrimaryController {
     private ResourceBundle resources;
 
     @FXML
+    private AnchorPane LOG;
+
+    @FXML
     private AnchorPane mainAnchorPane;
 
     @FXML
@@ -31,6 +34,9 @@ public class PrimaryController {
 
     @FXML
     private Button branchBtn;
+
+    @FXML
+    private Button LOGINBtn;
 
     @FXML
     private ListView<?> branchListView;
@@ -47,10 +53,16 @@ public class PrimaryController {
     }
 
     @FXML
+    private void handleLOGINBtn() {
+        switchScreen("Login");
+    }
+
+    @FXML
     void initialize() {
         assert branchBtn != null : "fx:id=\"branchBtn\" was not injected: check your FXML file 'primary.fxml'.";
         assert branchListView != null : "fx:id=\"branchListView\" was not injected: check your FXML file 'primary.fxml'.";
         assert branchesLabel != null : "fx:id=\"branchesLabel\" was not injected: check your FXML file 'primary.fxml'.";
+        assert LOGINBtn != null : "fx:id=\"LOGINBtn\" was not injected: check your FXML file 'primary.fxml'.";
 
         try {// Update window title
             Platform.runLater(() -> {

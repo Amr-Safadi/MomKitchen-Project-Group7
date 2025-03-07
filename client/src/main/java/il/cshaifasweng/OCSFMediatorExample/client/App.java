@@ -92,6 +92,17 @@ public class App extends Application {
                     }
                 });
                 break;
+            case "Login":
+                Platform.runLater(() -> {
+                    setWindowTitle("Login");
+                    try {
+                        setContent("Login");
+                    } catch (IOException e) {
+                        System.out.println("Error loading screen - app - switchScreen function - Login");
+                        e.printStackTrace();
+                    }
+                });
+                break;
         }
     }
     
