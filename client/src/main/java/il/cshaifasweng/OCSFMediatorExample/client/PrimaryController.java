@@ -15,7 +15,7 @@ import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class PrimaryController {
 
-    public javafx.scene.image.ImageView branchHaifaIm;
+  //  public javafx.scene.image.ImageView branchHaifaIm;
 
     @FXML
     private ResourceBundle resources;
@@ -33,7 +33,16 @@ public class PrimaryController {
     private URL location;
 
     @FXML
-    private Button branchBtn;
+    private Button HaifaBtn;
+
+    @FXML
+    private Button MajdalBtn;
+
+    @FXML
+    private Button MielyaBtn;
+
+    @FXML
+    private Button ArrabiBtn;
 
     @FXML
     private Button LOGINBtn;
@@ -48,7 +57,22 @@ public class PrimaryController {
     Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/background.jpg")));
 
     @FXML
-    private void handleBranchBtn() {
+    private void handleHaifaBtn() {
+        switchScreen("Menu List");
+    }
+
+    @FXML
+    private void handleMajdalBtn() {
+        switchScreen("Menu List");
+    }
+
+    @FXML
+    private void handleMielyaBtn() {
+        switchScreen("Menu List");
+    }
+
+    @FXML
+    private void handleArrabiBtn() {
         switchScreen("Menu List");
     }
 
@@ -59,7 +83,10 @@ public class PrimaryController {
 
     @FXML
     void initialize() {
-        assert branchBtn != null : "fx:id=\"branchBtn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert HaifaBtn != null : "fx:id=\"HaifaBtn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert MajdalBtn != null : "fx:id=\"MajdalBtn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert MielyaBtn != null : "fx:id=\"MielyaBtn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert ArrabiBtn != null : "fx:id=\"ArrabiBtn\" was not injected: check your FXML file 'primary.fxml'.";
         assert branchListView != null : "fx:id=\"branchListView\" was not injected: check your FXML file 'primary.fxml'.";
         assert branchesLabel != null : "fx:id=\"branchesLabel\" was not injected: check your FXML file 'primary.fxml'.";
         assert LOGINBtn != null : "fx:id=\"LOGINBtn\" was not injected: check your FXML file 'primary.fxml'.";
@@ -71,7 +98,7 @@ public class PrimaryController {
 
         try {// Update window title
             Platform.runLater(() -> {
-                Stage currentStage = (Stage) branchesLabel.getScene().getWindow();
+                Stage currentStage = (Stage) MajdalBtn.getScene().getWindow();
                 currentStage.setTitle("MomKitchen");
             });
         }

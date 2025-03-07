@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -20,37 +17,27 @@
             <center>
                 <AnchorPane fx:id="secondaryAnchorPane" prefHeight="200.0" prefWidth="600.0">
                     <children>
-                        <GridPane alignment="CENTER" layoutX="100.0" layoutY="50.0" prefHeight="300.0" prefWidth="400.0" style="-fx-background-color: rgba(255, 255, 255, 0.8); -fx-background-radius: 10; -fx-padding: 20;">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" prefWidth="200.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" prefWidth="200.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="200.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints prefHeight="50.0" vgrow="SOMETIMES" />
-                                <RowConstraints prefHeight="200.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
-                            <children>
-                                <!-- Title of the Branch -->
-                                <Label fx:id="branchesLabel" alignment="CENTER" prefHeight="27.0" prefWidth="120.0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #333;" text="סניפים :" GridPane.columnIndex="1" GridPane.columnSpan="2" />
-
-                                <!-- ImageView for Branch -->
-                                <ImageView fx:id="branchHaifaIm" fitHeight="149.0" fitWidth="120.0" onMouseClicked="#handleBranchBtn" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                                    <image>
-                                        <Image url="@../../../../Images/haifabranch.png" />
-                                    </image>
-                                    <GridPane.margin>
-                                        <Insets top="10.0" />
-                                    </GridPane.margin>
-                                </ImageView>
-
-                            </children>
-                        </GridPane>
                   <AnchorPane fx:id="LOG" layoutX="398.0" layoutY="45.0" prefHeight="33.0" prefWidth="119.0">
                      <children>
                         <Button fx:id="LOGINBtn" layoutX="46.0" layoutY="8.0" mnemonicParsing="false" onAction="#handleLOGINBtn" onMouseClicked="#handleLOGINBtn" prefHeight="25.0" prefWidth="63.0" text="LOG IN" />
                      </children>
                   </AnchorPane>
+                  <GridPane alignment="CENTER" layoutX="157.0" layoutY="135.0" prefHeight="259.0" prefWidth="297.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button fx:id="branchHaifaIm" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleHaifaBtn" onMouseClicked="#handleHaifaBtn" prefHeight="27.0" prefWidth="151.0" text="Haifa" />
+                        <Button fx:id="MajdalBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleMajdalBtn" onMouseClicked="#handleMajdalBtn" prefHeight="25.0" prefWidth="151.0" text="Majdal Shams" GridPane.columnIndex="1" />
+                        <Button fx:id="MielyaBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleMielyaBtn" onMouseClicked="#handleMielyaBtn" prefHeight="25.0" prefWidth="147.0" text="Mielya" GridPane.rowIndex="1" />
+                        <Button fx:id="ArrabiBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleArrabiBtn" onMouseClicked="#handleArrabiBtn" prefHeight="25.0" prefWidth="149.0" text="Arrabi" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                     </children>
+                  </GridPane>
                     </children>
                 </AnchorPane>
             </center>
