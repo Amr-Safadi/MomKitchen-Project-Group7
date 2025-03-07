@@ -141,47 +141,122 @@ public class SimpleServer extends AbstractServer {
 
 		try {
 
-			Branch branch1 = new Branch("Downtown", "123 Main St", LocalTime.of(8, 0), LocalTime.of(22, 0));
-			Branch branch2 = new Branch("Midtown", "456 Central Ave", LocalTime.of(9, 0), LocalTime.of(21, 0));
-			Branch branch3 = new Branch("Uptown", "789 High St", LocalTime.of(10, 0), LocalTime.of(20, 0));
+			Branch branch1 = new Branch("Haifa", "Hanamal 16", LocalTime.of(8, 0), LocalTime.of(23, 0));
+			Branch branch2 = new Branch("Majdal Shams", "Main St. 13", LocalTime.of(9, 0), LocalTime.of(21, 0));
+			Branch branch3 = new Branch("Mielya", "AlKroum st. 11", LocalTime.of(10, 0), LocalTime.of(22, 0));
+			Branch branch4 = new Branch("Arrabi", "Alwadi st. 14", LocalTime.of(10, 0), LocalTime.of(21, 0));
+
 
 			session.saveOrUpdate(branch1);
 			session.saveOrUpdate(branch2);
 			session.saveOrUpdate(branch3);
+			session.saveOrUpdate(branch4);
 
-			Meals meal1 = new Meals("Pizza", "Cheese, Tomato, Dough", "Vegetarian", 10.99);
-			Meals meal2 = new Meals("Burger", "Beef, Lettuce, Tomato", "No Cheese", 12.50);
-			Meals meal3 = new Meals("Pasta", "Tomato Sauce, Parmesan", "Gluten-Free Option", 8.99);
+			Meals meal1 = new Meals("Pizza", "Cheese, Tomato, Bail, Dough", "Vegetarian", 10.99);
+			Meals meal2 = new Meals("Burger", "Beef, Lettuce, Tomato, BBQ sauce", "No Cheese", 89.00);
+			Meals meal3 = new Meals("Pasta", "Tomato Sauce, Parmesan", "Gluten-Free Option", 65.00);
+			Meals meal4 = new Meals("Mineral Water", " ", " ", 10.00);
+			Meals meal5 = new Meals("Diet Coke", "", " ", 13.00);
+			Meals meal6 = new Meals("Orange juice", "made of fresh oranges", " ", 17.00);
+			Meals meal7 = new Meals("Fillet Steak", "350 gr steak, french fries on the side", "", 120.00);
+			Meals meal8 = new Meals("Fillet Salmon", "200 gr, with smashed potatoes on the side", "", 119.00);
+			Meals meal9 = new Meals("cheese Ravioli", "Cream, Mushrooms, Parmesan", "No Mushrooms", 119.00);
+			Meals meal10 = new Meals("Sezar Salad", "Lettuce, Chicken slices, Sezar Sauce, Parmesan", "No Cheese", 56.00);
 
 			session.saveOrUpdate(meal1);
 			session.saveOrUpdate(meal2);
 			session.saveOrUpdate(meal3);
+			session.saveOrUpdate(meal4);
+			session.saveOrUpdate(meal5);
+			session.saveOrUpdate(meal6);
+			session.saveOrUpdate(meal7);
+			session.saveOrUpdate(meal8);
+			session.saveOrUpdate(meal9);
+			session.saveOrUpdate(meal10);
 
 			branch1.getMeals().add(meal1);
 			branch1.getMeals().add(meal2);
+			branch1.getMeals().add(meal3);
+			branch1.getMeals().add(meal4);
+			branch1.getMeals().add(meal5);
+			branch1.getMeals().add(meal6);
+			branch1.getMeals().add(meal7);
 
+			branch2.getMeals().add(meal1);
 			branch2.getMeals().add(meal2);
 			branch2.getMeals().add(meal3);
+			branch2.getMeals().add(meal4);
+			branch2.getMeals().add(meal5);
+			branch2.getMeals().add(meal6);
+			branch2.getMeals().add(meal8);
 
 			branch3.getMeals().add(meal1);
+			branch3.getMeals().add(meal2);
 			branch3.getMeals().add(meal3);
+			branch3.getMeals().add(meal4);
+			branch3.getMeals().add(meal5);
+			branch3.getMeals().add(meal6);
+			branch3.getMeals().add(meal9);
+
+			branch4.getMeals().add(meal1);
+			branch4.getMeals().add(meal2);
+			branch4.getMeals().add(meal3);
+			branch4.getMeals().add(meal4);
+			branch4.getMeals().add(meal5);
+			branch4.getMeals().add(meal6);
+			branch4.getMeals().add(meal10);
 
 			meal1.getBranches().add(branch1);
+			meal1.getBranches().add(branch2);
 			meal1.getBranches().add(branch3);
+			meal1.getBranches().add(branch4);
 
 			meal2.getBranches().add(branch1);
 			meal2.getBranches().add(branch2);
+			meal2.getBranches().add(branch3);
+			meal2.getBranches().add(branch4);
 
+			meal3.getBranches().add(branch1);
 			meal3.getBranches().add(branch2);
 			meal3.getBranches().add(branch3);
+			meal3.getBranches().add(branch4);
+
+			meal4.getBranches().add(branch1);
+			meal4.getBranches().add(branch2);
+			meal4.getBranches().add(branch3);
+			meal4.getBranches().add(branch4);
+
+			meal5.getBranches().add(branch1);
+			meal5.getBranches().add(branch2);
+			meal5.getBranches().add(branch3);
+			meal5.getBranches().add(branch4);
+
+			meal6.getBranches().add(branch1);
+			meal6.getBranches().add(branch2);
+			meal6.getBranches().add(branch3);
+			meal6.getBranches().add(branch4);
+
+			meal7.getBranches().add(branch1);
+			meal8.getBranches().add(branch2);
+			meal9.getBranches().add(branch3);
+			meal10.getBranches().add(branch4);
 
 			session.saveOrUpdate(branch1);
 			session.saveOrUpdate(branch2);
 			session.saveOrUpdate(branch3);
+			session.saveOrUpdate(branch4);
 
 			session.saveOrUpdate(meal1);
 			session.saveOrUpdate(meal2);
 			session.saveOrUpdate(meal3);
+			session.saveOrUpdate(meal4);
+			session.saveOrUpdate(meal5);
+			session.saveOrUpdate(meal6);
+			session.saveOrUpdate(meal7);
+			session.saveOrUpdate(meal8);
+			session.saveOrUpdate(meal9);
+			session.saveOrUpdate(meal10);
+
 
 			System.out.println("Initial meals added to the database.");
 			System.out.println("branch1 meals are : \n");
