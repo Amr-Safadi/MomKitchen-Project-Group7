@@ -58,21 +58,25 @@ public class PrimaryController {
 
     @FXML
     private void handleHaifaBtn() {
+        SecondaryController.branch = "Haifa";
         switchScreen("Menu List");
     }
 
     @FXML
     private void handleMajdalBtn() {
+        SecondaryController.branch = "Majdal Shams";
         switchScreen("Menu List");
     }
 
     @FXML
     private void handleMielyaBtn() {
+        SecondaryController.branch = "Mielya";
         switchScreen("Menu List");
     }
 
     @FXML
     private void handleArrabiBtn() {
+        SecondaryController.branch = "Arrabi";
         switchScreen("Menu List");
     }
 
