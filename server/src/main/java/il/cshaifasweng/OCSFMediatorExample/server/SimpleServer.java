@@ -54,8 +54,8 @@ public class SimpleServer extends AbstractServer {
 		try{
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			//populateInitialData(session);
-			//populateUsers(session);
+			populateInitialData(session);
+			populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception var5) {
 			if (session != null && session.getTransaction().isActive()) {

@@ -1,56 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
 
 <AnchorPane fx:id="mainAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PrimaryController">
     <children>
         <BorderPane layoutX="0.0" layoutY="0.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <top>
-                <Label alignment="CENTER" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #4CAF50;" text="ברוכים הבאים למטבח של אמא" BorderPane.alignment="CENTER" />
+                <Label alignment="CENTER" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: black;" text="Welcome to Mama's Kitchen" BorderPane.alignment="CENTER" />
             </top>
             <center>
                 <AnchorPane fx:id="secondaryAnchorPane" prefHeight="200.0" prefWidth="600.0">
                     <children>
-                        <GridPane alignment="CENTER" layoutX="100.0" layoutY="50.0" prefHeight="300.0" prefWidth="400.0" style="-fx-background-color: rgba(255, 255, 255, 0.8); -fx-background-radius: 10; -fx-padding: 20;">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" prefWidth="200.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" prefWidth="200.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="200.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints prefHeight="50.0" vgrow="SOMETIMES" />
-                                <RowConstraints prefHeight="200.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
-                            <children>
-                                <!-- Title of the Branch -->
-                                <Label fx:id="branchesLabel" alignment="CENTER" prefHeight="27.0" prefWidth="120.0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #333;" text="סניפים :" GridPane.columnIndex="1" GridPane.columnSpan="2" />
-
-                                <!-- ImageView for Branch -->
-                                <ImageView fx:id="branchHaifaIm" fitHeight="149.0" fitWidth="120.0" onMouseClicked="#handleBranchBtn" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                                    <image>
-                                        <Image url="@../../../../Images/haifabranch.png" />
-                                    </image>
-                                    <GridPane.margin>
-                                        <Insets top="10.0" />
-                                    </GridPane.margin>
-                                </ImageView>
-
-                            </children>
-                        </GridPane>
                   <AnchorPane fx:id="LOG" layoutX="398.0" layoutY="45.0" prefHeight="33.0" prefWidth="119.0">
                      <children>
                         <Button fx:id="LOGINBtn" layoutX="46.0" layoutY="8.0" mnemonicParsing="false" onAction="#handleLOGINBtn" onMouseClicked="#handleLOGINBtn" prefHeight="25.0" prefWidth="63.0" text="LOG IN" />
                      </children>
                   </AnchorPane>
+                  <Button fx:id="branchHaifaIm" contentDisplay="CENTER" layoutX="67.0" layoutY="79.0" mnemonicParsing="false" onAction="#handleHaifaBtn" onMouseClicked="#handleHaifaBtn" prefHeight="27.0" prefWidth="151.0" text="Haifa" />
+                  <Button fx:id="MajdalBtn" contentDisplay="CENTER" layoutX="67.0" layoutY="118.0" mnemonicParsing="false" onAction="#handleMajdalBtn" onMouseClicked="#handleMajdalBtn" prefHeight="25.0" prefWidth="151.0" text="Majdal Shams" />
+                  <Button fx:id="MielyaBtn" contentDisplay="CENTER" layoutX="67.0" layoutY="154.0" mnemonicParsing="false" onAction="#handleMielyaBtn" onMouseClicked="#handleMielyaBtn" prefHeight="26.0" prefWidth="151.0" text="Mielya" />
+                  <Button fx:id="ArrabiBtn" contentDisplay="CENTER" layoutX="67.0" layoutY="191.0" mnemonicParsing="false" onAction="#handleArrabiBtn" onMouseClicked="#handleArrabiBtn" prefHeight="26.0" prefWidth="151.0" text="Arraba" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="25.0" layoutY="45.0" prefHeight="18.0" prefWidth="234.0" text="Choose your favourite branch:" />
                     </children>
                 </AnchorPane>
             </center>
