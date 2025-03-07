@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -21,6 +23,9 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
 public class SimpleServer extends AbstractServer {
+
+	private static final Set<String> onlineUsers = ConcurrentHashMap.newKeySet();
+
 
 	private static Session session;
 	private static SessionFactory sessionFactory = getSessionFactory();
@@ -49,6 +54,7 @@ public class SimpleServer extends AbstractServer {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			//populateInitialData(session);
+			//populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception var5) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -104,6 +110,13 @@ public class SimpleServer extends AbstractServer {
 				}
 				break;
 
+			case "#Logout":
+				String email = (String) message.getObject();
+				onlineUsers.remove(email);
+				System.out.println("User logged out: " + email);
+				break;
+
+
 			default:
 				System.out.println("Unknown message received: " + msgStr);
 				break;
@@ -111,6 +124,17 @@ public class SimpleServer extends AbstractServer {
 	}
 
 
+	private static void populateUsers(Session session)
+	{
+		User Amr = new User("amrsafadi02@gmail.com","Amr123", "Amr Safadi" , User.Role.GENERAL_MANAGER);
+		User Marian = new User("marian.dahmoush@gmail.com","Marian123", "Marian Dahmoush" , User.Role.BRANCH_MANAGER);
+		User Kanar = new User("kanararrabi9@gmail.com","Kanar123", "Kanar Arrabi" , User.Role.DIETITIAN);
+
+		session.saveOrUpdate(Amr);
+		session.saveOrUpdate(Marian);
+		session.saveOrUpdate(Kanar);
+		System.out.println("Users added to the database.");
+	}
 
 	// a function to give intial values to meals database
 	private static void populateInitialData(Session session) {
@@ -258,12 +282,9 @@ public class SimpleServer extends AbstractServer {
 
 		try (Session session = getSessionFactory().openSession()) {
 			tx = session.beginTransaction();
-
-			// Query to retrieve user by email
 			authenticatedUser = session.createQuery("FROM User WHERE email = :email", User.class)
 					.setParameter("email", user.getEmail())
 					.uniqueResult();
-
 			tx.commit();
 		} catch (Exception e) {
 			if (tx != null) tx.rollback();
@@ -272,15 +293,19 @@ public class SimpleServer extends AbstractServer {
 
 		try {
 			if (authenticatedUser == null) {
-				// Email not found in the database
 				client.sendToClient(new Message(null, "#EmailNotFound"));
 				System.out.println("Login failed: Email not found -> " + user.getEmail());
 			} else if (!authenticatedUser.getPassword().equals(user.getPassword())) {
-				// Email found but password is incorrect
 				client.sendToClient(new Message(null, "#IncorrectPassword"));
 				System.out.println("Login failed: Incorrect password for -> " + user.getEmail());
+			} else if (onlineUsers.contains(authenticatedUser.getEmail())) {
+				client.sendToClient(new Message(null, "#AlreadyLoggedIn"));
+				System.out.println("Login failed: User already logged in -> " + user.getEmail());
 			} else {
-				// Login successful
+				// Mark user as online
+				onlineUsers.add(authenticatedUser.getEmail());
+
+				// Send success response
 				client.sendToClient(new Message(authenticatedUser, "#LoginSuccess"));
 				System.out.println("User logged in: " + authenticatedUser.getEmail() + " | Role: " + authenticatedUser.getRole());
 			}
@@ -288,6 +313,18 @@ public class SimpleServer extends AbstractServer {
 			e.printStackTrace();
 		}
 	}
+
+	// to ensure deleting the disconnected user from the map
+	@Override
+	protected void clientDisconnected(ConnectionToClient client) {
+		for (String email : onlineUsers) {
+			onlineUsers.remove(email);
+			System.out.println("User disconnected: " + email);
+			break;
+		}
+	}
+
+
 
 
 

@@ -16,7 +16,7 @@ public class SimpleClient extends AbstractClient {
 		super(host, port);
 	}
 
-	public User user = null ; //to detrmine which role the current user
+	private static User user = null ; //to detrmine which role the current user
 
 	@Override
 	protected void handleMessageFromServer(Object msg) {
@@ -36,7 +36,7 @@ public class SimpleClient extends AbstractClient {
 			case "#LoginSuccess":
 				user = (User) message.getObject();
 				System.out.println("Login successful: " + user.getEmail() + " | Role: " + user.getRole());
-				EventBus.getDefault().post(user);  // Notify UI about login success
+				EventBus.getDefault().post(message);  // Notify UI about login success
 				break;
 
 			case "#EmailNotFound":
@@ -49,6 +49,11 @@ public class SimpleClient extends AbstractClient {
 				EventBus.getDefault().post(new Message(null, "#ShowLoginError: Incorrect password."));
 				break;
 
+			case "#AlreadyLoggedIn":
+				EventBus.getDefault().post(new Message(null, "#AlreadyLoggedIn"));
+				break;
+
+
 			default:
 				System.out.println("Unknown message received: " + message.toString());
 				break;
@@ -56,6 +61,9 @@ public class SimpleClient extends AbstractClient {
 	}
 
 
+	public static User getUser() {
+		return user;
+	}
 	public static SimpleClient getClient() {
 		if (client == null) {
 			client = new SimpleClient("localhost", 3000);

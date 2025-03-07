@@ -64,6 +64,11 @@ public class PrimaryController {
         assert branchesLabel != null : "fx:id=\"branchesLabel\" was not injected: check your FXML file 'primary.fxml'.";
         assert LOGINBtn != null : "fx:id=\"LOGINBtn\" was not injected: check your FXML file 'primary.fxml'.";
 
+        if (SimpleClient.getUser() != null) {
+            LOGINBtn.setDisable(true);
+            LOGINBtn.setVisible(false);
+        }
+
         try {// Update window title
             Platform.runLater(() -> {
                 Stage currentStage = (Stage) branchesLabel.getScene().getWindow();

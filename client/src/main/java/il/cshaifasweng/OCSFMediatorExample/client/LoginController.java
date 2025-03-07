@@ -68,6 +68,8 @@ public class LoginController {
                     showAlert("Login Failed", "Incorrect password. Please try again.");
                     break;
 
+                case "#AlreadyLoggedIn":
+                    showAlert("Login Failed", "This account is already logged in from another device.");
                 default:
                     System.out.println("Unknown response received: " + message.toString());
                     break;
