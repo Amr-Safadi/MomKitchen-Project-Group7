@@ -43,7 +43,7 @@ public class SecondaryController {
     @FXML
     private ListView<String> mealsList;
 
-    Image backgroundImage = new Image(String.valueOf(SecondaryController.class.getResource("/Images/REKA.jpg")));
+    Image backgroundImage = new Image(String.valueOf(SecondaryController.class.getResource("/Images/design.jpg")));
 
     public static ArrayList<Meals> mealsArrayList = new ArrayList<>();
     public static String branch = "" ;

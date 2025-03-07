@@ -4,73 +4,29 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="mainAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PrimaryController">
     <children>
         <BorderPane layoutX="0.0" layoutY="0.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <top>
-                <AnchorPane fx:id="secondaryAnchorPane" prefHeight="603.0" prefWidth="579.0" BorderPane.alignment="CENTER">
+            <top>
+                <Label alignment="CENTER" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: black;" text="Welcome to Mama's Kitchen" BorderPane.alignment="CENTER" />
+            </top>
+            <center>
+                <AnchorPane fx:id="secondaryAnchorPane" prefHeight="200.0" prefWidth="600.0">
                     <children>
-                  <AnchorPane fx:id="LOG" layoutY="14.0" prefHeight="6.0" prefWidth="137.0">
+                  <AnchorPane fx:id="LOG" layoutX="398.0" layoutY="45.0" prefHeight="33.0" prefWidth="119.0">
                      <children>
-                        <Button fx:id="LOGINBtn" contentDisplay="CENTER" layoutX="73.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleLOGINBtn" onMouseClicked="#handleLOGINBtn" prefHeight="25.0" prefWidth="63.0" style="-fx-background-color: #4CAF50;" text="LOG IN" textFill="WHITE">
-                           <font>
-                              <Font name="Bauhaus 93" size="14.0" />
-                           </font>
-                        </Button>
+                        <Button fx:id="LOGINBtn" layoutX="46.0" layoutY="8.0" mnemonicParsing="false" onAction="#handleLOGINBtn" onMouseClicked="#handleLOGINBtn" prefHeight="25.0" prefWidth="63.0" text="LOG IN" />
                      </children>
                   </AnchorPane>
-                  <GridPane alignment="CENTER" layoutX="79.0" layoutY="223.0" prefHeight="251.0" prefWidth="157.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Button fx:id="branchHaifaIm" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleHaifaBtn" onMouseClicked="#handleHaifaBtn" prefHeight="27.0" prefWidth="151.0" style="-fx-background-color: #4CAF50;" text="Haifa" textAlignment="CENTER" textFill="WHITE">
-                           <font>
-                              <Font name="Bauhaus 93" size="21.0" />
-                           </font></Button>
-                        <Button fx:id="MajdalBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleMajdalBtn" onMouseClicked="#handleMajdalBtn" prefHeight="45.0" prefWidth="151.0" style="-fx-background-color: #4CAF50;" text="Majdal Shams" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font name="Bauhaus 93" size="20.0" />
-                           </font></Button>
-                        <Button fx:id="MielyaBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleMielyaBtn" onMouseClicked="#handleMielyaBtn" prefHeight="46.0" prefWidth="152.0" style="-fx-background-color: #4CAF50;" text="Mielya" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font name="Bauhaus 93" size="20.0" />
-                           </font></Button>
-                        <Button fx:id="ArrabiBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleArrabiBtn" onMouseClicked="#handleArrabiBtn" prefHeight="39.0" prefWidth="152.0" style="-fx-background-color: #4CAF50;" text="Arrabi" textFill="WHITE" GridPane.rowIndex="3">
-                           <font>
-                              <Font name="Bauhaus 93" size="20.0" />
-                           </font></Button>
-                     </children>
-                  </GridPane>
-                  <Label layoutX="79.0" layoutY="193.0" prefHeight="17.0" prefWidth="244.0" text="PICK YOUR FAVOURITE BRANCH" textFill="#4b822c">
-                     <font>
-                        <Font name="Bauhaus 93" size="15.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="79.0" layoutY="96.0" prefHeight="35.0" prefWidth="173.0" text="WELCOME TO" textFill="#1fce00">
-                     <font>
-                        <Font name="Bauhaus 93" size="23.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="77.0" layoutY="140.0" prefHeight="40.0" prefWidth="289.0" text="MAMA'S KITCHEN" textFill="#04881a">
-                     <font>
-                        <Font name="Bauhaus 93" size="28.0" />
-                     </font>
-                  </Label>
+                  <Button fx:id="branchHaifaIm" contentDisplay="CENTER" layoutX="67.0" layoutY="79.0" mnemonicParsing="false" onAction="#handleHaifaBtn" onMouseClicked="#handleHaifaBtn" prefHeight="27.0" prefWidth="151.0" text="Haifa" />
+                  <Button fx:id="MajdalBtn" contentDisplay="CENTER" layoutX="67.0" layoutY="118.0" mnemonicParsing="false" onAction="#handleMajdalBtn" onMouseClicked="#handleMajdalBtn" prefHeight="25.0" prefWidth="151.0" text="Majdal Shams" />
+                  <Button fx:id="MielyaBtn" contentDisplay="CENTER" layoutX="67.0" layoutY="154.0" mnemonicParsing="false" onAction="#handleMielyaBtn" onMouseClicked="#handleMielyaBtn" prefHeight="26.0" prefWidth="151.0" text="Mielya" />
+                  <Button fx:id="ArrabiBtn" contentDisplay="CENTER" layoutX="67.0" layoutY="191.0" mnemonicParsing="false" onAction="#handleArrabiBtn" onMouseClicked="#handleArrabiBtn" prefHeight="26.0" prefWidth="151.0" text="Arraba" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="25.0" layoutY="45.0" prefHeight="18.0" prefWidth="234.0" text="Choose your favourite branch:" />
                     </children>
                 </AnchorPane>
-         </top>
+            </center>
         </BorderPane>
     </children>
 </AnchorPane>
