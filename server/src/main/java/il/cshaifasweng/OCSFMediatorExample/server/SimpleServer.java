@@ -24,7 +24,8 @@ import org.hibernate.service.ServiceRegistry;
 
 public class SimpleServer extends AbstractServer {
 
-	private static final Set<String> onlineUsers = ConcurrentHashMap.newKeySet();
+	private static final ConcurrentHashMap<ConnectionToClient, String> onlineUsers = new ConcurrentHashMap<>();
+
 
 
 	private static Session session;
@@ -378,8 +379,7 @@ public class SimpleServer extends AbstractServer {
 				System.out.println("Login failed: User already logged in -> " + user.getEmail());
 			} else {
 				// Mark user as online
-				onlineUsers.add(authenticatedUser.getEmail());
-
+				onlineUsers.put(client, authenticatedUser.getEmail());
 				// Send success response
 				client.sendToClient(new Message(authenticatedUser, "#LoginSuccess"));
 				System.out.println("User logged in: " + authenticatedUser.getEmail() + " | Role: " + authenticatedUser.getRole());
@@ -389,15 +389,21 @@ public class SimpleServer extends AbstractServer {
 		}
 	}
 
-	// to ensure deleting the disconnected user from the map
 	@Override
-	protected void clientDisconnected(ConnectionToClient client) {
-		for (String email : onlineUsers) {
-			onlineUsers.remove(email);
-			System.out.println("User disconnected: " + email);
-			break;
+	protected synchronized void clientDisconnected(ConnectionToClient client) {
+		String disconnectedEmail = onlineUsers.remove(client);
+
+		if (disconnectedEmail != null) {
+			System.out.println("✅ User disconnected: " + disconnectedEmail);
+		} else {
+			System.out.println("⚠️ Unknown user disconnected or already removed.");
 		}
+
+		System.out.println("Online users now are " + onlineUsers); // Debugging
 	}
+
+
+
 
 
 

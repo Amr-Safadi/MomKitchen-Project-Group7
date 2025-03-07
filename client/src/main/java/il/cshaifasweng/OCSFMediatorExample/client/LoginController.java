@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
+
 public class LoginController {
 
     @FXML

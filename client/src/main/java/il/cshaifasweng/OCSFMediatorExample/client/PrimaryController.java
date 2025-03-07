@@ -69,17 +69,6 @@ public class PrimaryController {
             LOGINBtn.setVisible(false);
         }
 
-        try {// Update window title
-            Platform.runLater(() -> {
-                Stage currentStage = (Stage) branchesLabel.getScene().getWindow();
-                currentStage.setTitle("MomKitchen");
-            });
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error setting primary title");
-        }
-
         // Create and set the background image
         BackgroundImage background = new BackgroundImage(
                 backgroundImage,
