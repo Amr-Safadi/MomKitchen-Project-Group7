@@ -54,8 +54,8 @@ public class SimpleServer extends AbstractServer {
 		try{
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			//populateInitialData(session);
-			//populateUsers(session);
+			populateInitialData(session);
+			populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception var5) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -71,8 +71,6 @@ public class SimpleServer extends AbstractServer {
 	}
 
 	ArrayList<Meals> mealsArrayList ;
-	String branch ;
-
 
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
@@ -94,8 +92,7 @@ public class SimpleServer extends AbstractServer {
 				System.out.println("Handling meal update request.");
 				Meals updatedMeal = (Meals) message.getObject();
 				updateMeal(updatedMeal);
-
-				mealsArrayList = getMeals(branch);
+				mealsArrayList = getAllMeals();
 				try {
 					sendToAllClients(new Message(mealsArrayList, "#Initialize Meals"));
 					System.out.println("Meal updated and sent to clients.");
@@ -107,12 +104,17 @@ public class SimpleServer extends AbstractServer {
 
 			case "#Meals Request":
 				try {
-					branch = (String) message.getObject();
-					mealsArrayList = getMeals(branch);
+					mealsArrayList = getAllMeals();
 					client.sendToClient(new Message(mealsArrayList, "#Initialize Meals"));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				break;
+
+			case "#Logout":
+				String email = (String) message.getObject();
+				onlineUsers.remove(email);
+				System.out.println("User logged out: " + email);
 				break;
 
 
@@ -269,8 +271,7 @@ public class SimpleServer extends AbstractServer {
 	}
 
 	//a function that returns all the meals in the database
-	public ArrayList<Meals> getMeals(String branchName) {
-
+	public ArrayList<Meals> getAllMeals() {
 		ArrayList<Meals> mealsArrayList = new ArrayList<>(); // Initialize a new ArrayList
 		List<Meals> mealsList;
 
@@ -279,12 +280,8 @@ public class SimpleServer extends AbstractServer {
 			Transaction transaction = session.beginTransaction();
 
 			// Query to fetch all meals
-			// Fetch meals only for the given branch
-			mealsList = session.createQuery(
-							"SELECT m FROM Meals m JOIN m.branches b WHERE b.name = :branchName", Meals.class)
-					.setParameter("branchName", branchName)
-					.getResultList();
-					System.out.println("1");
+			mealsList = session.createQuery("FROM Meals", Meals.class).list();
+			System.out.println("1");
 			// Add all meals to the ArrayList
 			mealsArrayList.addAll(mealsList);
 			System.out.println("2");
