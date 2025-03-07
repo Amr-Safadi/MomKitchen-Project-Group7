@@ -24,7 +24,7 @@ import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class MealViewController {
 
-    Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/REKA.jpg")));
+    Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/design.jpg")));
     SimpleClient client = SimpleClient.getClient();
 
     private Meals meal;
