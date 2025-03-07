@@ -61,6 +61,7 @@ public class SimpleClient extends AbstractClient {
 	}
 
 
+
 	public static User getUser() {
 		return user;
 	}

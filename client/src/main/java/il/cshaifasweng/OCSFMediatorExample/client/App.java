@@ -33,6 +33,7 @@ public class App extends Application {
         System.out.println("client connected");
 
         scene = new Scene(loadFXML("primary"), 600, 520);
+        setWindowTitle("MomKitchen");
 
         stage.setScene(scene);
         stage.show();
@@ -105,14 +106,30 @@ public class App extends Application {
                 break;
         }
     }
-    
+
 
     @Override
+    public void stop() throws Exception {
+        if (client != null && client.isConnected()) {
+            try {
+                if (EventBus.getDefault().isRegistered(this)) {
+                    EventBus.getDefault().unregister(this);
+                }
+                client.closeConnection(); // Properly close connection
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        super.stop(); // Ensure JavaFX exits correctly
+    }
+
+
+    /*@Override
 	public void stop() throws Exception {
 		// TODO Auto-generated method stub
     	// EventBus.getDefault().unregister(this);
 		super.stop();
-	}
+	}*/
 
 
 	public static void main(String[] args) {
