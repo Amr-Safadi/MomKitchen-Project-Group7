@@ -46,6 +46,7 @@ public class SecondaryController {
     Image backgroundImage = new Image(String.valueOf(SecondaryController.class.getResource("/Images/design.jpg")));
 
     public static ArrayList<Meals> mealsArrayList = new ArrayList<>();
+    public static String branch = "" ;
 
     @Subscribe
     public void initializeListView(Message msg) {
@@ -119,13 +120,14 @@ public class SecondaryController {
     void initialize() {
         EventBus.getDefault().register(this);
         try {
-            client.sendToServer(new Message("#Meals Request")); //**//
+            client.sendToServer(new Message(branch,"#Meals Request")); //**//
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         assert mealsLabel != null : "fx:id=\"mealsLabel\" was not injected: check your FXML file 'secondary.fxml'.";
         assert mealsList != null : "fx:id=\"mealsList\" was not injected: check your FXML file 'secondary.fxml'.";
 
+        mealsLabel.setText(branch + " " + mealsLabel.getText());
         // Create and set the background image at the root StackPane level
         BackgroundImage background = new BackgroundImage(
                 backgroundImage,
