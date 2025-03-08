@@ -119,6 +119,6 @@ public class PrimaryController {
                 )
         );
         //mainAnchorPane.setBackground(new Background(background));
-        secondaryAnchorPane.setBackground(new Background(background));
+       secondaryAnchorPane.setBackground(new Background(background));
     }
 }

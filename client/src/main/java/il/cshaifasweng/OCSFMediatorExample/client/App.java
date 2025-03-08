@@ -34,7 +34,7 @@ public class App extends Application {
 
         System.out.println("client connected");
 
-        scene = new Scene(loadFXML("primary"), 600, 520);
+        scene = new Scene(loadFXML("primary"), 600, 600);
         setWindowTitle("MomKitchen");
 
         stage.setScene(scene);
@@ -60,6 +60,18 @@ public class App extends Application {
     }
     public static void switchScreen (String screenName) {
         switch (screenName) {
+            case "Cart":
+                Platform.runLater(() -> {
+                    setWindowTitle("Cart");
+                    try {
+                        setContent("Cart");
+                    } catch (IOException e) {
+                        System.out.println("Error loading screen - app - switchScreen function - Cart");
+                        e.printStackTrace();
+                    }
+                });
+                break;
+
             case "Menu List":
                 Platform.runLater(() -> {
                     setWindowTitle("Menu List");
