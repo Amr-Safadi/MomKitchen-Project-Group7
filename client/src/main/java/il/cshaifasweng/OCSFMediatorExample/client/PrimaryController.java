@@ -54,7 +54,7 @@ public class PrimaryController {
     private Label branchesLabel;
 
     // Background image reference
-    Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/design.jpg")));
+    Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/NEWBACKGRND.jpg")));
 
     @FXML
     private void handleHaifaBtn() {
