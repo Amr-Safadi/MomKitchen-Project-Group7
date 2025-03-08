@@ -6,6 +6,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SimpleClient extends AbstractClient {
@@ -28,6 +29,10 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
+			case "#Update All Meals":
+				System.out.println(" simple client to update meal - handle message");
+				EventBus.getDefault().post(message);
+				break;
 			case "#Initialize Meals":
 				System.out.println("Received ArrayList of meals");
 				EventBus.getDefault().post(msg);

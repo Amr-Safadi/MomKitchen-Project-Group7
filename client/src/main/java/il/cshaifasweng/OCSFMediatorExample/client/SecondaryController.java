@@ -116,6 +116,18 @@ public class SecondaryController {
         }
     }
 
+    //once a meal is updated we forced all the branch to re fetch their meals to make sure everything is up to date
+    @Subscribe
+    public void updateMeals(Message msg) {
+        if (msg.toString().equals("#Update All Meals")) {
+            try {
+                client.sendToServer(new Message(branch,"#Meals Request")); //**//
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     @FXML
     void initialize() {
         EventBus.getDefault().register(this);
