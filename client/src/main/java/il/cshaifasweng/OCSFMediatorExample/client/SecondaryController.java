@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -36,6 +39,12 @@ public class SecondaryController {
 
     @FXML
     private URL location;
+
+    @FXML
+    private AnchorPane pane;
+
+    @FXML
+    private Button backBtn;
 
     @FXML
     private Label mealsLabel;
@@ -127,7 +136,17 @@ public class SecondaryController {
             }
         }
     }
+    @FXML
+    void handleCartBtn(ActionEvent event) {
+        switchScreen("Cart");
+    }
 
+@FXML
+   public void handleBackBtn() {
+        switchScreen("Primary");
+        CartSession.clearCart();
+    System.out.println("cart has been cleared after backing from the branch");
+    }
     @FXML
     void initialize() {
         EventBus.getDefault().register(this);
@@ -156,11 +175,6 @@ public class SecondaryController {
                 )
         );
 
-        // Ensure the background is applied to the entire scene
-        if (borderPane.getParent() instanceof StackPane) {
-            ((StackPane) borderPane.getParent()).setBackground(new Background(background));
-        } else {
-            System.out.println("BorderPane is not wrapped in a StackPane.");
-        }
+        pane.setBackground(new Background(background));
     }
 }

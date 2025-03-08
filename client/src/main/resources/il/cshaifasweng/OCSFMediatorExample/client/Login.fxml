@@ -6,10 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="logpane" prefHeight="400.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginController">
+<AnchorPane fx:id="logpane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginController">
 
    <children>
       <Label layoutX="259.0" layoutY="50.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Log In" />
@@ -21,5 +18,6 @@
       <PasswordField fx:id="passwordInput" layoutX="200.0" layoutY="196.0" prefWidth="250.0" />
 
       <Button fx:id="loginButton" layoutX="250.0" layoutY="260.0" mnemonicParsing="false" onAction="#handleLogin" text="Log In" />
+      <Button fx:id="backBtn" layoutX="484.0" layoutY="334.0" mnemonicParsing="false" onAction="#handleBackBtn" text="Back" />
    </children>
 </AnchorPane>

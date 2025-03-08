@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -28,6 +29,14 @@ public class LoginController {
     @FXML
     private Button loginButton;
 
+    @FXML
+    private Button backBtn;
+
+
+    @FXML
+    void handleBackBtn(ActionEvent event) {
+        switchScreen("Primary");
+    }
     /**
      * Handles the login process when the login button is clicked.
      */
