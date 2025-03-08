@@ -87,6 +87,9 @@ public class PrimaryController {
 
     @FXML
     void initialize() {
+
+        UserSession.setUser(null);
+
         assert HaifaBtn != null : "fx:id=\"HaifaBtn\" was not injected: check your FXML file 'primary.fxml'.";
         assert MajdalBtn != null : "fx:id=\"MajdalBtn\" was not injected: check your FXML file 'primary.fxml'.";
         assert MielyaBtn != null : "fx:id=\"MielyaBtn\" was not injected: check your FXML file 'primary.fxml'.";
