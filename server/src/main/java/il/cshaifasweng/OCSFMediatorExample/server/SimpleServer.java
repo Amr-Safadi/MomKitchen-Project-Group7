@@ -94,10 +94,8 @@ public class SimpleServer extends AbstractServer {
 				System.out.println("Handling meal update request.");
 				Meals updatedMeal = (Meals) message.getObject();
 				updateMeal(updatedMeal);
-
-				mealsArrayList = getMeals(branch);
 				try {
-					sendToAllClients(new Message(mealsArrayList, "#Initialize Meals"));
+					sendToAllClients(new Message("#Update All Meals"));
 					System.out.println("Meal updated and sent to clients.");
 				} catch (Exception e) {
 					System.out.println("Error updating the meal");
