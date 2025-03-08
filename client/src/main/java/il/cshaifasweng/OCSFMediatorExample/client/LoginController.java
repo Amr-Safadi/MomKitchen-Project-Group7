@@ -58,6 +58,7 @@ public class LoginController {
                 case "#LoginSuccess":
                     User loggedInUser = (User) message.getObject();
                     System.out.println("Login successful: " + loggedInUser.getEmail() + " | Role: " + loggedInUser.getRole());
+                    UserSession.setUser(loggedInUser);
                     switchScreen("Primary");
                     break;
 

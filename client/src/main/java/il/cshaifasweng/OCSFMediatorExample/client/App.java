@@ -23,6 +23,8 @@ public class App extends Application {
     private SimpleClient client;
     private static Stage appStage;
 
+
+
     @Override
     public void start(Stage stage) throws IOException {
         appStage = stage;
@@ -110,6 +112,10 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
+        if (UserSession.getUser() != null) {
+            System.out.println("User " + UserSession.getUser().getEmail() + " disconnected.");
+            UserSession.logout();
+        }
         if (client != null && client.isConnected()) {
             try {
                 if (EventBus.getDefault().isRegistered(this)) {

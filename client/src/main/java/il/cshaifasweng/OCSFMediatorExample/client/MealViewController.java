@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,6 +49,17 @@ public class MealViewController {
    @FXML
     void initialize() {
 
+       // Get the logged-in user
+       User loggedInUser = UserSession.getUser();
+
+       if (loggedInUser != null) {
+           // Check if the user is NOT a dietitian or branch manager
+           if (loggedInUser.getRole() != User.Role.DIETITIAN && loggedInUser.getRole() != User.Role.BRANCH_MANAGER && loggedInUser.getRole() != User.Role.GENERAL_MANAGER) {
+               btnEdit.setVisible(false); // Disable the button
+           }
+       } else {
+           btnEdit.setVisible(true); // If no user is logged in, disable it
+       }
 
        // Create and set the background image at the root StackPane level
        BackgroundImage background = new BackgroundImage(
