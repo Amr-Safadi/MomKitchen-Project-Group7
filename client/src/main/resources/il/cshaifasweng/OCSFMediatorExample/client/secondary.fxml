@@ -8,13 +8,13 @@
 
 <AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SecondaryController">
    <children>
-      <Button fx:id="backBtn" layoutX="503.0" layoutY="345.0" mnemonicParsing="false" onAction="#handleBackBtn" text="Back" />
+      <Button fx:id="backBtn" layoutX="28.0" layoutY="561.0" mnemonicParsing="false" onAction="#handleBackBtn" text="Back" />
       <ListView fx:id="mealsList" layoutX="136.0" layoutY="65.0" onMouseClicked="#handleMenuBtn" prefHeight="367.0" prefWidth="305.0" style="-fx-background-color: transparent;                        -fx-border-color: transparent;                        -fx-control-inner-background: transparent;" stylesheets="/il/cshaifasweng/OCSFMediatorExample/client/listview-style.css" />
       <Label fx:id="mealsLabel" layoutX="230.0" layoutY="25.0" text="Menu :" textAlignment="CENTER">
          <font>
             <Font name="Arial Rounded MT Bold" size="19.0" />
          </font>
       </Label>
-      <Button fx:id="cartBtn" layoutX="407.0" layoutY="357.0" mnemonicParsing="false" onAction="#handleCartBtn" text="Cart" />
+      <Button fx:id="cartBtn" layoutX="84.0" layoutY="561.0" mnemonicParsing="false" onAction="#handleCartBtn" text="Cart" />
    </children>
 </AnchorPane>
