@@ -24,16 +24,21 @@ public class Meals implements Serializable {
     @Column(nullable = false)
     private double price;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Meals.Category category;
+
     @ManyToMany(mappedBy = "meals")
     private List<Branch> branches = new ArrayList<>();
 
     public Meals() {}
 
-    public Meals(String name, String ingredients, String preferences, double price) {
+    public Meals(String name, String ingredients, String preferences, double price, Category category) {
         this.name = name;
         this.ingredients = ingredients;
         this.preferences = preferences;
         this.price = price;
+        this.category = category;
     }
 
     public int getId() { return id; }
@@ -45,6 +50,8 @@ public class Meals implements Serializable {
     public void setPreferences(String preferences) { this.preferences = preferences; }
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+    public Enum<Category> getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
     public List<Branch> getBranches() {
         if (branches == null) {
             branches = new ArrayList<>();
@@ -52,4 +59,10 @@ public class Meals implements Serializable {
         return branches;
     }
     public void setBranches(List<Branch> branches) { this.branches = branches; }
+
+    public enum Category {
+        DRINKS,
+        ITALIAN,
+        MEAT
+    }
 }
