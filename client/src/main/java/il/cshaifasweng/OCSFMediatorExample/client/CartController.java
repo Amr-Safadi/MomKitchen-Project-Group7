@@ -4,7 +4,9 @@ import il.cshaifasweng.OCSFMediatorExample.entities.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 
 import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
@@ -14,25 +16,21 @@ public class CartController {
     private Button backBtn;
 
     @FXML
-    private ListView<Meals> cartView; // Store actual Meals objects
+    private Button removeBtn;
+
+    @FXML
+    private ListView<Meals> cartView;
 
     @FXML
     void initialize() {
-        loadCartItems(); // Load cart items when the scene initializes
+        configureListView();
+        loadCartItems();
     }
 
-    @FXML
-    void backHandler() {
-        switchScreen("Menu List");
-    }
+    private void configureListView() {
+        cartView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
-    // Method to load cart items into the ListView
-    private void loadCartItems() {
-        cartView.getItems().clear(); // Clear previous items
-        cartView.getItems().addAll(CartSession.getCart().getMeals()); // Add Meals objects
-
-        // Custom cell factory to display the name and price
-        cartView.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
+        cartView.setCellFactory(listView -> new ListCell<Meals>() {
             @Override
             protected void updateItem(Meals meal, boolean empty) {
                 super.updateItem(meal, empty);
@@ -43,5 +41,24 @@ public class CartController {
                 }
             }
         });
+    }
+
+    private void loadCartItems() {
+        cartView.getItems().clear();
+        cartView.getItems().addAll(CartSession.getCart().getMeals());
+    }
+
+    @FXML
+    void backHandler() {
+        switchScreen("Menu List");
+    }
+
+    @FXML
+    void removeHandler() {
+        Meals selectedMeal = cartView.getSelectionModel().getSelectedItem();
+        if (selectedMeal != null) {
+            CartSession.getCart().removeMeal(selectedMeal);
+            cartView.getItems().remove(selectedMeal);
+        }
     }
 }
