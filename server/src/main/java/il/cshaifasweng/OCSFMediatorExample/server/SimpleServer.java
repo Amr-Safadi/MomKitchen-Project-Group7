@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -148,9 +151,9 @@ public class SimpleServer extends AbstractServer {
 
 	private static void populateUsers(Session session)
 	{
-		User Amr = new User("amrsafadi02@gmail.com","Amr123", "Amr Safadi" , User.Role.GENERAL_MANAGER);
-		User Marian = new User("marian.dahmoush@gmail.com","Marian123", "Marian Dahmoush" , User.Role.BRANCH_MANAGER);
-		User Kanar = new User("kanararrabi9@gmail.com","Kanar123", "Kanar Arrabi" , User.Role.DIETITIAN);
+		User Amr = new User("amrsafadi02@gmail.com",passwordEncrypt("Amr123"), "Amr Safadi" , User.Role.GENERAL_MANAGER);
+		User Marian = new User("marian.dahmoush@gmail.com",passwordEncrypt("Marian123"), "Marian Dahmoush" , User.Role.BRANCH_MANAGER);
+		User Kanar = new User("kanararrabi9@gmail.com",passwordEncrypt("Kanar123"), "Kanar Arrabi" , User.Role.DIETITIAN);
 
 		session.saveOrUpdate(Amr);
 		session.saveOrUpdate(Marian);
@@ -291,6 +294,23 @@ public class SimpleServer extends AbstractServer {
 		}
 	}
 
+	private static String passwordEncrypt(String password) {
+		String salt = "encrypt";
+		try {
+			String passwordWithSalt = password + salt;
+			MessageDigest digest = MessageDigest.getInstance("SHA-512");
+			byte[] hashBytes = digest.digest(passwordWithSalt.getBytes(StandardCharsets.UTF_8));
+			StringBuilder sb = new StringBuilder();
+			for (byte b : hashBytes) {
+				sb.append(String.format("%02x", b));
+			}
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 	//a function that returns all the meals in the database
 	public ArrayList<Meals> getMeals(String branchName) {
 
@@ -397,16 +417,14 @@ public class SimpleServer extends AbstractServer {
 			if (authenticatedUser == null) {
 				client.sendToClient(new Message(null, "#EmailNotFound"));
 				System.out.println("Login failed: Email not found -> " + user.getEmail());
-			} else if (!authenticatedUser.getPassword().equals(user.getPassword())) {
+			} else if (!authenticatedUser.getPassword().equals(passwordEncrypt(user.getPassword()))) {
 				client.sendToClient(new Message(null, "#IncorrectPassword"));
 				System.out.println("Login failed: Incorrect password for -> " + user.getEmail());
 			} else if (onlineUsers.contains(authenticatedUser.getEmail())) {
 				client.sendToClient(new Message(null, "#AlreadyLoggedIn"));
 				System.out.println("Login failed: User already logged in -> " + user.getEmail());
 			} else {
-				// Mark user as online
 				onlineUsers.put(client, authenticatedUser.getEmail());
-				// Send success response
 				client.sendToClient(new Message(authenticatedUser, "#LoginSuccess"));
 				System.out.println("User logged in: " + authenticatedUser.getEmail() + " | Role: " + authenticatedUser.getRole());
 			}
@@ -414,6 +432,7 @@ public class SimpleServer extends AbstractServer {
 			e.printStackTrace();
 		}
 	}
+
 
 	public ArrayList<Meals> fetchMealByCategoriesAndBranch(String branchName, String category) {
 		ArrayList<Meals> mealsByCategoryAndBranch = new ArrayList<>();
@@ -464,12 +483,4 @@ public class SimpleServer extends AbstractServer {
 
 		System.out.println("Online users now are " + onlineUsers); // Debugging
 	}
-
-
-
-
-
-
-
-
 }
