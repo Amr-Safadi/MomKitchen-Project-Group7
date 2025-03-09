@@ -9,6 +9,7 @@
 <AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.SecondaryController">
    <children>
       <Button fx:id="backBtn" layoutX="53.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleBackBtn" style="-fx-background-color: #8ad4a8;" text="Back" textFill="WHITE">
+
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
@@ -18,6 +19,7 @@
             <Font name="Bauhaus 93" size="25.0" />
          </font>
       </Label>
+
       <Button fx:id="cartBtn" layoutX="276.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleCartBtn" style="-fx-background-color: #8ad4a8;" text="Cart" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="14.0" />
@@ -26,5 +28,6 @@
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
+
    </children>
 </AnchorPane>
