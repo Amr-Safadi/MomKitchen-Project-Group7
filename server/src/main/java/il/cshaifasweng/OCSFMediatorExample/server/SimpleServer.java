@@ -71,6 +71,7 @@ public class SimpleServer extends AbstractServer {
 	}
 
 	ArrayList<Meals> mealsArrayList ;
+	ArrayList<Meals> mealsByCategories ;
 	String branch ;
 
 
@@ -85,7 +86,31 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
-			case "#LoginRequest":
+			case "fetchDrinks":
+
+				mealsByCategories = fetchMealByCategoriesAndBranch(branch,"Drinks");
+                try {
+                    client.sendToClient(new Message(mealsByCategories,"Category Fetched"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }break;
+			case "fetchItalian":
+
+				mealsByCategories = fetchMealByCategoriesAndBranch(branch,"Italian");
+				try {
+					client.sendToClient(new Message(mealsByCategories,"Category Fetched"));
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}break;
+			case "fetchMeat":
+
+				mealsByCategories = fetchMealByCategoriesAndBranch(branch,"Meat");
+				try {
+					client.sendToClient(new Message(mealsByCategories,"Category Fetched"));
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}break;
+            case "#LoginRequest":
 				User user = (User) message.getObject();
 				handleUserLogin(user, client);
 				break;
@@ -149,16 +174,16 @@ public class SimpleServer extends AbstractServer {
 			session.saveOrUpdate(branch3);
 			session.saveOrUpdate(branch4);
 
-			Meals meal1 = new Meals("Pizza", "Cheese, Tomato, Bail, Dough", "Vegetarian", 10.99);
-			Meals meal2 = new Meals("Burger", "Beef, Lettuce, Tomato, BBQ sauce", "No Cheese", 89.00);
-			Meals meal3 = new Meals("Pasta", "Tomato Sauce, Parmesan", "Gluten-Free Option", 65.00);
-			Meals meal4 = new Meals("Mineral Water", " ", " ", 10.00);
-			Meals meal5 = new Meals("Diet Coke", "", " ", 13.00);
-			Meals meal6 = new Meals("Orange juice", "made of fresh oranges", " ", 17.00);
-			Meals meal7 = new Meals("Fillet Steak", "350 gr steak, french fries on the side", "", 120.00);
-			Meals meal8 = new Meals("Fillet Salmon", "200 gr, with smashed potatoes on the side", "", 119.00);
-			Meals meal9 = new Meals("cheese Ravioli", "Cream, Mushrooms, Parmesan", "No Mushrooms", 119.00);
-			Meals meal10 = new Meals("Sezar Salad", "Lettuce, Chicken slices, Sezar Sauce, Parmesan", "No Cheese", 56.00);
+			Meals meal1 = new Meals("Pizza", "Cheese, Tomato, Bail, Dough", "Vegetarian", 10.99, Meals.Category.ITALIAN);
+			Meals meal2 = new Meals("Burger", "Beef, Lettuce, Tomato, BBQ sauce", "No Cheese", 89.00, Meals.Category.MEAT);
+			Meals meal3 = new Meals("Pasta", "Tomato Sauce, Parmesan", "Gluten-Free Option", 65.00, Meals.Category.ITALIAN);
+			Meals meal4 = new Meals("Mineral Water", " ", " ", 10.00, Meals.Category.DRINKS);
+			Meals meal5 = new Meals("Diet Coke", "", " ", 13.00, Meals.Category.DRINKS);
+			Meals meal6 = new Meals("Orange juice", "made of fresh oranges", " ", 17.00, Meals.Category.DRINKS);
+			Meals meal7 = new Meals("Fillet Steak", "350 gr steak, french fries on the side", "", 120.00, Meals.Category.MEAT);
+			Meals meal8 = new Meals("Chicken Wings", "200 gr, with rice on the side", "", 119.00, Meals.Category.MEAT);
+			Meals meal9 = new Meals("cheese Ravioli", "Cream, Mushrooms, Parmesan", "No Mushrooms", 119.00, Meals.Category.ITALIAN);
+			Meals meal10 = new Meals("Sezar Salad", "Lettuce, Chicken slices, Sezar Sauce, Parmesan", "No Cheese", 56.00, Meals.Category.ITALIAN);
 
 			session.saveOrUpdate(meal1);
 			session.saveOrUpdate(meal2);
@@ -388,6 +413,43 @@ public class SimpleServer extends AbstractServer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public ArrayList<Meals> fetchMealByCategoriesAndBranch(String branchName, String category) {
+		ArrayList<Meals> mealsByCategoryAndBranch = new ArrayList<>();
+		List<Meals> mealsList;
+
+		try (Session session = getSessionFactory().openSession()) {
+			// Begin a transaction
+			Transaction transaction = session.beginTransaction();
+
+			// Convert category string to Enum safely
+			Meals.Category categoryEnum;
+			try {
+				categoryEnum = Meals.Category.valueOf(category.toUpperCase()); // Convert string to Enum
+			} catch (IllegalArgumentException e) {
+				System.out.println("❌ Invalid category: " + category);
+				return mealsByCategoryAndBranch; // Return empty list if the category is invalid
+			}
+
+			// Query to fetch meals by both category and branch
+			mealsList = session.createQuery(
+							"SELECT m FROM Meals m JOIN m.branches b " +
+									"WHERE m.category = :category AND b.name = :branchName", Meals.class)
+					.setParameter("category", categoryEnum)
+					.setParameter("branchName", branchName)
+					.getResultList();
+
+			// Add all fetched meals to the ArrayList
+			mealsByCategoryAndBranch.addAll(mealsList);
+
+			// Commit the transaction
+			transaction.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return mealsByCategoryAndBranch;
 	}
 
 	@Override

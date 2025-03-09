@@ -63,9 +63,7 @@ public class MealViewController {
            }else{
                btnEdit.setVisible(true);
            }
-           else {
-               btnEdit.setVisible(true);
-           }
+         
        } else {
            btnEdit.setVisible(false); // If no user is logged in, disable it
        }
