@@ -60,6 +60,20 @@ public class App extends Application {
     }
     public static void switchScreen (String screenName) {
         switch (screenName) {
+
+
+            case "MenuByCategory":
+                Platform.runLater(() -> {
+                    setWindowTitle("MenuByCategory");
+                    try {
+                        setContent("MenuByCategory");
+                    } catch (IOException e) {
+                        System.out.println("Error loading screen - app - switchScreen function - MenuByCategory");
+                        e.printStackTrace();
+                    }
+                });
+                break;
+
             case "Cart":
                 Platform.runLater(() -> {
                     setWindowTitle("Cart");
@@ -114,6 +128,17 @@ public class App extends Application {
                         setContent("Login");
                     } catch (IOException e) {
                         System.out.println("Error loading screen - app - switchScreen function - Login");
+                        e.printStackTrace();
+                    }
+                });
+                break;
+            case "categories":
+                Platform.runLater(() -> {
+                    setWindowTitle("Categories");
+                    try {
+                        setContent("Categories");
+                    } catch (IOException e) {
+                        System.out.println("Error loading screen - app - switchScreen function - Categories");
                         e.printStackTrace();
                     }
                 });

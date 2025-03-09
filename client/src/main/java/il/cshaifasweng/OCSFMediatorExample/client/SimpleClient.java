@@ -29,6 +29,11 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
+			case "Category Fetched":
+				System.out.println(" simple client to  category fetched - handle message");
+				EventBus.getDefault().post(message);
+				break;
+
 			case "#Update All Meals":
 				System.out.println(" simple client to update meal - handle message");
 				EventBus.getDefault().post(message);
