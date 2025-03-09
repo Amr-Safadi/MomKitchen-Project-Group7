@@ -3,7 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 
 public class UserSession {
-    private static User currentUser;
+    private static User currentUser = null;
 
     public static void setUser(User user) {
         currentUser = user;
