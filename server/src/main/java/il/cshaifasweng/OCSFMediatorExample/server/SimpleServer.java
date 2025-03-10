@@ -151,9 +151,9 @@ public class SimpleServer extends AbstractServer {
 
 	private static void populateUsers(Session session)
 	{
-		User Amr = new User("amrsafadi02@gmail.com",passwordEncrypt("Amr123"), "Amr Safadi" , User.Role.GENERAL_MANAGER);
-		User Marian = new User("marian.dahmoush@gmail.com",passwordEncrypt("Marian123"), "Marian Dahmoush" , User.Role.BRANCH_MANAGER);
-		User Kanar = new User("kanararrabi9@gmail.com",passwordEncrypt("Kanar123"), "Kanar Arrabi" , User.Role.DIETITIAN);
+		User Amr = new User("amr",passwordEncrypt("Amr123"), "Amr Safadi" , User.Role.GENERAL_MANAGER);
+		User Marian = new User("marian",passwordEncrypt("Marian123"), "Marian Dahmoush" , User.Role.BRANCH_MANAGER);
+		User Kanar = new User("kanar",passwordEncrypt("Kanar123"), "Kanar Arrabi" , User.Role.DIETITIAN);
 
 		session.saveOrUpdate(Amr);
 		session.saveOrUpdate(Marian);
@@ -177,14 +177,14 @@ public class SimpleServer extends AbstractServer {
 			session.saveOrUpdate(branch3);
 			session.saveOrUpdate(branch4);
 
-			Meals meal1 = new Meals("Pizza", "Cheese, Tomato, Bail, Dough", "Vegetarian", 10.99, Meals.Category.ITALIAN);
-			Meals meal2 = new Meals("Burger", "Beef, Lettuce, Tomato, BBQ sauce", "No Cheese", 89.00, Meals.Category.MEAT);
-			Meals meal3 = new Meals("Pasta", "Tomato Sauce, Parmesan", "Gluten-Free Option", 65.00, Meals.Category.ITALIAN);
-			Meals meal4 = new Meals("Mineral Water", " ", " ", 10.00, Meals.Category.DRINKS);
-			Meals meal5 = new Meals("Diet Coke", "", " ", 13.00, Meals.Category.DRINKS);
-			Meals meal6 = new Meals("Orange juice", "made of fresh oranges", " ", 17.00, Meals.Category.DRINKS);
-			Meals meal7 = new Meals("Fillet Steak", "350 gr steak, french fries on the side", "", 120.00, Meals.Category.MEAT);
-			Meals meal8 = new Meals("Chicken Wings", "200 gr, with rice on the side", "", 119.00, Meals.Category.MEAT);
+			Meals meal1 = new Meals("Pizza", "Cheese, Tomato, Bail, Dough","Olives, Mushrooms, Peppers, Extra Cheese, Onions, Pepperoni, Basil, Oregano", 10.99, Meals.Category.ITALIAN);
+			Meals meal2 = new Meals("Burger", "Beef, Lettuce, Tomato, BBQ sauce", " Cheese, Lettuce, Tomato, Pickles, Onions, Bacon, Ketchup, Mayo", 89.00, Meals.Category.MEAT);
+			Meals meal3 = new Meals("Pasta", "Tomato Sauce, Parmesan", "Parmesan, Basil, Extra Sauce, Mushrooms, Garlic, Chili Flakes", 65.00, Meals.Category.ITALIAN);
+			Meals meal4 = new Meals("Mineral Water", "", "", 10.00, Meals.Category.DRINKS);
+			Meals meal5 = new Meals("Diet Coke", "", "", 13.00, Meals.Category.DRINKS);
+			Meals meal6 = new Meals("Orange juice", "made of fresh oranges", "", 17.00, Meals.Category.DRINKS);
+			Meals meal7 = new Meals("Fillet Steak", "350 gr steak, french fries on the side", "Garlic Butter, Mushrooms, Grilled Onions, Herb Butter", 120.00, Meals.Category.MEAT);
+			Meals meal8 = new Meals("Chicken Wings", "200 gr, with rice on the side", "BBQ Sauce, Spicy Sauce, Ranch Dip, Honey Mustard, Extra Crispy, Lemon Pepper", 119.00, Meals.Category.MEAT);
 			Meals meal9 = new Meals("cheese Ravioli", "Cream, Mushrooms, Parmesan", "No Mushrooms", 119.00, Meals.Category.ITALIAN);
 			Meals meal10 = new Meals("Sezar Salad", "Lettuce, Chicken slices, Sezar Sauce, Parmesan", "No Cheese", 56.00, Meals.Category.ITALIAN);
 

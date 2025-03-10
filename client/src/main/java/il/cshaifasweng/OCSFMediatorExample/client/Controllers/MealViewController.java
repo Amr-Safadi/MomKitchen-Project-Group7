@@ -11,10 +11,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 
@@ -23,7 +20,7 @@ import java.io.IOException;
 public class MealViewController {
 
     private SimpleClient client = SimpleClient.getClient();
-    private Meals meal;
+    private Meals meal = new Meals();
 
     @FXML
     private Button cartBtn, addToCartBtn, btnEdit, btnDone, btnBack;
@@ -35,6 +32,9 @@ public class MealViewController {
     private TextField txtPrdctName, txtPrdctPrice, txtPrdctIng, txtPrdctPrf;
     @FXML
     private AnchorPane rootPane;
+
+    @FXML
+    private CheckBox ingredint1,ingredint2,ingredint3,ingredint4,ingredint5,ingredint6,ingredint7,ingredint8;
 
     @FXML
     void initialize() {
@@ -61,7 +61,7 @@ public class MealViewController {
         UIUtil.styleTextField(txtPrdctName);
         UIUtil.styleTextField(txtPrdctPrice);
         UIUtil.styleTextField(txtPrdctIng);
-        UIUtil.styleTextField(txtPrdctPrf);
+       // UIUtil.styleTextField(txtPrdctPrf);
     }
 
     private void updateMealBackground() {
@@ -93,20 +93,42 @@ public class MealViewController {
             showErrorAlert("Error", "Meal data is missing.");
             return;
         }
+
         meal.setIngredients(txtPrdctIng.getText());
-        meal.setPreferences(txtPrdctPrf.getText());
         meal.setName(txtPrdctName.getText());
+
+        // Validate price input
         String priceInput = txtPrdctPrice.getText();
         if (!UIUtil.isValidPrice(priceInput)) {
             showErrorAlert("Invalid Input", "Please enter a valid positive number for the price.");
             return;
         }
         meal.setPrice(Double.parseDouble(priceInput));
+
+        // Store selected preferences before saving
+        StringBuilder updatedPreferences = new StringBuilder();
+        CheckBox[] checkBoxes = {ingredint1, ingredint2, ingredint3, ingredint4,
+                ingredint5, ingredint6, ingredint7, ingredint8};
+
+        for (CheckBox checkBox : checkBoxes) {
+            if (checkBox.isVisible() && checkBox.isSelected()) {
+                if (updatedPreferences.length() > 0) {
+                    updatedPreferences.append(", ");
+                }
+                updatedPreferences.append(checkBox.getText());
+            }
+        }
+
+        // Update the meal's preferences
+        meal.setPreferences(updatedPreferences.toString());
+
+        // Send updated meal to server
         try {
             client.sendToServer(new Message(meal, "#Update Meal"));
         } catch (IOException e) {
             throw new RuntimeException("Error sending the updated meal to server", e);
         }
+
         btnBackHandler(event);
     }
 
@@ -116,22 +138,63 @@ public class MealViewController {
 
     public void setMeal(Meals meal) {
         this.meal = meal;
-        if (meal != null) {
-            txtPrdctName.setText(meal.getName());
-            txtPrdctIng.setText(meal.getIngredients());
-            txtPrdctPrf.setText(meal.getPreferences());
-            txtPrdctPrice.setText(String.valueOf(meal.getPrice()));
-            updateMealBackground();
+        this.txtPrdctName.setText(meal.getName());
+        this.txtPrdctIng.setText(meal.getIngredients());
+        this.txtPrdctPrice.setText(String.valueOf(meal.getPrice()));
+
+        // Get preferences from the meal object (comma-separated)
+        String preferencesString = meal.getPreferences();
+        String[] preferences = preferencesString == null || preferencesString.trim().isEmpty() ? new String[0] : preferencesString.split(",");
+
+        // Store all checkboxes in an array
+        CheckBox[] checkBoxes = {ingredint1, ingredint2, ingredint3, ingredint4,
+                ingredint5, ingredint6, ingredint7, ingredint8};
+
+        // Hide all checkboxes initially
+        for (CheckBox checkBox : checkBoxes) {
+            checkBox.setVisible(false);
+            checkBox.setSelected(false);
+        }
+
+        // **NEW FIX** → Only show checkboxes if preferences exist
+        if (preferences.length > 0) {
+            for (int i = 0; i < preferences.length && i < checkBoxes.length; i++) {
+                checkBoxes[i].setText(preferences[i].trim());
+                checkBoxes[i].setVisible(true);
+                checkBoxes[i].setSelected(true); // By default, all preferences are checked
+            }
         }
     }
 
+
+
     @FXML
     void btnAddToCartHandler(ActionEvent event) {
-        if (meal != null) {
-            CartSession.getCart().addMeal(meal);
-        } else {
+        if (meal == null) {
             showErrorAlert("Error", "No meal selected to add to cart.");
+            return;
         }
+
+        // Store selected preferences
+        StringBuilder updatedPreferences = new StringBuilder();
+        CheckBox[] checkBoxes = {ingredint1, ingredint2, ingredint3, ingredint4,
+                ingredint5, ingredint6, ingredint7, ingredint8};
+
+        for (CheckBox checkBox : checkBoxes) {
+            if (checkBox.isVisible() && checkBox.isSelected()) {
+                if (updatedPreferences.length() > 0) {
+                    updatedPreferences.append(", ");
+                }
+                updatedPreferences.append(checkBox.getText());
+            }
+        }
+
+        // Update the meal's preferences before adding to cart
+        meal.setPreferences(updatedPreferences.toString());
+
+        System.out.println("Added " +meal.getName()+ " with the preference" + meal.getPreferences());
+        // Add meal to cart
+        CartSession.getCart().addMeal(meal);
     }
 
     private void showErrorAlert(String title, String content) {
