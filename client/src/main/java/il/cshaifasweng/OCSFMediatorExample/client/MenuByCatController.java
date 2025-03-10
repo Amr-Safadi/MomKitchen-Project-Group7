@@ -17,7 +17,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 
 public class MenuByCatController{
@@ -70,12 +69,12 @@ public class MenuByCatController{
 
     @FXML
     void handleBackBtn(ActionEvent event) {
-        switchScreen("categories");
+        ScreenManager.switchScreen("categories");
     }
 
     @FXML
     void handleCartBtn(ActionEvent event) {
-
+        ScreenManager.switchScreen("Cart");
     }
 
     @FXML

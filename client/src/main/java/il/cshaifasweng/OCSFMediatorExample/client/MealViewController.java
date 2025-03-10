@@ -1,6 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
@@ -21,8 +21,6 @@ import org.greenrobot.eventbus.Subscribe;
 
 
 import java.io.IOException;
-
-import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class MealViewController {
 
@@ -122,8 +120,9 @@ public class MealViewController {
         btnBackHandler(event);
     }
 
+    @FXML
     public void btnBackHandler (ActionEvent event) {
-        switchScreen("Menu List");
+        ScreenManager.switchScreen("Menu List");
     }
 
     public void setMeal(Meals meal) {
@@ -163,7 +162,4 @@ public class MealViewController {
         alert.setContentText(content);
         alert.showAndWait();
     }
-
-
-
 }

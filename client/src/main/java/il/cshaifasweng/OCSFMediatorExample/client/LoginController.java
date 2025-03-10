@@ -15,9 +15,6 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 
-import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
-
-
 public class LoginController {
 
     @FXML
@@ -35,7 +32,7 @@ public class LoginController {
 
     @FXML
     void handleBackBtn(ActionEvent event) {
-        switchScreen("Primary");
+        ScreenManager.switchScreen("Primary");
     }
     /**
      * Handles the login process when the login button is clicked.
@@ -68,7 +65,7 @@ public class LoginController {
                     User loggedInUser = (User) message.getObject();
                     System.out.println("Login successful: " + loggedInUser.getEmail() + " | Role: " + loggedInUser.getRole());
                     UserSession.setUser(loggedInUser);
-                    switchScreen("Primary");
+                    ScreenManager.switchScreen("Primary");
                     break;
 
                 case "#EmailNotFound":

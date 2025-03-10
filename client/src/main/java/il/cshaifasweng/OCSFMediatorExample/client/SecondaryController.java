@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
@@ -24,8 +24,6 @@ import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import javafx.scene.input.MouseEvent;
-
-import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class SecondaryController {
 
@@ -79,7 +77,7 @@ public class SecondaryController {
     }
     @FXML
     public void handleSearchBtn() {
-        switchScreen("categories");
+        ScreenManager.switchScreen("categories");
     }
     public void handleMenuBtn(MouseEvent event) {
         if (event.getClickCount() == 2) { // Double-click to open the new screen
@@ -113,18 +111,10 @@ public class SecondaryController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("MealView.fxml"));
             Parent root = loader.load();
-
-            // Get the controller for the new screen
             MealViewController controller = loader.getController();
-
-            // Pass the meal to the controller
             controller.setMeal(meal);
-
-            // Get the current stage (the stage that shows the Secondary screen)
             Stage currentStage = (Stage) mealsList.getScene().getWindow();
-
-            // Replace the scene of the current stage with the new scene
-            currentStage.setScene(new Scene(root));
+            currentStage.getScene().setRoot(root);
             currentStage.setTitle("Edit Meal");
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,12 +134,12 @@ public class SecondaryController {
     }
     @FXML
     void handleCartBtn(ActionEvent event) {
-        switchScreen("Cart");
+        ScreenManager.switchScreen("Cart");
     }
 
 @FXML
    public void handleBackBtn() {
-        switchScreen("Primary");
+    ScreenManager.switchScreen("Primary");
         CartSession.clearCart();
     System.out.println("cart has been cleared after backing from the branch");
     }

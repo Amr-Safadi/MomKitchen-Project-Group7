@@ -2,16 +2,13 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
-
-import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class PrimaryController {
 
@@ -59,30 +56,30 @@ public class PrimaryController {
     @FXML
     private void handleHaifaBtn() {
         SecondaryController.branch = "Haifa";
-        switchScreen("Menu List");
+        ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
     private void handleMajdalBtn() {
         SecondaryController.branch = "Majdal Shams";
-        switchScreen("Menu List");
+        ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
     private void handleMielyaBtn() {
         SecondaryController.branch = "Mielya";
-        switchScreen("Menu List");
+        ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
     private void handleArrabiBtn() {
         SecondaryController.branch = "Arrabi";
-        switchScreen("Menu List");
+        ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
     private void handleLOGINBtn() {
-        switchScreen("Login");
+        ScreenManager.switchScreen("Login");
     }
 
     @FXML

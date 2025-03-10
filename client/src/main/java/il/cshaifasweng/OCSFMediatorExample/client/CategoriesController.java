@@ -10,9 +10,6 @@ import javafx.scene.layout.*;
 
 import java.io.IOException;
 
-import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
-
-
 public class CategoriesController {
 
     SimpleClient client = SimpleClient.getClient();
@@ -46,7 +43,7 @@ public class CategoriesController {
             System.out.print("error handle drinks - categories controller");
             throw new RuntimeException(e);
         }
-        switchScreen("MenuByCategory");
+        ScreenManager.switchScreen("MenuByCategory");
     }
 
     @FXML
@@ -57,7 +54,7 @@ public class CategoriesController {
             System.out.print("error handle Italian - categories controller");
             throw new RuntimeException(e);
         }
-        switchScreen("MenuByCategory");
+        ScreenManager.switchScreen("MenuByCategory");
     }
 
     @FXML
@@ -68,11 +65,11 @@ public class CategoriesController {
             System.out.print("error handle Meat - categories controller");
             throw new RuntimeException(e);
         }
-        switchScreen("MenuByCategory");
+        ScreenManager.switchScreen("MenuByCategory");
     }
     @FXML
     void handleBackBtn(ActionEvent event) {
-        switchScreen("Primary");
+        ScreenManager.switchScreen("Menu List");
     }
 
     Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/NEWBACKGRND.jpg")));

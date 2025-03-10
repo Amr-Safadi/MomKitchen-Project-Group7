@@ -1,14 +1,12 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-
-import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class CartController {
 
@@ -50,7 +48,7 @@ public class CartController {
 
     @FXML
     void backHandler() {
-        switchScreen("Menu List");
+        ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
