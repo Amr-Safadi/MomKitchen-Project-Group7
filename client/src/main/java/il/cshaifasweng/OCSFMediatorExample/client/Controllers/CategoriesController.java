@@ -2,19 +2,20 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.Services.MenuByCatService;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 
 public class CategoriesController {
 
-    SimpleClient client = SimpleClient.getClient();
+    private final SimpleClient client = SimpleClient.getClient();
 
     @FXML
     private AnchorPane titlePane;
@@ -42,10 +43,10 @@ public class CategoriesController {
         try {
             client.sendToServer(new Message("fetchDrinks"));
         } catch (IOException e) {
-            System.out.print("error handle drinks - categories controller");
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new RuntimeException("Error handling drinks - CategoriesController", e);
         }
-        MenuByCatController.currentCategory = "Drinks";
+        MenuByCatService.setCurrentCategory("Drinks");
         ScreenManager.switchScreen("MenuByCategory");
     }
 
@@ -54,10 +55,10 @@ public class CategoriesController {
         try {
             client.sendToServer(new Message("fetchItalian"));
         } catch (IOException e) {
-            System.out.print("error handle Italian - categories controller");
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new RuntimeException("Error handling Italian - CategoriesController", e);
         }
-        MenuByCatController.currentCategory = "Italian";
+        MenuByCatService.setCurrentCategory("Italian");
         ScreenManager.switchScreen("MenuByCategory");
     }
 
@@ -66,38 +67,20 @@ public class CategoriesController {
         try {
             client.sendToServer(new Message("fetchMeat"));
         } catch (IOException e) {
-            System.out.print("error handle Meat - categories controller");
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new RuntimeException("Error handling Meat - CategoriesController", e);
         }
-        MenuByCatController.currentCategory = "Meat";
+        MenuByCatService.setCurrentCategory("Meat");
         ScreenManager.switchScreen("MenuByCategory");
     }
+
     @FXML
     void handleBackBtn(ActionEvent event) {
         ScreenManager.switchScreen("Menu List");
     }
 
-    Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/NEWBACKGRND.jpg")));
-
-@FXML
+    @FXML
     void initialize() {
-       // EventBus.getDefault().register(this);
-        BackgroundImage background = new BackgroundImage(
-                backgroundImage,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                new BackgroundSize(
-                        BackgroundSize.AUTO,
-                        BackgroundSize.AUTO,
-                        true,
-                        true,
-                        true,
-                        false
-                )
-        );
-
-        pane.setBackground(new Background(background));
+        BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
     }
 }
-

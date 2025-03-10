@@ -1,14 +1,12 @@
 package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
-
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.Services.MenuByCatService;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,15 +14,19 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
 
-public class MenuByCatController{
+public class MenuByCatController {
 
     @FXML
     private ResourceBundle resources;
@@ -47,33 +49,36 @@ public class MenuByCatController{
     @FXML
     private AnchorPane pane;
 
-
-    SimpleClient client = SimpleClient.getClient();
-    public static ArrayList<Meals> mealsArrayList = new ArrayList<>();
-    public static String currentCategory;
+    private final SimpleClient client = SimpleClient.getClient();
 
     @Subscribe
-    public void initializedMeals(Message message){
-        System.out.println("initializedMeals - MenuByCatController");
-        if (message.toString().equals("Category Fetched")) {
+    public void onMealsFetched(Message message) {
+        if ("Category Fetched".equals(message.toString())) {
             mealsList.getItems().clear();
-            mealsArrayList.clear();
+            MenuByCatService.setMealsList((ArrayList<Meals>) message.getObject());
 
-            mealsArrayList.addAll((ArrayList<Meals>) message.getObject());
-
-            if (mealsArrayList.isEmpty()) {
+            if (MenuByCatService.getMealsList().isEmpty()) {
                 System.out.println("No meals found for this category.");
             } else {
-                for (Meals meal : mealsArrayList) {
+                for (Meals meal : MenuByCatService.getMealsList()) {
                     mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
                 }
             }
-
-            System.out.println("mealsList Updated - MenuByCatController");
+            System.out.println("Meals list updated for category: " + MenuByCatService.getCurrentCategory());
         }
     }
-    Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/NEWBACKGRND.jpg")));
 
+    @Subscribe
+    public void onMealsUpdated(Message msg) {
+        if ("#Update All Meals".equals(msg.toString())) {
+            try {
+                // Example: fetch the current category again
+                client.sendToServer(new Message("fetch" + MenuByCatService.getCurrentCategory()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     @FXML
     void handleBackBtn(ActionEvent event) {
@@ -85,61 +90,39 @@ public class MenuByCatController{
         ScreenManager.switchScreen("Cart");
     }
 
-
+    @FXML
     public void handleMenuBtn(MouseEvent event) {
-        if (event.getClickCount() == 2) { // Double-click to open the new screen
-            String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem(); // Get the selected item
-
+        if (event.getClickCount() == 2) {
+            String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem();
             if (selectedMealInfo != null) {
-                String selectedMealName = selectedMealInfo.split(" - ")[0]; // Extract the name before the dash
-                searchAndSendMeal(selectedMealName);
+                String selectedMealName = selectedMealInfo.split(" - ")[0];
+                openMealView(selectedMealName);
             }
         }
     }
 
-    private void searchAndSendMeal(String mealName) {
-        Meals foundMeal = null;
+    private void openMealView(String mealName) {
+        Meals foundMeal = MenuByCatService.getMealsList().stream()
+                .filter(m -> m.getName().equals(mealName))
+                .findFirst()
+                .orElse(null);
 
-        for (Meals meal : mealsArrayList) { // Search for the meal by name
-            if (meal.getName().equals(mealName)) {
-                foundMeal = meal;
-                break;
-            }
-        }
-
-        if (foundMeal != null) {
-            openEditScreen(foundMeal); // Pass the meal to the next screen
-        } else {
+        if (foundMeal == null) {
             System.out.println("Meal not found!");
+            return;
         }
-    }
 
-    private void openEditScreen(Meals meal) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("MealView.fxml"));
             Parent root = loader.load();
             MealViewController controller = loader.getController();
-            controller.setMeal(meal);
+            controller.setMeal(foundMeal);
+
             Stage currentStage = (Stage) mealsList.getScene().getWindow();
-            // Update the existing scene's root instead of creating a new Scene
             currentStage.getScene().setRoot(root);
             currentStage.setTitle("Edit Meal");
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-
-    //once a meal is updated we forced all the branch to re fetch their meals to make sure everything is up to date
-    @Subscribe
-    public void updateMeals(Message msg) {
-        if (msg.toString().equals("#Update All Meals")) {
-            try {
-                System.out.println("fetch" + currentCategory + " , , , menubycatcaontroler");
-                client.sendToServer(new Message("fetch" + currentCategory)); //**//
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
@@ -148,28 +131,11 @@ public class MenuByCatController{
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        assert backBtn != null : "fx:id=\"backBtn\" was not injected: check your FXML file 'MenuByCategory.fxml'.";
-        assert cartBtn != null : "fx:id=\"cartBtn\" was not injected: check your FXML file 'MenuByCategory.fxml'.";
-        assert mealsLabel != null : "fx:id=\"mealsLabel\" was not injected: check your FXML file 'MenuByCategory.fxml'.";
-        assert mealsList != null : "fx:id=\"mealsList\" was not injected: check your FXML file 'MenuByCategory.fxml'.";
-        assert pane != null : "fx:id=\"pane\" was not injected: check your FXML file 'MenuByCategory.fxml'.";
 
-        BackgroundImage background = new BackgroundImage(
-                backgroundImage,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                new BackgroundSize(
-                        BackgroundSize.AUTO,
-                        BackgroundSize.AUTO,
-                        true,
-                        true,
-                        true,
-                        false
-                )
-        );
+        if (MenuByCatService.getCurrentCategory() != null) {
+            mealsLabel.setText(MenuByCatService.getCurrentCategory() + " " + mealsLabel.getText());
+        }
 
-        pane.setBackground(new Background(background));
+        BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
     }
-
 }

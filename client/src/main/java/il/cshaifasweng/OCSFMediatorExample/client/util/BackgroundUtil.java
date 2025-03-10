@@ -48,4 +48,23 @@ public class BackgroundUtil {
         BackgroundFill fill = new BackgroundFill(Color.rgb(255, 255, 255, 0.0), CornerRadii.EMPTY, Insets.EMPTY);
         return new Background(fill);
     }
+
+    public static void setPaneBackground(AnchorPane pane, String imagePath) {
+        Image bgImage = new Image(BackgroundUtil.class.getResource(imagePath).toExternalForm());
+        BackgroundImage background = new BackgroundImage(
+                bgImage,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(
+                        BackgroundSize.AUTO,
+                        BackgroundSize.AUTO,
+                        true,
+                        true,
+                        true,
+                        false
+                )
+        );
+        pane.setBackground(new Background(background));
+    }
 }
