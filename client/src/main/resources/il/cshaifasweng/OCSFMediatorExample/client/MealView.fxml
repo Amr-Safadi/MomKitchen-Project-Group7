@@ -38,6 +38,7 @@
                   <Button fx:id="addToCartBtn" mnemonicParsing="false" onAction="#btnAddToCartHandler" text="Add to cart" />
                         <Button fx:id="btnBack" onAction="#btnBackHandler" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 10;" text="חזרה" />
                         <Button fx:id="btnEdit" onAction="#btnEditHandler" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-background-radius: 10;" text="עריכה" />
+                  <Button fx:id="cartBtn" layoutX="54.0" layoutY="17.0" mnemonicParsing="false" onAction="#btnCartHandler" text="Cart" />
                         <Button fx:id="btnDone" onAction="#btnDoneHandler" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 10;" text="שמור" visible="false" />
                     </children>
                 </HBox>
