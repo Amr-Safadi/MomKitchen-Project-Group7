@@ -52,7 +52,7 @@
             <Label prefHeight="17.0" prefWidth="117.0" text="Phone number:" GridPane.rowIndex="5" />
          </children>
       </GridPane>
-      <Button fx:id="backBtn" layoutX="57.0" layoutY="34.0" mnemonicParsing="false" text="Back" />
+      <Button fx:id="backBtn" onMouseClicked="#backHandler" layoutX="57.0" layoutY="34.0" mnemonicParsing="false" text="Back" />
       <Button fx:id="checkorderBtn" layoutX="56.0" layoutY="421.0" mnemonicParsing="false" text="Check Order" />
    </children>
 </AnchorPane>

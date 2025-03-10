@@ -35,7 +35,6 @@ public class CheckOutController {
 
     @FXML
     void backHandler() {
-        ScreenManager.switchScreen("MealView");
+        ScreenManager.switchScreen("Cart");
     }
-
 }

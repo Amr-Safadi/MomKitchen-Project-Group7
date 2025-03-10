@@ -101,7 +101,7 @@ public class MealViewController {
         // Resize the imageView to fixed 600x600 size
         imageView.setFitWidth(600); // Set the fixed width
         imageView.setFitHeight(600); // Set the fixed height
-        imageView.setPreserveRatio(true); // Keep aspect ratio intact
+        imageView.setPreserveRatio(false); // Keep aspect ratio intact
 
         // Create an AnchorPane to layer the image
         AnchorPane imagePane = new AnchorPane();

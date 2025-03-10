@@ -118,21 +118,17 @@ public class MenuByCatController{
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("MealView.fxml"));
             Parent root = loader.load();
-
-            // Get the controller for the new screen
             MealViewController controller = loader.getController();
-
-            // Pass the meal to the controller
             controller.setMeal(meal);
-            // Get the current stage (the stage that shows the Secondary screen)
             Stage currentStage = (Stage) mealsList.getScene().getWindow();
-            // Replace the scene of the current stage with the new scene
-            currentStage.setScene(new Scene(root));
+            // Update the existing scene's root instead of creating a new Scene
+            currentStage.getScene().setRoot(root);
             currentStage.setTitle("Edit Meal");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     //once a meal is updated we forced all the branch to re fetch their meals to make sure everything is up to date
     @Subscribe
