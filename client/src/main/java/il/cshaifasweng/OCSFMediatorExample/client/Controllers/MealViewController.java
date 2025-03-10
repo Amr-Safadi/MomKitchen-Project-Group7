@@ -1,6 +1,9 @@
-package il.cshaifasweng.OCSFMediatorExample.client;
+package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
-import il.cshaifasweng.OCSFMediatorExample.client.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
@@ -50,7 +53,7 @@ public class MealViewController {
         }
 
         // Set main background
-        Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/NEWBACKGRND.jpg")));
+        Image backgroundImage = new Image(getClass().getResource("/images/NEWBACKGRND.jpg").toExternalForm());
         BackgroundImage background = new BackgroundImage(
                 backgroundImage,
                 BackgroundRepeat.NO_REPEAT,

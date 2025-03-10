@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.client;
+package il.cshaifasweng.OCSFMediatorExample.client.Main;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;

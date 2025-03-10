@@ -1,5 +1,7 @@
-package il.cshaifasweng.OCSFMediatorExample.client;
+package il.cshaifasweng.OCSFMediatorExample.client.Main;
 
+import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

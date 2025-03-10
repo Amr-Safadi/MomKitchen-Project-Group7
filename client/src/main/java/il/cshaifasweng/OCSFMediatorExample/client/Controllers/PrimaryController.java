@@ -1,15 +1,17 @@
-package il.cshaifasweng.OCSFMediatorExample.client;
+package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
+
+import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
+import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
 
 public class PrimaryController {
 
@@ -77,7 +79,7 @@ public class PrimaryController {
 
     @FXML
     private void handleArrabiBtn() {
-        SecondaryController.branch = "Arraba";
+        SecondaryController.branch = "Arrabi";
         ScreenManager.switchScreen("Menu List");
     }
 
@@ -88,9 +90,6 @@ public class PrimaryController {
 
     @FXML
     void initialize() {
-
-
-
         assert HaifaBtn != null : "fx:id=\"HaifaBtn\" was not injected: check your FXML file 'primary.fxml'.";
         assert MajdalBtn != null : "fx:id=\"MajdalBtn\" was not injected: check your FXML file 'primary.fxml'.";
         assert MielyaBtn != null : "fx:id=\"MielyaBtn\" was not injected: check your FXML file 'primary.fxml'.";

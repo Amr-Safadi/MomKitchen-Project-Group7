@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="secondaryAnchorPane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PrimaryController">
+<AnchorPane fx:id="secondaryAnchorPane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.PrimaryController">
    <children>
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="55.0" layoutY="165.0" prefHeight="24.0" prefWidth="285.0" text="Choose your favourite branch:" textFill="#2d5512">
          <font>

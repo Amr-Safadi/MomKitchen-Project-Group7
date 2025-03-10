@@ -1,12 +1,13 @@
-package il.cshaifasweng.OCSFMediatorExample.client;
+package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
-import il.cshaifasweng.OCSFMediatorExample.client.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
@@ -14,7 +15,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -110,7 +110,7 @@ public class SecondaryController {
 
     private void openEditScreen(Meals meal) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("MealView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/il/cshaifasweng/OCSFMediatorExample/client/MealView.fxml"));
             Parent root = loader.load();
             MealViewController controller = loader.getController();
             controller.setMeal(meal);

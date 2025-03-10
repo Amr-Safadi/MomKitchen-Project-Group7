@@ -1,6 +1,7 @@
-package il.cshaifasweng.OCSFMediatorExample.client;
+package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
-import il.cshaifasweng.OCSFMediatorExample.client.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
