@@ -1,5 +1,8 @@
-package il.cshaifasweng.OCSFMediatorExample.client;
+package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
+import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
+import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,14 +12,10 @@ import javafx.scene.control.TextField;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.*;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
-
-import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
-
 
 public class LoginController {
 
@@ -35,11 +34,9 @@ public class LoginController {
 
     @FXML
     void handleBackBtn(ActionEvent event) {
-        switchScreen("Primary");
+        ScreenManager.switchScreen("Primary");
     }
-    /**
-     * Handles the login process when the login button is clicked.
-     */
+
     @FXML
     private void handleLogin() {
         String email = emailInput.getText();
@@ -68,7 +65,7 @@ public class LoginController {
                     User loggedInUser = (User) message.getObject();
                     System.out.println("Login successful: " + loggedInUser.getEmail() + " | Role: " + loggedInUser.getRole());
                     UserSession.setUser(loggedInUser);
-                    switchScreen("Primary");
+                    ScreenManager.switchScreen("Primary");
                     break;
 
                 case "#EmailNotFound":
@@ -88,9 +85,6 @@ public class LoginController {
         });
     }
 
-    /**
-     * Displays an alert dialog with the given title and message.
-     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -101,28 +95,5 @@ public class LoginController {
     @FXML
     void initialize() {
         EventBus.getDefault().register(this);
-
-      /*  // Create and set the background image at the root StackPane level
-        BackgroundImage background = new BackgroundImage(
-                backgroundImage,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                new BackgroundSize(
-                        BackgroundSize.AUTO,
-                        BackgroundSize.AUTO,
-                        true,
-                        true,
-                        true,
-                        false
-                )
-        );
-
-        // Ensure the background is applied to the entire scene
-      /*  if (borderPane.getParent() instanceof StackPane) {
-            ((StackPane) borderPane.getParent()).setBackground(new Background(background));
-        } else {
-            System.out.println("BorderPane is not wrapped in a StackPane.");
-        } */
     }
 }
