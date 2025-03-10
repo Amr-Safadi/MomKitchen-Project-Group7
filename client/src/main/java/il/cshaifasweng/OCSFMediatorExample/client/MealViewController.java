@@ -85,7 +85,7 @@ public class MealViewController {
         mealImages.put("Fillet Steak", "/Images/filletSteak.jpg");
         mealImages.put("Chicken Wings", "/Images/chickenWings.jpg");
         mealImages.put("cheese Ravioli", "/Images/ravioli.jpg");
-        mealImages.put("Sezar Salad", "/Images/seafood.jpg");
+        mealImages.put("Sezar Salad", "/Images/sezarSalad.jpg");
 
         // Get the meal image path
         String imagePath = mealImages.get(meal.getName());
