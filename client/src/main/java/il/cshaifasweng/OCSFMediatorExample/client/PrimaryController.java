@@ -30,6 +30,9 @@ public class PrimaryController {
     private AnchorPane secondaryAnchorPane;
 
     @FXML
+    private Label userRec;
+
+    @FXML
     private URL location;
 
     @FXML
@@ -103,6 +106,12 @@ public class PrimaryController {
             LOGINBtn.setVisible(false);
         }
 
+        if (UserSession.getUser() == null) {
+            userRec.setVisible(false);
+        }
+        else {
+            userRec.setText("Welcome " + UserSession.getUser().getFullName());
+        }
         // Create and set the background image
         BackgroundImage background = new BackgroundImage(
                 backgroundImage,
