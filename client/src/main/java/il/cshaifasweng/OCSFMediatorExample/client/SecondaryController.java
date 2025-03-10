@@ -165,7 +165,7 @@ public class SecondaryController {
         assert mealsLabel != null : "fx:id=\"mealsLabel\" was not injected: check your FXML file 'secondary.fxml'.";
         assert mealsList != null : "fx:id=\"mealsList\" was not injected: check your FXML file 'secondary.fxml'.";
 
-        mealsLabel.setText(branch + " " + mealsLabel.getText());
+        mealsLabel.setText(branch + "'s " + mealsLabel.getText());
         // Create and set the background image at the root StackPane level
         BackgroundImage background = new BackgroundImage(
                 backgroundImage,

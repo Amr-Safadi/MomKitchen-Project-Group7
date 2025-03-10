@@ -96,17 +96,17 @@ public class MealViewController {
 
 
         txtPrdctPrice.setEditable(true);
-        //txtPrdctName.setEditable(true);
-        //txtPrdctPrf.setEditable(true);
-       // txtPrdctIng.setEditable(true);
+        txtPrdctName.setEditable(true);
+        txtPrdctPrf.setEditable(true);
+        txtPrdctIng.setEditable(true);
 
         btnDone.setVisible(true);
     }
     @FXML
     public void btnDoneHandler (ActionEvent event) {
-       // meal.setIngredients(txtPrdctIng.getText());
-        //meal.setPreferences(txtPrdctPrf.getText());
-        //meal.setName(txtPrdctName.getText());
+        meal.setIngredients(txtPrdctIng.getText());
+        meal.setPreferences(txtPrdctPrf.getText());
+        meal.setName(txtPrdctName.getText());
 
         String priceInput = txtPrdctPrice.getText();
 
