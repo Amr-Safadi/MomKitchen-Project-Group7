@@ -87,7 +87,7 @@ public class MealViewController {
 
     @FXML
     void btnCartHandler(ActionEvent event) {
-       switchScreen("Cart");
+        ScreenManager.switchScreen("Cart");
     }
 
     public void btnEditHandler (ActionEvent event) {
