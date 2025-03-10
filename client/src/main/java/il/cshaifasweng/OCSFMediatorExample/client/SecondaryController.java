@@ -81,6 +81,7 @@ public class SecondaryController {
     public void handleSearchBtn() {
         switchScreen("categories");
     }
+
     public void handleMenuBtn(MouseEvent event) {
         if (event.getClickCount() == 2) { // Double-click to open the new screen
             String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem(); // Get the selected item

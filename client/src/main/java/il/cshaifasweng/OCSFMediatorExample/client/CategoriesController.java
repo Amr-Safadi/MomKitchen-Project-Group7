@@ -46,6 +46,7 @@ public class CategoriesController {
             System.out.print("error handle drinks - categories controller");
             throw new RuntimeException(e);
         }
+        MenuByCatController.currentCategory = "Drinks";
         switchScreen("MenuByCategory");
     }
 
@@ -57,6 +58,7 @@ public class CategoriesController {
             System.out.print("error handle Italian - categories controller");
             throw new RuntimeException(e);
         }
+        MenuByCatController.currentCategory = "Italian";
         switchScreen("MenuByCategory");
     }
 
@@ -68,11 +70,12 @@ public class CategoriesController {
             System.out.print("error handle Meat - categories controller");
             throw new RuntimeException(e);
         }
+        MenuByCatController.currentCategory = "Meat";
         switchScreen("MenuByCategory");
     }
     @FXML
     void handleBackBtn(ActionEvent event) {
-        switchScreen("Primary");
+        switchScreen("Menu List");
     }
 
     Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/NEWBACKGRND.jpg")));

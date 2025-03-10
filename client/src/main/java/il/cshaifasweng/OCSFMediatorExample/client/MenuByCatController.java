@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -9,15 +10,20 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
+import static il.cshaifasweng.OCSFMediatorExample.client.SecondaryController.branch;
 
 
 public class MenuByCatController{
@@ -43,7 +49,10 @@ public class MenuByCatController{
     @FXML
     private AnchorPane pane;
 
+
+    SimpleClient client = SimpleClient.getClient();
     public static ArrayList<Meals> mealsArrayList = new ArrayList<>();
+    public static String currentCategory;
 
     @Subscribe
     public void initializedMeals(Message message){
@@ -75,12 +84,71 @@ public class MenuByCatController{
 
     @FXML
     void handleCartBtn(ActionEvent event) {
-
+        switchScreen("Cart");
     }
 
-    @FXML
-    void handleMenuBtn(MouseEvent event) {
 
+    public void handleMenuBtn(MouseEvent event) {
+        if (event.getClickCount() == 2) { // Double-click to open the new screen
+            String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem(); // Get the selected item
+
+            if (selectedMealInfo != null) {
+                String selectedMealName = selectedMealInfo.split(" - ")[0]; // Extract the name before the dash
+                searchAndSendMeal(selectedMealName);
+            }
+        }
+    }
+
+    private void searchAndSendMeal(String mealName) {
+        Meals foundMeal = null;
+
+        for (Meals meal : mealsArrayList) { // Search for the meal by name
+            if (meal.getName().equals(mealName)) {
+                foundMeal = meal;
+                break;
+            }
+        }
+
+        if (foundMeal != null) {
+            openEditScreen(foundMeal); // Pass the meal to the next screen
+        } else {
+            System.out.println("Meal not found!");
+        }
+    }
+
+    private void openEditScreen(Meals meal) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("MealView.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller for the new screen
+            MealViewController controller = loader.getController();
+
+            // Pass the meal to the controller
+            controller.setMeal(meal);
+
+            // Get the current stage (the stage that shows the Secondary screen)
+            Stage currentStage = (Stage) mealsList.getScene().getWindow();
+
+            // Replace the scene of the current stage with the new scene
+            currentStage.setScene(new Scene(root));
+            currentStage.setTitle("Edit Meal");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //once a meal is updated we forced all the branch to re fetch their meals to make sure everything is up to date
+    @Subscribe
+    public void updateMeals(Message msg) {
+        if (msg.toString().equals("#Update All Meals")) {
+            try {
+                System.out.println("fetch" + currentCategory + " , , , menubycatcaontroler");
+                client.sendToServer(new Message("fetch" + currentCategory)); //**//
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @FXML

@@ -33,6 +33,8 @@ public class MealViewController {
 
 
     @FXML
+    private Button cartBtn;
+    @FXML
     private GridPane gridMeal;
     @FXML
     private Button addToCartBtn;
@@ -63,7 +65,6 @@ public class MealViewController {
            }else{
                btnEdit.setVisible(true);
            }
-         
        } else {
            btnEdit.setVisible(false); // If no user is logged in, disable it
        }
@@ -84,6 +85,11 @@ public class MealViewController {
                )
        );
        AnchorPane.setBackground(new Background(background));
+    }
+
+    @FXML
+    void btnCartHandler(ActionEvent event) {
+       switchScreen("Cart");
     }
 
     public void btnEditHandler (ActionEvent event) {
