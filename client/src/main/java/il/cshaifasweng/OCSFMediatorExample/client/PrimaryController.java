@@ -2,13 +2,14 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 public class PrimaryController {
 
@@ -25,6 +26,9 @@ public class PrimaryController {
 
     @FXML
     private AnchorPane secondaryAnchorPane;
+
+    @FXML
+    private Label userRec;
 
     @FXML
     private URL location;
@@ -100,6 +104,12 @@ public class PrimaryController {
             LOGINBtn.setVisible(false);
         }
 
+        if (UserSession.getUser() == null) {
+            userRec.setVisible(false);
+        }
+        else {
+            userRec.setText("Welcome " + UserSession.getUser().getFullName());
+        }
         // Create and set the background image
         BackgroundImage background = new BackgroundImage(
                 backgroundImage,
