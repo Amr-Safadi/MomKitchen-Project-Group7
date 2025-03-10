@@ -113,7 +113,9 @@ public class MenuByCatController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("MealView.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/il/cshaifasweng/OCSFMediatorExample/client/MealView.fxml")
+            );
             Parent root = loader.load();
             MealViewController controller = loader.getController();
             controller.setMeal(foundMeal);

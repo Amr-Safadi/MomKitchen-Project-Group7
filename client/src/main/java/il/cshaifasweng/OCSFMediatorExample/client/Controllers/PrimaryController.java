@@ -1,24 +1,26 @@
 package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
+import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class PrimaryController {
 
-  //  public javafx.scene.image.ImageView branchHaifaIm;
-
     @FXML
     private ResourceBundle resources;
+
+    @FXML
+    private URL location;
 
     @FXML
     private AnchorPane LOG;
@@ -31,9 +33,6 @@ public class PrimaryController {
 
     @FXML
     private Label userRec;
-
-    @FXML
-    private URL location;
 
     @FXML
     private Button HaifaBtn;
@@ -56,30 +55,27 @@ public class PrimaryController {
     @FXML
     private Label branchesLabel;
 
-    // Background image reference
-    Image backgroundImage = new Image(String.valueOf(PrimaryController.class.getResource("/Images/NEWBACKGRND.jpg")));
-
     @FXML
     private void handleHaifaBtn() {
-        SecondaryController.branch = "Haifa";
+        SecondaryService.setBranch("Haifa");
         ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
     private void handleMajdalBtn() {
-        SecondaryController.branch = "Majdal Shams";
+        SecondaryService.setBranch("Majdal Shams");
         ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
     private void handleMielyaBtn() {
-        SecondaryController.branch = "Mielya";
+        SecondaryService.setBranch("Mielya");
         ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
     private void handleArrabiBtn() {
-        SecondaryController.branch = "Arrabi";
+        SecondaryService.setBranch("Arrabi");
         ScreenManager.switchScreen("Menu List");
     }
 
@@ -105,26 +101,10 @@ public class PrimaryController {
 
         if (UserSession.getUser() == null) {
             userRec.setVisible(false);
-        }
-        else {
+        } else {
             userRec.setText("Welcome " + UserSession.getUser().getFullName());
         }
-        // Create and set the background image
-        BackgroundImage background = new BackgroundImage(
-                backgroundImage,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                new BackgroundSize(
-                        BackgroundSize.AUTO,
-                        BackgroundSize.AUTO,
-                        true,
-                        true,
-                        true,
-                        false
-                )
-        );
-        //mainAnchorPane.setBackground(new Background(background));
-       secondaryAnchorPane.setBackground(new Background(background));
+
+        BackgroundUtil.setPaneBackground(secondaryAnchorPane, "/Images/NEWBACKGRND.jpg");
     }
 }

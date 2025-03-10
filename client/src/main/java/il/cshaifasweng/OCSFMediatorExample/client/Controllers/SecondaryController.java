@@ -1,13 +1,10 @@
 package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
-
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
-import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
@@ -18,19 +15,20 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import javafx.scene.input.MouseEvent;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
+
 public class SecondaryController {
 
-    SimpleClient client = SimpleClient.getClient();
-
-    @FXML
-    private BorderPane borderPane;
+    private final SimpleClient client = SimpleClient.getClient();
 
     @FXML
     private ResourceBundle resources;
@@ -48,72 +46,63 @@ public class SecondaryController {
     private Button searchBtn;
 
     @FXML
+    private Button cartBtn;
+
+    @FXML
     private Label mealsLabel;
 
     @FXML
     private ListView<String> mealsList;
 
-    Image backgroundImage = new Image(String.valueOf(SecondaryController.class.getResource("/Images/NEWBACKGRND.jpg")));
-
-    public static ArrayList<Meals> mealsArrayList = new ArrayList<>();
-    public static String branch = "" ;
-
     @Subscribe
-    public void initializeListView(Message msg) {
-        if (msg.toString().equals("#Initialize Meals")) { // Use .equals() for string comparison
-
+    public void onMealsInitialized(Message msg) {
+        if ("#Initialize Meals".equals(msg.toString())) {
             Platform.runLater(() -> {
-                System.out.println("Meals are being initialized");
-                mealsArrayList = (ArrayList<Meals>) msg.getObject(); // assign the list
+                System.out.println("Initializing meals for branch: " + SecondaryService.getBranch());
+                ArrayList<Meals> receivedMeals = (ArrayList<Meals>) msg.getObject();
+                SecondaryService.setMealsList(receivedMeals);
 
-                mealsList.getItems().clear(); // Clear the current items in the ListView
-                for (Meals meal : mealsArrayList) {
+                mealsList.getItems().clear();
+                for (Meals meal : SecondaryService.getMealsList()) {
                     mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
                 }
-
-                System.out.println("mealsList Initialized - SecondaryController"); // Debugging tool
             });
         }
     }
+
     @FXML
-    public void handleSearchBtn() {
+    public void handleSearchBtn(ActionEvent event) {
         ScreenManager.switchScreen("categories");
     }
 
-    public void handleMenuBtn(MouseEvent event) {
-        if (event.getClickCount() == 2) { // Double-click to open the new screen
-            String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem(); // Get the selected item
-
+    @FXML
+    public void handleMenuDoubleClick(MouseEvent event) {
+        if (event.getClickCount() == 2) {
+            String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem();
             if (selectedMealInfo != null) {
-                String selectedMealName = selectedMealInfo.split(" - ")[0]; // Extract the name before the dash
-                searchAndSendMeal(selectedMealName);
+                String selectedMealName = selectedMealInfo.split(" - ")[0];
+                openMealView(selectedMealName);
             }
         }
     }
 
-    private void searchAndSendMeal(String mealName) {
-        Meals foundMeal = null;
+    private void openMealView(String mealName) {
+        Meals foundMeal = SecondaryService.getMealsList().stream()
+                .filter(meal -> meal.getName().equals(mealName))
+                .findFirst()
+                .orElse(null);
 
-        for (Meals meal : mealsArrayList) { // Search for the meal by name
-            if (meal.getName().equals(mealName)) {
-                foundMeal = meal;
-                break;
-            }
+        if (foundMeal == null) {
+            System.out.println("Meal not found: " + mealName);
+            return;
         }
 
-        if (foundMeal != null) {
-            openEditScreen(foundMeal); // Pass the meal to the next screen
-        } else {
-            System.out.println("Meal not found!");
-        }
-    }
-
-    private void openEditScreen(Meals meal) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/il/cshaifasweng/OCSFMediatorExample/client/MealView.fxml"));
             Parent root = loader.load();
             MealViewController controller = loader.getController();
-            controller.setMeal(meal);
+            controller.setMeal(foundMeal);
+
             Stage currentStage = (Stage) mealsList.getScene().getWindow();
             currentStage.getScene().setRoot(root);
             currentStage.setTitle("Edit Meal");
@@ -122,56 +111,44 @@ public class SecondaryController {
         }
     }
 
-    //once a meal is updated we forced all the branch to re fetch their meals to make sure everything is up to date
     @Subscribe
-    public void updateMeals(Message msg) {
-        if (msg.toString().equals("#Update All Meals")) {
+    public void onMealsUpdated(Message msg) {
+        if ("#Update All Meals".equals(msg.toString())) {
             try {
-                client.sendToServer(new Message(branch,"#Meals Request")); //**//
+                System.out.println("Re-fetching meals for branch: " + SecondaryService.getBranch());
+                client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
+
     @FXML
     void handleCartBtn(ActionEvent event) {
         ScreenManager.switchScreen("Cart");
     }
 
-@FXML
-   public void handleBackBtn() {
-    ScreenManager.switchScreen("Primary");
+    @FXML
+    void handleBackBtn(ActionEvent event) {
+        ScreenManager.switchScreen("Primary");
         CartSession.clearCart();
-    System.out.println("cart has been cleared after backing from the branch");
+        System.out.println("Cart cleared after navigating back from the branch.");
     }
+
     @FXML
     void initialize() {
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+
         try {
-            client.sendToServer(new Message(branch,"#Meals Request")); //**//
+            client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        assert mealsLabel != null : "fx:id=\"mealsLabel\" was not injected: check your FXML file 'secondary.fxml'.";
-        assert mealsList != null : "fx:id=\"mealsList\" was not injected: check your FXML file 'secondary.fxml'.";
 
-        mealsLabel.setText(branch + "'s " + mealsLabel.getText());
-        // Create and set the background image at the root StackPane level
-        BackgroundImage background = new BackgroundImage(
-                backgroundImage,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                new BackgroundSize(
-                        BackgroundSize.AUTO,
-                        BackgroundSize.AUTO,
-                        true,
-                        true,
-                        true,
-                        false
-                )
-        );
+        mealsLabel.setText(SecondaryService.getBranch() + "'s " + mealsLabel.getText());
 
-        pane.setBackground(new Background(background));
+        BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
     }
 }
