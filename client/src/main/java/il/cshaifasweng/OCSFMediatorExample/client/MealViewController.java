@@ -1,6 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
@@ -18,8 +18,6 @@ import javafx.scene.paint.Color;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class MealViewController {
 
@@ -114,7 +112,7 @@ public class MealViewController {
         AnchorPane.setLeftAnchor(imageView, -50.0);  // Move it less to the left (adjust to -50)
 
         // Add the imagePane to the GridPane (Ensure it's behind other content)
-        gridMeal.getChildren().add(imagePane);
+        gridMeal.getChildren().addFirst(imagePane);
 
         // Make the GridPane background transparent by setting the style of the grid to transparent
         gridMeal.setStyle("-fx-background-color: transparent;");
@@ -131,7 +129,7 @@ public class MealViewController {
 
     @FXML
     void btnCartHandler(ActionEvent event) {
-        switchScreen("Cart");
+        ScreenManager.switchScreen("Cart");
     }
 
     public void btnEditHandler(ActionEvent event) {
@@ -172,7 +170,7 @@ public class MealViewController {
     }
 
     public void btnBackHandler(ActionEvent event) {
-        switchScreen("Menu List");
+        ScreenManager.switchScreen("Menu List");
     }
 
     public void setMeal(Meals meal) {

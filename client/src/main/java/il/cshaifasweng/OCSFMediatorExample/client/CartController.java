@@ -74,6 +74,6 @@ public class CartController {
 
     @FXML
     void checkOutHandler(ActionEvent event) {
-        switchScreen("Check out");
+        ScreenManager.switchScreen("Check out");
     }
 }
