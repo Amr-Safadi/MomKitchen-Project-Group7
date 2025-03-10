@@ -2,21 +2,29 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 
 import static il.cshaifasweng.OCSFMediatorExample.client.App.switchScreen;
 
 public class CartController {
 
     @FXML
+    private Button checkOutBtn;
+
+    @FXML
     private Button backBtn;
 
     @FXML
+    private Label priceLabel;
+
+    @FXML
     private Button removeBtn;
+
+    @FXML
+    private AnchorPane pane;
 
     @FXML
     private ListView<Meals> cartView;
@@ -46,6 +54,9 @@ public class CartController {
     private void loadCartItems() {
         cartView.getItems().clear();
         cartView.getItems().addAll(CartSession.getCart().getMeals());
+
+
+        priceLabel.setText("$" + CartSession.getCart().getTotalPrice());
     }
 
     @FXML
@@ -59,6 +70,12 @@ public class CartController {
         if (selectedMeal != null) {
             CartSession.getCart().removeMeal(selectedMeal);
             cartView.getItems().remove(selectedMeal);
+            priceLabel.setText("$" + CartSession.getCart().getTotalPrice());
         }
+    }
+
+    @FXML
+    void checkOutHandler(ActionEvent event) {
+        switchScreen("Check out");
     }
 }

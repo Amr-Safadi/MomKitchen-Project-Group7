@@ -62,6 +62,18 @@ public class App extends Application {
         switch (screenName) {
 
 
+            case "Check out":
+                Platform.runLater(() -> {
+                    setWindowTitle("Payment");
+                    try {
+                        setContent("CheckOut");
+                    } catch (IOException e) {
+                        System.out.println("Error loading screen - app - switchScreen function - MenuByCategory");
+                        e.printStackTrace();
+                    }
+                });
+                break;
+
             case "MenuByCategory":
                 Platform.runLater(() -> {
                     setWindowTitle("MenuByCategory");
