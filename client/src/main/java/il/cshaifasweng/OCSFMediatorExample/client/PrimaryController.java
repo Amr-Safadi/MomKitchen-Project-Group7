@@ -73,7 +73,7 @@ public class PrimaryController {
 
     @FXML
     private void handleArrabiBtn() {
-        SecondaryController.branch = "Arrabi";
+        SecondaryController.branch = "Arraba";
         ScreenManager.switchScreen("Menu List");
     }
 

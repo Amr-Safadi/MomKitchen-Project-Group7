@@ -31,6 +31,8 @@ public class MealViewController {
 
 
     @FXML
+    private Button cartBtn;
+    @FXML
     private GridPane gridMeal;
     @FXML
     private Button addToCartBtn;
@@ -61,7 +63,6 @@ public class MealViewController {
            }else{
                btnEdit.setVisible(true);
            }
-         
        } else {
            btnEdit.setVisible(false); // If no user is logged in, disable it
        }
@@ -84,21 +85,26 @@ public class MealViewController {
        AnchorPane.setBackground(new Background(background));
     }
 
+    @FXML
+    void btnCartHandler(ActionEvent event) {
+       switchScreen("Cart");
+    }
+
     public void btnEditHandler (ActionEvent event) {
 
 
         txtPrdctPrice.setEditable(true);
-        //txtPrdctName.setEditable(true);
-        //txtPrdctPrf.setEditable(true);
-       // txtPrdctIng.setEditable(true);
+        txtPrdctName.setEditable(true);
+        txtPrdctPrf.setEditable(true);
+        txtPrdctIng.setEditable(true);
 
         btnDone.setVisible(true);
     }
     @FXML
     public void btnDoneHandler (ActionEvent event) {
-       // meal.setIngredients(txtPrdctIng.getText());
-        //meal.setPreferences(txtPrdctPrf.getText());
-        //meal.setName(txtPrdctName.getText());
+        meal.setIngredients(txtPrdctIng.getText());
+        meal.setPreferences(txtPrdctPrf.getText());
+        meal.setName(txtPrdctName.getText());
 
         String priceInput = txtPrdctPrice.getText();
 

@@ -79,6 +79,7 @@ public class SecondaryController {
     public void handleSearchBtn() {
         ScreenManager.switchScreen("categories");
     }
+
     public void handleMenuBtn(MouseEvent event) {
         if (event.getClickCount() == 2) { // Double-click to open the new screen
             String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem(); // Get the selected item
@@ -154,7 +155,7 @@ public class SecondaryController {
         assert mealsLabel != null : "fx:id=\"mealsLabel\" was not injected: check your FXML file 'secondary.fxml'.";
         assert mealsList != null : "fx:id=\"mealsList\" was not injected: check your FXML file 'secondary.fxml'.";
 
-        mealsLabel.setText(branch + " " + mealsLabel.getText());
+        mealsLabel.setText(branch + "'s " + mealsLabel.getText());
         // Create and set the background image at the root StackPane level
         BackgroundImage background = new BackgroundImage(
                 backgroundImage,

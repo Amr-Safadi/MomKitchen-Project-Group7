@@ -43,6 +43,7 @@ public class CategoriesController {
             System.out.print("error handle drinks - categories controller");
             throw new RuntimeException(e);
         }
+        MenuByCatController.currentCategory = "Drinks";
         ScreenManager.switchScreen("MenuByCategory");
     }
 
@@ -54,6 +55,7 @@ public class CategoriesController {
             System.out.print("error handle Italian - categories controller");
             throw new RuntimeException(e);
         }
+        MenuByCatController.currentCategory = "Italian";
         ScreenManager.switchScreen("MenuByCategory");
     }
 
@@ -65,6 +67,7 @@ public class CategoriesController {
             System.out.print("error handle Meat - categories controller");
             throw new RuntimeException(e);
         }
+        MenuByCatController.currentCategory = "Meat";
         ScreenManager.switchScreen("MenuByCategory");
     }
     @FXML
