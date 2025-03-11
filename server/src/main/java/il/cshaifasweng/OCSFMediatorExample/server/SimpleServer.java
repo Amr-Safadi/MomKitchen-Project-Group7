@@ -1,9 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
-import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
@@ -42,6 +39,7 @@ public class SimpleServer extends AbstractServer {
 		configuration.addAnnotatedClass(Meals.class);
 		configuration.addAnnotatedClass(Branch.class);
 		configuration.addAnnotatedClass(User.class);
+		configuration.addAnnotatedClass(Reservation.class);
 
 		ServiceRegistry serviceRegistry = new
 				StandardServiceRegistryBuilder()
@@ -141,6 +139,25 @@ public class SimpleServer extends AbstractServer {
 				}
 				break;
 
+			case "#ReservationRequest":
+				Reservation reservationRequest = (Reservation) message.getObject();
+				boolean available = checkAvailability(reservationRequest);
+				if (available) {
+					saveReservation(reservationRequest);
+					try {
+						client.sendToClient(new Message(reservationRequest, "#ReservationSuccess"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					String alternatives = computeAlternativeTimes(reservationRequest);
+					try {
+						client.sendToClient(new Message(alternatives, "#NoAvailability"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
 
 			default:
 				System.out.println("Unknown message received: " + msgStr);
@@ -159,6 +176,53 @@ public class SimpleServer extends AbstractServer {
 		session.saveOrUpdate(Marian);
 		session.saveOrUpdate(Kanar);
 		System.out.println("Users added to the database.");
+	}
+
+	private boolean checkAvailability(Reservation reservation) {
+		LocalTime open = LocalTime.of(17, 0);
+		LocalTime close = LocalTime.of(20, 0);
+		LocalTime startAllowed = open.plusMinutes(15);
+		LocalTime endAllowed = close.minusMinutes(60);
+		LocalTime requested = reservation.getTime();
+		return !requested.isBefore(startAllowed) && !requested.isAfter(endAllowed);
+	}
+
+	private void saveReservation(Reservation reservation) {
+		try (Session session = getSessionFactory().openSession()) {
+			Transaction tx = session.beginTransaction();
+
+			if (reservation.getBranch() == null || reservation.getBranch().getId() == 0) {
+				String branchName = reservation.getBranch() != null ? reservation.getBranch().getName() : "defaultBranch";
+				Branch persistentBranch = session.createQuery("FROM Branch WHERE name = :branchName", Branch.class)
+						.setParameter("branchName", branchName)
+						.uniqueResult();
+				if (persistentBranch == null) {
+					throw new RuntimeException("Branch not found: " + branchName);
+				}
+				reservation.setBranch(persistentBranch);
+			}
+
+			session.save(reservation);
+			tx.commit();
+			System.out.println("Reservation saved: " + reservation.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	private String computeAlternativeTimes(Reservation reservation) {
+		LocalTime open = LocalTime.of(17, 0);
+		LocalTime close = LocalTime.of(20, 0);
+		LocalTime startAllowed = open.plusMinutes(15);
+		LocalTime endAllowed = close.minusMinutes(60);
+		List<String> alternatives = new ArrayList<>();
+		LocalTime slot = startAllowed;
+		while (!slot.isAfter(endAllowed)) {
+			alternatives.add(slot.toString());
+			slot = slot.plusMinutes(15);
+		}
+		return String.join(", ", alternatives);
 	}
 
 	// a function to give intial values to meals database
@@ -188,7 +252,7 @@ public class SimpleServer extends AbstractServer {
 			Meals meal9 = new Meals("cheese Ravioli", "Cream, Mushrooms, Parmesan", "No Mushrooms", 119.00, Meals.Category.ITALIAN);
 			Meals meal10 = new Meals("Sezar Salad", "Lettuce, Chicken slices, Sezar Sauce, Parmesan", "No Cheese", 56.00, Meals.Category.ITALIAN);
 
-			session.saveOrUpdate(meal1);
+			session.	saveOrUpdate(meal1);
 			session.saveOrUpdate(meal2);
 			session.saveOrUpdate(meal3);
 			session.saveOrUpdate(meal4);

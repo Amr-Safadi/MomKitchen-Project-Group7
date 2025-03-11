@@ -54,6 +54,9 @@ public class SecondaryController {
     @FXML
     private ListView<String> mealsList;
 
+    @FXML
+    private Button reservationBtn;
+
     @Subscribe
     public void onMealsInitialized(Message msg) {
         if ("#Initialize Meals".equals(msg.toString())) {
@@ -84,6 +87,11 @@ public class SecondaryController {
                 openMealView(selectedMealName);
             }
         }
+    }
+
+    @FXML
+    public void handleReservation(ActionEvent event) {
+        ScreenManager.switchScreen("Reservation");
     }
 
     private void openMealView(String mealName) {

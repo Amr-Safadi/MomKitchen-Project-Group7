@@ -29,7 +29,7 @@ public class Meals implements Serializable {
     private Meals.Category category;
 
     @Column(nullable = false)
-    private Boolean isBranchMeal;
+    private Boolean isBranchMeal = false;
 
     @ManyToMany(mappedBy = "meals")
     private List<Branch> branches = new ArrayList<>();
