@@ -38,13 +38,13 @@ public class PrimaryController {
     private Button HaifaBtn;
 
     @FXML
-    private Button MajdalBtn;
+    private Button AcreBtn;
 
     @FXML
-    private Button MielyaBtn;
+    private Button TelavivBtn;
 
     @FXML
-    private Button ArrabiBtn;
+    private Button NetanyaBtn;
 
     @FXML
     private Button LOGINBtn;
@@ -62,20 +62,20 @@ public class PrimaryController {
     }
 
     @FXML
-    private void handleMajdalBtn() {
-        SecondaryService.setBranch("Majdal Shams");
+    private void handleAcreBtn() {
+        SecondaryService.setBranch("Acre");
         ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
-    private void handleMielyaBtn() {
-        SecondaryService.setBranch("Mielya");
+    private void handleTelavivBtn() {
+        SecondaryService.setBranch("Tel-Aviv");
         ScreenManager.switchScreen("Menu List");
     }
 
     @FXML
-    private void handleArrabiBtn() {
-        SecondaryService.setBranch("Arrabi");
+    private void handleNetanyaBtn() {
+        SecondaryService.setBranch("Netanya");
         ScreenManager.switchScreen("Menu List");
     }
 
@@ -87,9 +87,9 @@ public class PrimaryController {
     @FXML
     void initialize() {
         assert HaifaBtn != null : "fx:id=\"HaifaBtn\" was not injected: check your FXML file 'primary.fxml'.";
-        assert MajdalBtn != null : "fx:id=\"MajdalBtn\" was not injected: check your FXML file 'primary.fxml'.";
-        assert MielyaBtn != null : "fx:id=\"MielyaBtn\" was not injected: check your FXML file 'primary.fxml'.";
-        assert ArrabiBtn != null : "fx:id=\"ArrabiBtn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert AcreBtn != null : "fx:id=\"AcreBtn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert TelavivBtn != null : "fx:id=\"TelavivBtn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert NetanyaBtn != null : "fx:id=\"NetanyaBtn\" was not injected: check your FXML file 'primary.fxml'.";
         assert branchListView != null : "fx:id=\"branchListView\" was not injected: check your FXML file 'primary.fxml'.";
         assert branchesLabel != null : "fx:id=\"branchesLabel\" was not injected: check your FXML file 'primary.fxml'.";
         assert LOGINBtn != null : "fx:id=\"LOGINBtn\" was not injected: check your FXML file 'primary.fxml'.";
