@@ -31,22 +31,22 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Button fx:id="branchHaifaIm" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleHaifaBtn" onMouseClicked="#handleHaifaBtn" prefHeight="27.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="Haifa" textFill="WHITE">
+            <Button fx:id="HaifaBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleHaifaBtn" onMouseClicked="#handleHaifaBtn" prefHeight="27.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="Haifa" textFill="WHITE">
                <font>
                   <Font name="Bauhaus 93" size="20.0" />
                </font>
             </Button>
-            <Button fx:id="MajdalBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleMajdalBtn" onMouseClicked="#handleMajdalBtn" prefHeight="25.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="Majdal Shams" textFill="WHITE" GridPane.rowIndex="1">
+            <Button fx:id="AcreBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleAcreBtn" prefHeight="25.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="Acre" textFill="WHITE" GridPane.rowIndex="1">
                <font>
                   <Font name="Bauhaus 93" size="20.0" />
                </font>
             </Button>
-            <Button fx:id="MielyaBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleMielyaBtn" onMouseClicked="#handleMielyaBtn" prefHeight="26.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="Mielya" textFill="WHITE" GridPane.rowIndex="2">
+            <Button fx:id="TelavivBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleTelavivBtn" prefHeight="26.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="Tel-Aviv" textFill="WHITE" GridPane.rowIndex="2">
                <font>
                   <Font name="Bauhaus 93" size="20.0" />
                </font>
             </Button>
-            <Button fx:id="ArrabiBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleArrabiBtn" onMouseClicked="#handleArrabiBtn" prefHeight="26.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="Arraba" textFill="WHITE" GridPane.rowIndex="3">
+            <Button fx:id="NetanyaBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleNetanyaBtn" prefHeight="26.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="Netanya" textFill="WHITE" GridPane.rowIndex="3">
                <font>
                   <Font name="Bauhaus 93" size="20.0" />
                </font>

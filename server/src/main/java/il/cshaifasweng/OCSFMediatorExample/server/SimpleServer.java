@@ -57,8 +57,8 @@ public class SimpleServer extends AbstractServer {
 		try{
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			//populateInitialData(session);
-			//populateUsers(session);
+//			populateInitialData(session);
+//			populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception var5) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -167,9 +167,9 @@ public class SimpleServer extends AbstractServer {
 		try {
 
 			Branch branch1 = new Branch("Haifa", "Hanamal 16", LocalTime.of(8, 0), LocalTime.of(23, 0));
-			Branch branch2 = new Branch("Majdal Shams", "Main St. 13", LocalTime.of(9, 0), LocalTime.of(21, 0));
-			Branch branch3 = new Branch("Mielya", "AlKroum st. 11", LocalTime.of(10, 0), LocalTime.of(22, 0));
-			Branch branch4 = new Branch("Arrabi", "Alwadi st. 14", LocalTime.of(10, 0), LocalTime.of(21, 0));
+			Branch branch2 = new Branch("Acre", "Main St. 13", LocalTime.of(9, 0), LocalTime.of(21, 0));
+			Branch branch3 = new Branch("Tel-Aviv", "Rothschild st. 11", LocalTime.of(10, 0), LocalTime.of(22, 0));
+			Branch branch4 = new Branch("Netanya", "Hagefen st. 14", LocalTime.of(10, 0), LocalTime.of(21, 0));
 
 
 			session.saveOrUpdate(branch1);

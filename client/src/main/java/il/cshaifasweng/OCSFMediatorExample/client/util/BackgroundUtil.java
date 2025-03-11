@@ -23,7 +23,7 @@ public class BackgroundUtil {
         MEAL_IMAGES.put("Fillet Steak", "/Images/filletSteak.jpg");
         MEAL_IMAGES.put("Chicken Wings", "/Images/chickenWings.jpg");
         MEAL_IMAGES.put("cheese Ravioli", "/Images/ravioli.jpg");
-        MEAL_IMAGES.put("Sezar Salad", "/Images/seafood.jpg");
+        MEAL_IMAGES.put("Sezar Salad", "/Images/sezarSalad.jpg");
     }
 
     public static AnchorPane createMealImagePane(Meals meal) {
