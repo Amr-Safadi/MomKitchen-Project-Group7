@@ -28,6 +28,9 @@ public class Meals implements Serializable {
     @Column(nullable = false)
     private Meals.Category category;
 
+    @Column(nullable = false)
+    private Boolean isBranchMeal;
+
     @ManyToMany(mappedBy = "meals")
     private List<Branch> branches = new ArrayList<>();
 
