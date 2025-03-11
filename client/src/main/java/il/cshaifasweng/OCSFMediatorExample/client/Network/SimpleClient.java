@@ -60,6 +60,10 @@ public class SimpleClient extends AbstractClient {
 				EventBus.getDefault().post(new Message(null, "#AlreadyLoggedIn"));
 				break;
 
+			case "#BranchFetched":
+				System.out.println("Received branch fetched message");
+				EventBus.getDefault().post(message);
+				break;
 
 			default:
 				System.out.println("Unknown message received: " + message.toString());

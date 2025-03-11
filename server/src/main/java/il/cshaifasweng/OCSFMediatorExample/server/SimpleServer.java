@@ -68,7 +68,7 @@ public class SimpleServer extends AbstractServer {
 				session.close();
 			}
 		}
-		
+
 	}
 
 	ArrayList<Meals> mealsArrayList ;
@@ -90,11 +90,11 @@ public class SimpleServer extends AbstractServer {
 			case "fetchDrinks":
 
 				mealsByCategories = fetchMealByCategoriesAndBranch(branch,"Drinks");
-                try {
-                    client.sendToClient(new Message(mealsByCategories,"Category Fetched"));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }break;
+				try {
+					client.sendToClient(new Message(mealsByCategories,"Category Fetched"));
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}break;
 			case "fetchItalian":
 
 				mealsByCategories = fetchMealByCategoriesAndBranch(branch,"Italian");
@@ -111,7 +111,7 @@ public class SimpleServer extends AbstractServer {
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}break;
-            case "#LoginRequest":
+			case "#LoginRequest":
 				User user = (User) message.getObject();
 				handleUserLogin(user, client);
 				break;
@@ -135,6 +135,16 @@ public class SimpleServer extends AbstractServer {
 					mealsArrayList = getMeals(branch);
 					client.sendToClient(new Message(mealsArrayList, "#Initialize Meals"));
 				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+
+			case "#BranchRequest":
+				String branchName = (String) message.getObject();
+				Branch branchObj = getBranchByName(branchName);
+				try {
+					client.sendToClient(new Message(branchObj, "#BranchFetched"));
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				break;
@@ -165,6 +175,19 @@ public class SimpleServer extends AbstractServer {
 		}
 	}
 
+	public Branch getBranchByName(String branchName) {
+		Branch branch = null;
+		try (Session session = getSessionFactory().openSession()) {
+			Transaction transaction = session.beginTransaction();
+			branch = session.createQuery("FROM Branch WHERE name = :branchName", Branch.class)
+					.setParameter("branchName", branchName)
+					.uniqueResult();
+			transaction.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return branch;
+	}
 
 	private static void populateUsers(Session session)
 	{
@@ -391,7 +414,7 @@ public class SimpleServer extends AbstractServer {
 							"SELECT m FROM Meals m JOIN m.branches b WHERE b.name = :branchName", Meals.class)
 					.setParameter("branchName", branchName)
 					.getResultList();
-					System.out.println("1");
+			System.out.println("1");
 			// Add all meals to the ArrayList
 			mealsArrayList.addAll(mealsList);
 			System.out.println("2");

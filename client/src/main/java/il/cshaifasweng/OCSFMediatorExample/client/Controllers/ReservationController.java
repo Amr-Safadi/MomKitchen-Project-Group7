@@ -120,7 +120,7 @@ public class ReservationController {
 
     @FXML
     public void handleBack(ActionEvent event) {
-        ScreenManager.switchScreen("Primary");
+        ScreenManager.switchScreen("Menu List");
     }
 
     private void showAlert(String title, String message) {

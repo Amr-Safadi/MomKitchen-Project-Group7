@@ -5,6 +5,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
+import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
@@ -120,6 +121,15 @@ public class SecondaryController {
     }
 
     @Subscribe
+    public void onBranchFetched(Message msg) {
+        if ("#BranchFetched".equals(msg.toString())) {
+            Branch branch = (Branch) msg.getObject();
+            SecondaryService.setBranchObj(branch);
+            System.out.println("Fetched branch: " + branch.getName());
+        }
+    }
+
+    @Subscribe
     public void onMealsUpdated(Message msg) {
         if ("#Update All Meals".equals(msg.toString())) {
             try {
@@ -147,6 +157,12 @@ public class SecondaryController {
     void initialize() {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+
+        try {
+            SimpleClient.getClient().sendToServer(new Message(SecondaryService.getBranch(), "#BranchRequest"));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         try {
