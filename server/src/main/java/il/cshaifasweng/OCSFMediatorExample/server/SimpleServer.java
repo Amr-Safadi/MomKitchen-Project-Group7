@@ -2,21 +2,25 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.handlers.*;
+import il.cshaifasweng.OCSFMediatorExample.initializers.DataInitializer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 import il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SimpleServer extends AbstractServer {
 
 	private static final ConcurrentHashMap<ConnectionToClient, String> onlineUsers = new ConcurrentHashMap<>();
 	private static SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+    private static Session session;
 
 	ArrayList<Meals> mealsArrayList;
 	ArrayList<Meals> mealsByCategories;
@@ -24,7 +28,6 @@ public class SimpleServer extends AbstractServer {
 
 	public SimpleServer(int port) {
 		super(port);
-		Session session = null;
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
@@ -55,6 +58,66 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
+
+			case "#CancelOrder":
+				CancelingHandler.cancelOrder((Orders) message.getObject() , sessionFactory);
+                try {
+                    client.sendToClient(new Message("OrderCanceled"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+			case "#ValidateUser": {
+				String[] userDetails = (String[]) message.getObject();
+				String email = userDetails[0];
+				String phone = userDetails[1];
+
+				List<Orders> userOrders = CancelingHandler.fetchOrders(email,phone,sessionFactory);
+
+				System.out.println("fetched the following orders : ");
+				for (Orders order : userOrders) {
+					System.out.println(
+							"Order ID: " + order.getId() +
+									" | Placed: " + order.getOrderPlacedTime().toLocalDate() +
+									" at " + order.getOrderPlacedTime().toLocalTime()
+					);
+				}
+					if (!userOrders.isEmpty()) {
+                        try {
+                            client.sendToClient(new Message(userOrders, "#UserValidated"));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        try {
+                            client.sendToClient(new Message(null, "#ValidationFailed"));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+				}
+			break;
+
+			case "#PlaceOrder":
+			{
+				try {
+					OrderHandler.placeOrder((Orders) message.getObject(),sessionFactory);
+					// Send success response back to client
+					Message response = new Message("#OrderPlacedSuccessfully");
+					client.sendToClient(response);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					try {
+						client.sendToClient(new Message("#OrderPlacementFailed"));
+						System.out.println("orderplacement failed - server");
+					} catch (IOException ioException) {
+						ioException.printStackTrace();
+					}
+				}
+			}
+			break;
+
 			case "fetchDrinks":
 				mealsByCategories = MealHandler.fetchMealByCategoriesAndBranch(branch, "Drinks", sessionFactory);
 				try {
@@ -148,6 +211,8 @@ public class SimpleServer extends AbstractServer {
 				break;
 		}
 	}
+
+
 
 	@Override
 	protected synchronized void clientDisconnected(ConnectionToClient client) {
