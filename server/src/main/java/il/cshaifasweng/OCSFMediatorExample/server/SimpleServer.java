@@ -1,9 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
-import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
@@ -42,6 +39,8 @@ public class SimpleServer extends AbstractServer {
 		configuration.addAnnotatedClass(Meals.class);
 		configuration.addAnnotatedClass(Branch.class);
 		configuration.addAnnotatedClass(User.class);
+		configuration.addAnnotatedClass(ContactRequest.class);
+
 
 		ServiceRegistry serviceRegistry = new
 				StandardServiceRegistryBuilder()
@@ -59,6 +58,7 @@ public class SimpleServer extends AbstractServer {
 			session.beginTransaction();
 //			populateInitialData(session);
 //			populateUsers(session);
+			createContactRequestsTable();
 			session.getTransaction().commit();
 		} catch (Exception var5) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -140,6 +140,21 @@ public class SimpleServer extends AbstractServer {
 					e.printStackTrace();
 				}
 				break;
+			case "#Update Complaint":
+				System.out.println("Storing complaint");
+				ContactRequest complaint = (ContactRequest) message.getObject();
+				saveComplaint(complaint);
+				try {
+					client.sendToClient(new Message(null, "#ComplaintSubmissionSuccess"));
+					System.out.println("Complaint stored and confirmation sent to client.");
+				} catch (Exception e) {
+					System.out.println("Error storing the complaint");
+					e.printStackTrace();
+				}
+				break;
+
+
+
 
 
 			default:
@@ -147,6 +162,27 @@ public class SimpleServer extends AbstractServer {
 				break;
 		}
 	}
+	private void createContactRequestsTable() {
+		try (Session session = sessionFactory.openSession()) {
+			Transaction tx = session.beginTransaction();
+
+			String sql = "CREATE TABLE IF NOT EXISTS contact_requests (" +
+					"id INT AUTO_INCREMENT PRIMARY KEY, " +
+					"name VARCHAR(255) NOT NULL, " +
+					"branch VARCHAR(50) NOT NULL, " +
+					"complaint TEXT NOT NULL, " +
+					"submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+					")";
+
+			session.createNativeQuery(sql).executeUpdate();
+			tx.commit();
+
+			System.out.println("✅ Table `contact_requests` checked/created successfully.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 
 	private static void populateUsers(Session session)
@@ -396,6 +432,25 @@ public class SimpleServer extends AbstractServer {
 			e.printStackTrace();
 		}
 	}
+
+	public void saveComplaint(ContactRequest newComplaint) {
+		Transaction transaction = null;
+		try (Session session = sessionFactory.openSession()) {
+			transaction = session.beginTransaction();
+
+			// Save the complaint
+			session.save(newComplaint);
+
+			// Commit the transaction
+			transaction.commit();
+			System.out.println("✅ Complaint saved successfully.");
+		} catch (Exception e) {
+			if (transaction != null) transaction.rollback();
+			e.printStackTrace();
+			System.out.println("❌ Error saving the complaint.");
+		}
+	}
+
 
 
 	private void handleUserLogin(User user, ConnectionToClient client) {
