@@ -30,6 +30,31 @@ public class CancelingHandler {
 
         return userOrders; // Meals are already loaded before session closes
     }
+    public static void cancelOrder(Orders order, SessionFactory sessionFactory) {
+        Transaction transaction = null;
+
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+
+            // Fetch the order from the database
+            Orders orderToDelete = session.get(Orders.class, order.getId());
+
+            if (orderToDelete != null) {
+                session.delete(orderToDelete);
+                transaction.commit(); // Save changes
+                System.out.println("✅ Order ID " + order.getId() + " has been successfully deleted.");
+            } else {
+                System.out.println("⚠️ Order ID " + order.getId() + " not found in the database.");
+            }
+
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback(); // Rollback in case of failure
+            }
+            e.printStackTrace();
+            System.out.println("❌ Failed to cancel order ID " + order.getId());
+        }
+    }
 
 
 }

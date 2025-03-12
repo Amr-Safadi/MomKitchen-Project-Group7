@@ -71,6 +71,13 @@ public class Orders implements Serializable {
         System.out.println("=======================");
     }
 
+    @Override
+    public String toString() {
+       return  "Order ID: " + this.getId() +
+                " | Placed: " + this.getOrderPlacedTime().toLocalDate() +
+                " at " + this.getOrderPlacedTime().toLocalTime() +
+               " by " + this.getName();
+    }
 
     public void setStatus(String status) { this.status = status; }
 }

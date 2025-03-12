@@ -59,6 +59,14 @@ public class SimpleServer extends AbstractServer {
 
 		switch (msgStr) {
 
+			case "#CancelOrder":
+				CancelingHandler.cancelOrder((Orders) message.getObject() , sessionFactory);
+                try {
+                    client.sendToClient(new Message("OrderCanceled"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
 			case "#ValidateUser": {
 				String[] userDetails = (String[]) message.getObject();
 				String email = userDetails[0];

@@ -4,6 +4,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.ContactRequest;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -48,8 +49,7 @@ public class ContactUsController {
         }
 
         try {
-            client.sendToServer(new Message(new ContactRequest(name, branch, complaint), "#Update Complaint"));
-            ScreenManager.switchScreen("Primary"); // ✅ Switch back to main screen
+            client.sendToServer(new Message(new ContactRequest(name, branch, complaint,false), "#Update Complaint"));
         } catch (IOException e) {
             showAlert("Error", "Failed to send the complaint.");
             e.printStackTrace();
@@ -57,15 +57,16 @@ public class ContactUsController {
         }
     }
 
-    // ✅ Listen for the confirmation and switch the screen
     @Subscribe
     public void onComplaintSuccess(Message message) {
-        if (message.toString().equals("#ComplaintSubmissionSuccess")) {
-            showAlert("Success", "Your complaint has been submitted!");
-            EventBus.getDefault().unregister(this);
-            ScreenManager.switchScreen("Primary"); // ✅ Switch back to main screen
-        }
+        Platform.runLater(() -> { // Ensure UI updates run on the JavaFX thread
+            if (message.toString().equals("#ComplaintSubmissionSuccess")) {
+                showAlert("Success", "Your complaint has been submitted!");
+                ScreenManager.switchScreen("Primary");
+            }
+        });
     }
+
 
     @FXML
     void handleBack() {
@@ -81,8 +82,4 @@ public class ContactUsController {
         alert.showAndWait();
     }
 
-    // Unregister EventBus when closing the screen to avoid memory leaks
-    public void onClose() {
-        EventBus.getDefault().unregister(this);
-    }
 }

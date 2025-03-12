@@ -26,7 +26,7 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
-			case "#UserValidated", "#ValidationFailed":
+			case "#UserValidated", "#ValidationFailed", "OrderCanceled":
 				EventBus.getDefault().post(message);
 				break;
             case "#OrderPlacedSuccessfully":

@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
@@ -25,42 +26,41 @@ public class CancelOrderController {
     @FXML private Button backBtn;
 
     public static List<Orders> Orders; // List of user's orders
-    private Orders selectedOrder; // The currently selected order
+    private Orders selectedOrder = null; // The currently selected order
 
     @FXML
     public void initialize() {
+        EventBus.getDefault().register(this);
         ordersListView.getItems().clear();
 
         if (Orders != null) {
             for (Orders order : Orders) {
-                ordersListView.getItems().add(
-                        "Order ID: " + order.getId() +
-                                " | Placed: " + order.getOrderPlacedTime().toLocalDate() +
-                                " at " + order.getOrderPlacedTime().toLocalTime()
-                );
+                ordersListView.getItems().add(order.toString());
             }
         }
     }
 
     @FXML
     void selectOrder(MouseEvent event) {
+        // Get the selected index
+        int selectedIndex = ordersListView.getSelectionModel().getSelectedIndex();
+
+        if (selectedIndex != -1) {
+            selectedOrder = Orders.get(selectedIndex); // Update selected order
+
+            // Handle single click: Show details
+            displayOrderDetails();
+
+
             if (event.getClickCount() == 2) { // Double-click
-                int selectedIndex = ordersListView.getSelectionModel().getSelectedIndex();
+                 selectedIndex = ordersListView.getSelectionModel().getSelectedIndex();
                 if (selectedIndex != -1) {
                     selectedOrder = Orders.get(selectedIndex); // Update selected order
                     showOrderDetailsPopup(); // Show pop-up
                 }
             }
 
-        displayOrderDetails();
-        /*// Handle selection change: Update UI
-        ordersListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            int selectedIndex = ordersListView.getSelectionModel().getSelectedIndex();
-            if (selectedIndex != -1) {
-                selectedOrder = Orders.get(selectedIndex);
-
-            }
-        });*/
+        }
 
     }
     private void showOrderDetailsPopup() {
@@ -86,6 +86,7 @@ public class CancelOrderController {
     }
 
     private void displayOrderDetails() {
+       // selectedOrder = ordersListView.getSelectionModel().getSelectedItem();
         if (selectedOrder == null) return;
 
         orderStatusLabel.setText("Order Status: " + selectedOrder.getStatus());
@@ -95,8 +96,10 @@ public class CancelOrderController {
 
         if (hoursLeft >= 3) {
             refundLabel.setText("Cancellation is free.");
+            cancelOrderBtn.setDisable(false);
         } else if (hoursLeft >= 1) {
             refundLabel.setText("50% of the order price will be charged.");
+            cancelOrderBtn.setDisable(false);
         } else {
             refundLabel.setText("No refund available.");
             cancelOrderBtn.setDisable(true);
@@ -105,6 +108,7 @@ public class CancelOrderController {
 
     @FXML
     void handleCancelOrder() {
+        selectedOrder = Orders.get(ordersListView.getSelectionModel().getSelectedIndex());
         if (selectedOrder == null) {
             showAlert("Error", "Please select an order to cancel.");
             return;
@@ -112,6 +116,8 @@ public class CancelOrderController {
 
         try {
             SimpleClient.getClient().sendToServer(new Message(selectedOrder, "#CancelOrder"));
+            ordersListView.getItems().remove(selectedOrder.toString());
+            Orders.remove(selectedOrder);
         } catch (IOException e) {
             showAlert("Error", "Failed to send cancellation request.");
         }
@@ -120,15 +126,11 @@ public class CancelOrderController {
     @Subscribe
     public void onOrderCancellationResponse(Message message) {
         Platform.runLater(() -> {
-            if (message.toString().equals("#OrderCanceled")) {
+            if (message.toString().equals("OrderCanceled")) {
                 showAlert("Success", "Order has been successfully canceled.");
-                int selectedIndex = ordersListView.getSelectionModel().getSelectedIndex();
-                ordersListView.getItems().remove(selectedIndex);
-                Orders.remove(selectedIndex);
-            } else {
-                showAlert("Error", "Failed to cancel the order.");
             }
         });
+
     }
 
     @FXML
