@@ -63,6 +63,10 @@ public class PrimaryController {
     private Label branchesLabel;
 
     @FXML
+    private void handleCancelOrder() {
+        ScreenManager.switchScreen("Validate User");
+    }
+    @FXML
     private void handleHaifaBtn() {
         SecondaryService.setBranch("Haifa");
         ScreenManager.switchScreen("Menu List");

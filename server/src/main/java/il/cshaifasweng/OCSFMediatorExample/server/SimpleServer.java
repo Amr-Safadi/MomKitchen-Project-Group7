@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.handlers.*;
+import il.cshaifasweng.OCSFMediatorExample.initializers.DataInitializer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 import il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil;
@@ -12,6 +13,7 @@ import org.hibernate.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SimpleServer extends AbstractServer {
@@ -57,10 +59,41 @@ public class SimpleServer extends AbstractServer {
 
 		switch (msgStr) {
 
+			case "#ValidateUser": {
+				String[] userDetails = (String[]) message.getObject();
+				String email = userDetails[0];
+				String phone = userDetails[1];
+
+				List<Orders> userOrders = CancelingHandler.fetchOrders(email,phone,sessionFactory);
+
+				System.out.println("fetched the following orders : ");
+				for (Orders order : userOrders) {
+					System.out.println(
+							"Order ID: " + order.getId() +
+									" | Placed: " + order.getOrderPlacedTime().toLocalDate() +
+									" at " + order.getOrderPlacedTime().toLocalTime()
+					);
+				}
+					if (!userOrders.isEmpty()) {
+                        try {
+                            client.sendToClient(new Message(userOrders, "#UserValidated"));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        try {
+                            client.sendToClient(new Message(null, "#ValidationFailed"));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+				}
+			break;
+
 			case "#PlaceOrder":
 			{
 				try {
-					placeOrder((Orders) message.getObject());
+					OrderHandler.placeOrder((Orders) message.getObject(),sessionFactory);
 					// Send success response back to client
 					Message response = new Message("#OrderPlacedSuccessfully");
 					client.sendToClient(response);
@@ -171,30 +204,7 @@ public class SimpleServer extends AbstractServer {
 		}
 	}
 
-    private static void placeOrder(Orders order) {
-        Transaction transaction = null;
 
-        try {
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
-
-            order.printOrder(); // Debugging: Print the order details
-            session.save(order); // Save the order (DO NOT use saveOrUpdate)
-            transaction.commit(); // Commit the transaction
-
-            System.out.println("✅ Order placed successfully: " + order.getName() + " - $" + order.getTotalPrice());
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback(); // Rollback if there's an error
-            }
-            System.out.println("❌ Error placing order:");
-            e.printStackTrace();
-        } finally {
-            if (session != null) {
-                session.close(); // Close the session to free resources
-            }
-        }
-    }
 
 	@Override
 	protected synchronized void clientDisconnected(ConnectionToClient client) {
