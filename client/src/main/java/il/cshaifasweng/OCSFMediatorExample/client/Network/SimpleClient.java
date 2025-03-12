@@ -59,6 +59,13 @@ public class SimpleClient extends AbstractClient {
 			case "#AlreadyLoggedIn":
 				EventBus.getDefault().post(new Message(null, "#AlreadyLoggedIn"));
 				break;
+			case "#ComplaintSubmissionSuccess":
+				System.out.println("Complaint successfully stored!");
+				EventBus.getDefault().post(new Message(null, "#ComplaintSubmissionSuccess"));
+				break;
+
+
+
 
 
 			default:
