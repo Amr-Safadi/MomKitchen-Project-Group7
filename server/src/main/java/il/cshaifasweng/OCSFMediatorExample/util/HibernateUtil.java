@@ -1,14 +1,11 @@
 package il.cshaifasweng.OCSFMediatorExample.util;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.service.ServiceRegistry;
-import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
-import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
-import il.cshaifasweng.OCSFMediatorExample.entities.User;
-import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 
 public class HibernateUtil {
     private static final SessionFactory sessionFactory = buildSessionFactory();
@@ -20,6 +17,7 @@ public class HibernateUtil {
         configuration.addAnnotatedClass(Branch.class);
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Reservation.class);
+        configuration.addAnnotatedClass(ContactRequest.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties())

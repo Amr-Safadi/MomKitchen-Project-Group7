@@ -1,12 +1,9 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import il.cshaifasweng.OCSFMediatorExample.handlers.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
-import il.cshaifasweng.OCSFMediatorExample.handlers.BranchHandler;
-import il.cshaifasweng.OCSFMediatorExample.handlers.MealHandler;
-import il.cshaifasweng.OCSFMediatorExample.handlers.ReservationHandler;
-import il.cshaifasweng.OCSFMediatorExample.handlers.UserHandler;
 import il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil;
 
 import org.hibernate.Session;
@@ -133,6 +130,19 @@ public class SimpleServer extends AbstractServer {
 					}
 				}
 				break;
+
+			case "#Update Complaint":
+				System.out.println("Storing complaint");
+				ContactRequest complaint = (ContactRequest) message.getObject();
+				ComplaintHandler.saveComplaint(complaint, sessionFactory);
+				try {
+					client.sendToClient(new Message(null, "#ComplaintSubmissionSuccess"));
+					System.out.println("Complaint stored and confirmation sent to client.");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
 			default:
 				System.out.println("Unknown message received: " + msgStr);
 				break;
