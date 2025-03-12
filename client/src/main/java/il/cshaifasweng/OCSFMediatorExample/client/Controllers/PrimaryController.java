@@ -50,6 +50,10 @@ public class PrimaryController {
     private Button LOGINBtn;
 
     @FXML
+    private Button contactUsBtn;
+
+
+    @FXML
     private ListView<?> branchListView;
 
     @FXML
@@ -72,6 +76,11 @@ public class PrimaryController {
         SecondaryService.setBranch("Tel-Aviv");
         ScreenManager.switchScreen("Menu List");
     }
+    @FXML
+    private void handleContactUsBtn() {
+        ScreenManager.switchScreen("Contact Us");
+    }
+
 
     @FXML
     private void handleNetanyaBtn() {

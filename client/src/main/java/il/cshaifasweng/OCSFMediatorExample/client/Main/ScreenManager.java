@@ -25,6 +25,7 @@ public class ScreenManager {
         screens.put("categories", "categories.fxml");
         screens.put("check out", "CheckOut.fxml");
         screens.put("Reservation", "Reservation.fxml");
+        screens.put("Contact Us", "ContactUs.fxml");
     }
 
     public static void init(Stage stage) throws IOException {
