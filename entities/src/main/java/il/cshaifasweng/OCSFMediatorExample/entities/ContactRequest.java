@@ -5,8 +5,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "contact_requests")
-public class ContactRequest implements Serializable {  // ✅ Implement Serializable
-    private static final long serialVersionUID = 1L;  // ✅ Add serialVersionUID
+public class ContactRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,17 +16,14 @@ public class ContactRequest implements Serializable {  // ✅ Implement Serializ
     private String branch;
     private String complaint;
 
-    // ✅ Default constructor (required for Hibernate & serialization)
     public ContactRequest() {}
 
-    // ✅ Constructor
     public ContactRequest(String name, String branch, String complaint) {
         this.name = name;
         this.branch = branch;
         this.complaint = complaint;
     }
 
-    // ✅ Getters & Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
