@@ -26,6 +26,9 @@ public class PrimaryController {
     private AnchorPane LOG;
 
     @FXML
+    private Button cancelOrderBtn;
+
+    @FXML
     private AnchorPane mainAnchorPane;
 
     @FXML

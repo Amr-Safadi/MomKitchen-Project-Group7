@@ -1,9 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
-import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
@@ -42,6 +39,7 @@ public class SimpleServer extends AbstractServer {
 		configuration.addAnnotatedClass(Meals.class);
 		configuration.addAnnotatedClass(Branch.class);
 		configuration.addAnnotatedClass(User.class);
+		configuration.addAnnotatedClass(Orders.class);
 
 		ServiceRegistry serviceRegistry = new
 				StandardServiceRegistryBuilder()
@@ -57,8 +55,8 @@ public class SimpleServer extends AbstractServer {
 		try{
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-//			populateInitialData(session);
-//			populateUsers(session);
+			//populateInitialData(session);
+			//populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception var5) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -89,6 +87,27 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
+
+			case "#PlaceOrder":
+			{
+				try {
+					placeOrder((Orders) message.getObject());
+					// Send success response back to client
+					Message response = new Message("#OrderPlacedSuccessfully");
+					client.sendToClient(response);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					try {
+						client.sendToClient(new Message("#OrderPlacementFailed"));
+						System.out.println("orderplacement failed - server");
+					} catch (IOException ioException) {
+						ioException.printStackTrace();
+					}
+				}
+			}
+			break;
+
 			case "fetchDrinks":
 
 				mealsByCategories = fetchMealByCategoriesAndBranch(branch,"Drinks");
@@ -159,6 +178,31 @@ public class SimpleServer extends AbstractServer {
 		session.saveOrUpdate(Marian);
 		session.saveOrUpdate(Kanar);
 		System.out.println("Users added to the database.");
+	}
+
+	private static void placeOrder(Orders order) {
+		Transaction transaction = null;
+
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+
+			order.printOrder(); // Debugging: Print the order details
+			session.save(order); // Save the order (DO NOT use saveOrUpdate)
+			transaction.commit(); // Commit the transaction
+
+			System.out.println("✅ Order placed successfully: " + order.getName() + " - $" + order.getTotalPrice());
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback(); // Rollback if there's an error
+			}
+			System.out.println("❌ Error placing order:");
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				session.close(); // Close the session to free resources
+			}
+		}
 	}
 
 	// a function to give intial values to meals database

@@ -69,5 +69,6 @@
          </font>
       </Button>
       <Label fx:id="userRec" layoutX="462.0" layoutY="23.0" text="Label" />
+      <Button fx:id="cancelOrderBtn" layoutX="424.0" layoutY="487.0" mnemonicParsing="false" text="Cancel Order" />
    </children>
 </AnchorPane>

@@ -26,6 +26,16 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
+			case "#OrderPlacedSuccessfully":
+				System.out.println("Order placed successfully!");
+				EventBus.getDefault().post(new Message("#OrderSuccess"));
+				break;
+
+			case "#OrderPlacementFailed":
+				System.out.println("Order placement failed!");
+				EventBus.getDefault().post(new Message("#OrderFailed"));
+				break;
+
 			case "Category Fetched":
 				System.out.println(" simple client to  category fetched - handle message");
 				EventBus.getDefault().post(message);

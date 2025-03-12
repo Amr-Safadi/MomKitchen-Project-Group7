@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="250.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ValidateUserController">
+    <children>
+        <Label layoutX="50" layoutY="30" text="Enter your email and phone to validate:"/>
+        <Label layoutX="50" layoutY="70" text="Email:"/>
+        <TextField fx:id="emailField" layoutX="120" layoutY="70"/>
+        <Label layoutX="50" layoutY="110" text="Phone:"/>
+        <TextField fx:id="phoneField" layoutX="120" layoutY="110"/>
+        <Button fx:id="validateBtn" text="Validate" layoutX="150" layoutY="160" onAction="#validateUser"/>
+    </children>
+</AnchorPane>
