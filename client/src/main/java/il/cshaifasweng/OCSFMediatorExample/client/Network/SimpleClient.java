@@ -69,7 +69,23 @@ public class SimpleClient extends AbstractClient {
 			case "#AlreadyLoggedIn":
 				EventBus.getDefault().post(new Message(null, "#AlreadyLoggedIn"));
 				break;
+			case "#ComplaintSubmissionSuccess":
+				System.out.println("Complaint successfully stored!");
+				EventBus.getDefault().post(new Message(null, "#ComplaintSubmissionSuccess"));
+				break;
 
+
+
+
+			case "#BranchFetched":
+				System.out.println("Received branch fetched message");
+				EventBus.getDefault().post(message);
+				break;
+
+			case "#NoAvailability":
+				System.out.println("Received no availability message");
+				EventBus.getDefault().post(message);
+				break;
 
 			default:
 				System.out.println("Unknown message received: " + message.toString());

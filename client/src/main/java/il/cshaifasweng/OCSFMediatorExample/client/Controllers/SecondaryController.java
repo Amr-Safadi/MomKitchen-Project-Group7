@@ -5,6 +5,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
+import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
@@ -54,6 +55,9 @@ public class SecondaryController {
     @FXML
     private ListView<String> mealsList;
 
+    @FXML
+    private Button reservationBtn;
+
     @Subscribe
     public void onMealsInitialized(Message msg) {
         if ("#Initialize Meals".equals(msg.toString())) {
@@ -86,6 +90,11 @@ public class SecondaryController {
         }
     }
 
+    @FXML
+    public void handleReservation(ActionEvent event) {
+        ScreenManager.switchScreen("Reservation");
+    }
+
     private void openMealView(String mealName) {
         Meals foundMeal = SecondaryService.getMealsList().stream()
                 .filter(meal -> meal.getName().equals(mealName))
@@ -108,6 +117,18 @@ public class SecondaryController {
             currentStage.setTitle("Edit Meal");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Subscribe
+    public void onBranchFetched(Message msg) {
+        if ("#BranchFetched".equals(msg.toString())) {
+            Branch branch = (Branch) msg.getObject();
+            SecondaryService.setBranchObj(branch);
+            System.out.println("Fetched branch: " + branch.getName());
+            System.out.println("Branch open time: " + branch.getOpenHour());
+            System.out.println("Branch close time: " + branch.getCloseHour());
+            System.out.println("location: " + branch.getLocation());
         }
     }
 
@@ -139,6 +160,12 @@ public class SecondaryController {
     void initialize() {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+
+        try {
+            SimpleClient.getClient().sendToServer(new Message(SecondaryService.getBranch(), "#BranchRequest"));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         try {

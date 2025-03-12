@@ -166,8 +166,6 @@ public class MealViewController {
         }
     }
 
-
-
     @FXML
     void btnAddToCartHandler(ActionEvent event) {
         if (meal == null) {

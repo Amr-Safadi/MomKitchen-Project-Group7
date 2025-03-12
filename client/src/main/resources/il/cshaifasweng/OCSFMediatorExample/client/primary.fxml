@@ -68,6 +68,15 @@
             <Font name="Bauhaus 93" size="14.0" />
          </font>
       </Button>
+      <Button fx:id="contactUsBtn" alignment="CENTER"
+              onAction="#handleContactUsBtn"
+              prefHeight="30.0" prefWidth="120.0"
+              style="-fx-background-color: #8ad4a8;" text="Contact Us" textFill="WHITE"
+              AnchorPane.topAnchor="20.0" AnchorPane.rightAnchor="20.0">
+         <font>
+            <Font name="Bauhaus 93" size="16.0" />
+         </font>
+      </Button>
       <Label fx:id="userRec" layoutX="462.0" layoutY="23.0" text="Label" />
       <Button fx:id="cancelOrderBtn" layoutX="424.0" layoutY="487.0" mnemonicParsing="false" text="Cancel Order" />
    </children>
