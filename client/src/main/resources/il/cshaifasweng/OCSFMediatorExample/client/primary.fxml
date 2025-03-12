@@ -73,9 +73,7 @@
             <Font name="Bauhaus 93" size="16.0" />
          </font>
       </Button>
-      <Label fx:id="userRec" layoutX="57.0" layoutY="18.0" prefHeight="17.0" prefWidth="230.0" text="Label" textFill="#5c9f50">
-         <font>
-            <Font name="Bauhaus 93" size="13.0" />
-         </font></Label>
+      <Label fx:id="userRec" layoutX="462.0" layoutY="23.0" text="Label" />
+      <Button fx:id="cancelOrderBtn" layoutX="424.0" layoutY="487.0" mnemonicParsing="false" onAction="#handleCancelOrder" text="Cancel Order" />
    </children>
 </AnchorPane>

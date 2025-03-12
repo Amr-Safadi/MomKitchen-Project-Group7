@@ -26,6 +26,9 @@ public class PrimaryController {
     private AnchorPane LOG;
 
     @FXML
+    private Button cancelOrderBtn;
+
+    @FXML
     private AnchorPane mainAnchorPane;
 
     @FXML
@@ -59,6 +62,10 @@ public class PrimaryController {
     @FXML
     private Label branchesLabel;
 
+    @FXML
+    private void handleCancelOrder() {
+        ScreenManager.switchScreen("Validate User");
+    }
     @FXML
     private void handleHaifaBtn() {
         SecondaryService.setBranch("Haifa");

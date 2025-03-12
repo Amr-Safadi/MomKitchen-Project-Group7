@@ -86,7 +86,7 @@ public class MealViewController {
     public void btnEditHandler(ActionEvent event) {
         txtPrdctPrice.setEditable(true);
         txtPrdctName.setEditable(true);
-        //txtPrdctPrf.setEditable(true);
+       // txtPrdctPrf.setEditable(true);
         txtPrdctIng.setEditable(true);
         btnDone.setVisible(true);
         specialMealBtn.setVisible(true);
@@ -179,7 +179,6 @@ public class MealViewController {
                 checkBoxes[i].setSelected(true); // By default, all preferences are checked
             }
         }
-        updateMealBackground();
     }
 
     @FXML
