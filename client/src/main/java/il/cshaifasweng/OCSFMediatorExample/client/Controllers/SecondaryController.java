@@ -4,6 +4,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
@@ -48,6 +49,9 @@ public class SecondaryController {
 
     @FXML
     private Button cartBtn;
+
+    @FXML
+    private Button manageTablesBtn;
 
     @FXML
     private Label mealsLabel;
@@ -157,6 +161,11 @@ public class SecondaryController {
     }
 
     @FXML
+    void handleManageTables() {
+        ScreenManager.switchScreen("TableMap");
+    }
+
+    @FXML
     void initialize() {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
@@ -172,6 +181,22 @@ public class SecondaryController {
             client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        if (UserSession.getUser() != null) {
+            switch (UserSession.getUser().getRole()) {
+                case BRANCH_MANAGER:
+                case GENERAL_MANAGER:
+                case DIETITIAN:
+                case SERVICE_EMPLOYEE:
+                    manageTablesBtn.setVisible(true);
+                    break;
+                default:
+                    manageTablesBtn.setVisible(false);
+                    break;
+            }
+        } else {
+            manageTablesBtn.setVisible(false);
         }
 
         mealsLabel.setText(SecondaryService.getBranch() + "'s " + mealsLabel.getText());

@@ -11,27 +11,34 @@
       <Button fx:id="backBtn" layoutX="53.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleBackBtn" style="-fx-background-color: #8ad4a8;" text="Back" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="15.0" />
-         </font></Button>
+         </font>
+      </Button>
+      <Button fx:id="searchBtn" layoutX="114.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleSearchBtn" onMouseClicked="#handleSearchBtn" prefHeight="29.0" prefWidth="149.0" style="-fx-background-color: #8ad4a8;" text="Search by category" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="15.0" />
+         </font>
+      </Button>
+      <Button fx:id="cartBtn" layoutX="276.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleCartBtn" style="-fx-background-color: #8ad4a8;" text="Cart" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="14.0" />
+         </font>
+      </Button>
       <Button fx:id="reservationBtn" layoutX="270.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleReservation" style="-fx-background-color: #8ad4a8;" text="Make Reservation" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="14.0" />
          </font>
       </Button>
-      <ListView fx:id="mealsList" layoutX="53.0" layoutY="146.0" onMouseClicked="#handleMenuDoubleClick" prefHeight="367.0" prefWidth="305.0" style="-fx-background-color: transparent;                        -fx-border-color: transparent;                        -fx-control-inner-background: transparent;" stylesheets="/il/cshaifasweng/OCSFMediatorExample/client/listview-style.css" />
+      <!-- New Manage Tables button -->
+      <Button fx:id="manageTablesBtn" layoutX="400.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleManageTables" style="-fx-background-color: #8ad4a8;" text="Manage Tables" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="14.0" />
+         </font>
+      </Button>
       <Label fx:id="mealsLabel" layoutX="53.0" layoutY="96.0" text="Menu :" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="25.0" />
          </font>
       </Label>
-
-      <Button fx:id="cartBtn" layoutX="276.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleCartBtn" style="-fx-background-color: #8ad4a8;" text="Cart" textFill="WHITE">
-         <font>
-            <Font name="Bauhaus 93" size="14.0" />
-         </font></Button>
-      <Button fx:id="searchBtn" layoutX="114.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleSearchBtn" onMouseClicked="#handleSearchBtn" prefHeight="29.0" prefWidth="149.0" style="-fx-background-color: #8ad4a8;" text="Search by category" textFill="WHITE">
-         <font>
-            <Font name="Bauhaus 93" size="15.0" />
-         </font></Button>
-
+      <ListView fx:id="mealsList" layoutX="53.0" layoutY="146.0" onMouseClicked="#handleMenuDoubleClick" prefHeight="367.0" prefWidth="305.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-control-inner-background: transparent;" stylesheets="/il/cshaifasweng/OCSFMediatorExample/client/listview-style.css" />
    </children>
 </AnchorPane>

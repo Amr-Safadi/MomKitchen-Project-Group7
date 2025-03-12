@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.handlers.*;
+import il.cshaifasweng.OCSFMediatorExample.initializers.DataInitializer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 import il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil;
@@ -28,9 +29,8 @@ public class SimpleServer extends AbstractServer {
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			// Uncomment the following lines if you wish to populate initial data and users:
-			// DataInitializer.populateInitialData(session);
-			// UserHandler.populateUsers(session);
+			DataInitializer.populateInitialData(session);
+			UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -128,6 +128,17 @@ public class SimpleServer extends AbstractServer {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				}
+				break;
+
+			case "#ReserveTable":
+				RestaurantTable table = (RestaurantTable) message.getObject();
+				TableHandler.reserveTable(table, sessionFactory);
+				// Optionally send a confirmation message back to the client:
+				try {
+					client.sendToClient(new Message(table, "#TableReservedSuccess"));
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 				break;
 

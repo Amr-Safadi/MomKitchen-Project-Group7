@@ -25,6 +25,9 @@ public class Branch implements Serializable {
     @Column(nullable = false)
     private LocalTime closeHour;
 
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<RestaurantTable> tables = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(
             name = "Branch_Meal",
@@ -57,4 +60,11 @@ public class Branch implements Serializable {
         return meals;
     }
     public void setMeals(List<Meals> meals) { this.meals = meals; }
+    public List<RestaurantTable> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<RestaurantTable> tables) {
+        this.tables = tables;
+    }
 }
