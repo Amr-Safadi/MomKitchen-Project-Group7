@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Orders;
 import javafx.application.Platform;
@@ -76,7 +77,7 @@ public class CancelOrderController {
         details.append("Delivery/Pickup Time: ").append(selectedOrder.getDeliveryTime()).append("\n");
         details.append("Meals Ordered:\n");
 
-        for (var meal : selectedOrder.getMeals()) {
+        for (Meals meal : selectedOrder.getMeals()) {
             details.append("- ").append(meal.getName()).append(" ($").append(meal.getPrice()).append(")\n");
         }
 
