@@ -69,6 +69,11 @@ public class SimpleClient extends AbstractClient {
 				System.out.println("Received no availability message");
 				EventBus.getDefault().post(message);
 				break;
+
+//			case "#ReservationSuccess":
+//				System.out.println("Received success reservation message");
+//				EventBus.getDefault().post(message);
+//				break;
 			default:
 				System.out.println("Unknown message received: " + message.toString());
 				break;

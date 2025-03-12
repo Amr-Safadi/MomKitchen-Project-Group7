@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import javafx.application.Platform;
@@ -81,9 +82,12 @@ public class ReservationController {
         }
 
         Reservation reservation = new Reservation();
-        Branch branch = new Branch();
-        branch.setName(SecondaryService.getBranch());
-        reservation.setBranch(branch);
+        Branch persistentBranch = SecondaryService.getBranchObj();
+        if (persistentBranch == null) {
+            showAlert("Error", "Branch information not available.");
+            return;
+        }
+        reservation.setBranch(persistentBranch);
 
         reservation.setDate(datePicker.getValue());
         reservation.setTime(LocalTime.parse(timeComboBox.getValue()));
@@ -96,14 +100,13 @@ public class ReservationController {
         reservation.setCreditCard(creditCardField.getText());
 
         try {
-            SimpleClient.getClient().sendToServer(
-                    new il.cshaifasweng.OCSFMediatorExample.entities.Message(reservation, "#ReservationRequest")
-            );
+            SimpleClient.getClient().sendToServer(new Message(reservation, "#ReservationRequest"));
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to send reservation request.");
         }
     }
+
 
     @Subscribe
     public void onReservationResponse(il.cshaifasweng.OCSFMediatorExample.entities.Message message) {

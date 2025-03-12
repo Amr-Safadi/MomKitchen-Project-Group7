@@ -202,13 +202,41 @@ public class SimpleServer extends AbstractServer {
 	}
 
 	private boolean checkAvailability(Reservation reservation) {
-		LocalTime open = LocalTime.of(17, 0);
-		LocalTime close = LocalTime.of(20, 0);
-		LocalTime startAllowed = open.plusMinutes(15);
-		LocalTime endAllowed = close.minusMinutes(60);
+		Branch branch = reservation.getBranch();
+		if (branch == null) {
+			System.out.println("Branch is null in reservation.");
+			return false;
+		}
+
+		LocalTime branchOpen = branch.getOpenHour();
+		LocalTime branchClose = branch.getCloseHour();
+		LocalTime startAllowed = branchOpen.plusMinutes(15);
+		LocalTime endAllowed = branchClose.minusMinutes(60);
 		LocalTime requested = reservation.getTime();
-		return !requested.isBefore(startAllowed) && !requested.isAfter(endAllowed);
+
+		boolean withinRange = !requested.isBefore(startAllowed) && !requested.isAfter(endAllowed);
+
+		boolean isSlotFree = true;
+		try (Session session = getSessionFactory().openSession()) {
+			Transaction tx = session.beginTransaction();
+			List<Reservation> reservations = session.createQuery(
+							"FROM Reservation r WHERE r.branch.id = :branchId AND r.date = :date AND r.time = :time",
+							Reservation.class)
+					.setParameter("branchId", branch.getId())
+					.setParameter("date", reservation.getDate())
+					.setParameter("time", requested)
+					.getResultList();
+			tx.commit();
+			if (reservations != null && !reservations.isEmpty()) {
+				isSlotFree = false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return withinRange && isSlotFree;
 	}
+
 
 	private void saveReservation(Reservation reservation) {
 		try (Session session = getSessionFactory().openSession()) {
@@ -235,10 +263,16 @@ public class SimpleServer extends AbstractServer {
 
 
 	private String computeAlternativeTimes(Reservation reservation) {
-		LocalTime open = LocalTime.of(17, 0);
-		LocalTime close = LocalTime.of(20, 0);
-		LocalTime startAllowed = open.plusMinutes(15);
-		LocalTime endAllowed = close.minusMinutes(60);
+		Branch branch = reservation.getBranch();
+		if (branch == null) {
+			return "Branch not specified";
+		}
+
+		LocalTime branchOpen = branch.getOpenHour();
+		LocalTime branchClose = branch.getCloseHour();
+		LocalTime startAllowed = branchOpen.plusMinutes(15);
+		LocalTime endAllowed = branchClose.minusMinutes(60);
+
 		List<String> alternatives = new ArrayList<>();
 		LocalTime slot = startAllowed;
 		while (!slot.isAfter(endAllowed)) {
@@ -247,6 +281,7 @@ public class SimpleServer extends AbstractServer {
 		}
 		return String.join(", ", alternatives);
 	}
+
 
 	// a function to give intial values to meals database
 	private static void populateInitialData(Session session) {
