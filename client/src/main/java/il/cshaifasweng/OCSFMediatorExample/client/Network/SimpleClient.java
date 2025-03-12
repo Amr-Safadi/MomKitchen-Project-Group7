@@ -65,6 +65,10 @@ public class SimpleClient extends AbstractClient {
 				EventBus.getDefault().post(message);
 				break;
 
+			case "#NoAvailability":
+				System.out.println("Received no availability message");
+				EventBus.getDefault().post(message);
+				break;
 			default:
 				System.out.println("Unknown message received: " + message.toString());
 				break;

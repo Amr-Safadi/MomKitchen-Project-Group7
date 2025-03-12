@@ -49,7 +49,7 @@ public class ReservationController {
     public void initialize() {
         branchLabel.setText(SecondaryService.getBranch());
 
-        List<String> timeSlots = computeTimeSlots(LocalTime.of(17, 0), LocalTime.of(20, 0));
+        List<String> timeSlots = computeTimeSlots(SecondaryService.getBranchObj().getOpenHour(), SecondaryService.getBranchObj().getCloseHour());
         timeComboBox.getItems().addAll(timeSlots);
 
         seatingToggleGroup = new ToggleGroup();

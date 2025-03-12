@@ -126,6 +126,9 @@ public class SecondaryController {
             Branch branch = (Branch) msg.getObject();
             SecondaryService.setBranchObj(branch);
             System.out.println("Fetched branch: " + branch.getName());
+            System.out.println("Branch open time: " + branch.getOpenHour());
+            System.out.println("Branch close time: " + branch.getCloseHour());
+            System.out.println("location: " + branch.getLocation());
         }
     }
 
