@@ -4,8 +4,8 @@ import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
-import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -23,19 +23,12 @@ public class TableMapController {
     @FXML
     private GridPane tableGrid;
 
-    private Branch currentBranch; // The branch whose tables are being managed
+    private Branch currentBranch;
 
     @FXML
     public void initialize() {
-        // Optional: Check that only worker roles can access this page.
-        // For example, if the user role is not a worker, you could redirect:
-        // if (UserSession.getUser() == null || UserSession.getUser().getRole() == User.Role.CLIENT) { ... }
-
-        // Fetch the current branch. This could be stored in SecondaryService (or similar)
-        // For demonstration, assume SecondaryService holds the current branch object.
         currentBranch = SecondaryService.getBranchObj();
 
-        // Register EventBus if needed for server responses.
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -53,7 +46,7 @@ public class TableMapController {
             VBox tableBox = createTableBox(table);
             tableGrid.add(tableBox, col, row);
             col++;
-            if (col > 2) { // Adjust columns per row as needed
+            if (col > 2) {
                 col = 0;
                 row++;
             }
@@ -69,11 +62,9 @@ public class TableMapController {
         Label statusLabel = new Label(table.isReserved() ? "Reserved" : "Available");
         Button reserveBtn = new Button("Reserve");
 
-        // If already reserved, disable the button
         reserveBtn.setDisable(table.isReserved());
 
         reserveBtn.setOnAction((ActionEvent e) -> {
-            // Call method to reserve table. This could send a message to the server.
             reserveTable(table);
         });
 
@@ -82,28 +73,33 @@ public class TableMapController {
     }
 
     private void reserveTable(RestaurantTable table) {
-        // For example, send a message to the server to update this table’s status
         try {
-            // Create a message object with the table and a specific command, e.g., "#ReserveTable"
-            // SimpleClient.getClient().sendToServer(new Message(table, "#ReserveTable"));
-            // For demonstration, you could update the table locally:
             table.setReserved(true);
             populateTableGrid();
+            SimpleClient.getClient().sendToServer(new Message(table, "#ReserveTable"));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Optionally listen for server confirmations (if using EventBus)
     @Subscribe
     public void onTableReserved(il.cshaifasweng.OCSFMediatorExample.entities.Message message) {
-        // Optionally, update the UI upon receiving a confirmation.
-        System.out.println("Received table reservation event: " + message);
+        if (message.toString().equals("#TableReservedSuccess")) {
+            RestaurantTable updatedTable = (RestaurantTable) message.getObject();
+            for (RestaurantTable t : currentBranch.getTables()) {
+                if (t.getId() == updatedTable.getId()) {
+                    t.setReserved(updatedTable.isReserved());
+                    break;
+                }
+            }
+            populateTableGrid();
+        }
     }
+
 
 
     @FXML
     void handleBack() {
-        ScreenManager.switchScreen("Secondary"); // or the appropriate screen
+        ScreenManager.switchScreen("Secondary");
     }
 }
