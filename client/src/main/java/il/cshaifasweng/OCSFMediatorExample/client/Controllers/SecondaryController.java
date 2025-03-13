@@ -53,7 +53,16 @@ public class SecondaryController {
     private Label mealsLabel;
 
     @FXML
+    private Label specialLabel;
+
+    @FXML
+    private Label hoursLabel;
+
+    @FXML
     private ListView<String> mealsList;
+
+    @FXML
+    private ListView<String> specialsList;
 
     @FXML
     private Button reservationBtn;
@@ -64,12 +73,26 @@ public class SecondaryController {
             Platform.runLater(() -> {
                 System.out.println("Initializing meals for branch: " + SecondaryService.getBranch());
                 ArrayList<Meals> receivedMeals = (ArrayList<Meals>) msg.getObject();
-                SecondaryService.setMealsList(receivedMeals);
+                ArrayList<Meals> generalMeals = new ArrayList<>();
+                ArrayList<Meals> specialMeals = new ArrayList<>() ;
 
+                for (Meals meal : receivedMeals) {
+                    if (meal.getisBranchMeal() == false)
+                        generalMeals.add(meal);
+                    else
+                        specialMeals.add(meal);
+                }
+                SecondaryService.setMealsList(generalMeals);
                 mealsList.getItems().clear();
                 for (Meals meal : SecondaryService.getMealsList()) {
                     mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
                 }
+                SecondaryService.setMealsList(specialMeals);
+                specialsList.getItems().clear();
+                for (Meals meal : SecondaryService.getMealsList()) {
+                    specialsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
+                }
+                SecondaryService.setMealsList(receivedMeals);
             });
         }
     }
@@ -83,9 +106,14 @@ public class SecondaryController {
     public void handleMenuDoubleClick(MouseEvent event) {
         if (event.getClickCount() == 2) {
             String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem();
+            String selectedSpecialInfo = specialsList.getSelectionModel().getSelectedItem();
             if (selectedMealInfo != null) {
                 String selectedMealName = selectedMealInfo.split(" - ")[0];
                 openMealView(selectedMealName);
+            }
+            if (selectedSpecialInfo != null) {
+                String selectedSpecialName = selectedSpecialInfo.split(" - ")[0];
+                openMealView(selectedSpecialName);
             }
         }
     }
@@ -174,8 +202,14 @@ public class SecondaryController {
             throw new RuntimeException(e);
         }
 
-        mealsLabel.setText(SecondaryService.getBranch() + "'s " + mealsLabel.getText());
-
+        mealsLabel.setText( mealsLabel.getText() + SecondaryService.getBranch());
+        specialLabel.setText(SecondaryService.getBranch() + "'s specials");
+        switch (SecondaryService.getBranch()){
+            case "Haifa": hoursLabel.setText("Openning hours: " + "8:00 - 23:00"); break;
+            case "Acre": hoursLabel.setText("Openning hours: " + "9:00 - 21:00"); break;
+            case "Tel-Aviv": hoursLabel.setText("Openning hours: " + "10:00 - 22:00"); break;
+            case "Netanya": hoursLabel.setText("Openning hours: " + "10:00 - 21:00"); break;
+        }
         BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
     }
 }

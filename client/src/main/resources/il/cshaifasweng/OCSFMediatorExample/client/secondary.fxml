@@ -12,17 +12,29 @@
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
-      <Button fx:id="reservationBtn" layoutX="270.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleReservation" style="-fx-background-color: #8ad4a8;" text="Make Reservation" textFill="WHITE">
+      <Button fx:id="reservationBtn" layoutX="337.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleReservation" style="-fx-background-color: #8ad4a8;" text="Reserve Table" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="14.0" />
          </font>
       </Button>
-      <ListView fx:id="mealsList" layoutX="53.0" layoutY="146.0" onMouseClicked="#handleMenuDoubleClick" prefHeight="367.0" prefWidth="305.0" style="-fx-background-color: transparent;                        -fx-border-color: transparent;                        -fx-control-inner-background: transparent;" stylesheets="/il/cshaifasweng/OCSFMediatorExample/client/listview-style.css" />
-      <Label fx:id="mealsLabel" layoutX="53.0" layoutY="96.0" text="Menu :" textAlignment="CENTER" textFill="WHITE">
+      <ListView fx:id="mealsList" layoutX="53.0" layoutY="164.0" onMouseClicked="#handleMenuDoubleClick" prefHeight="226.0" prefWidth="305.0" style="-fx-background-color: transparent;                        -fx-border-color: transparent;                        -fx-control-inner-background: transparent;" stylesheets="/il/cshaifasweng/OCSFMediatorExample/client/listview-style.css" />
+      <Label fx:id="mealsLabel" layoutX="53.0" layoutY="86.0" text="Menu :" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="25.0" />
          </font>
       </Label>
+      <Label fx:id="hoursLabel" layoutX="53.0" layoutY="116.0" prefHeight="17.0" prefWidth="211.0" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="15.0" />
+         </font></Label>
+      <Label layoutX="56.0" layoutY="139.0" prefHeight="17.0" prefWidth="186.0" text="Menu:" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="17.0" />
+         </font></Label>
+      <Label fx:id="specialLabel" layoutX="56.0" layoutY="390.0" prefHeight="19.0" prefWidth="244.0" text=" special menu:" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="16.0" />
+         </font></Label>
 
       <Button fx:id="cartBtn" layoutX="276.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleCartBtn" style="-fx-background-color: #8ad4a8;" text="Cart" textFill="WHITE">
          <font>
@@ -32,6 +44,7 @@
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
+      <ListView fx:id="specialsList" layoutX="59.0" layoutY="419.0" onMouseClicked="#handleMenuDoubleClick" prefHeight="167.0" prefWidth="297.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-control-inner-background: transparent;" stylesheets="@listview-style.css" />
 
    </children>
 </AnchorPane>

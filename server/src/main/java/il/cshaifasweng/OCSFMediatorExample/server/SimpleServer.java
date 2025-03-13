@@ -35,8 +35,8 @@ public class SimpleServer extends AbstractServer {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			// Uncomment the following lines if you wish to populate initial data and users:
-			// DataInitializer.populateInitialData(session);
-			// UserHandler.populateUsers(session);
+			 //DataInitializer.populateInitialData(session);
+			 //UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {

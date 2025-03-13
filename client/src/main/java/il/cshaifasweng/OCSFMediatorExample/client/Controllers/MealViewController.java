@@ -21,9 +21,10 @@ public class MealViewController {
 
     private SimpleClient client = SimpleClient.getClient();
     private Meals meal = new Meals();
+    private boolean movedMeal = false;
 
     @FXML
-    private Button cartBtn, addToCartBtn, btnEdit, btnDone, btnBack;
+    private Button cartBtn, addToCartBtn, btnEdit, btnDone, btnBack, specialMealBtn;
     @FXML
     private GridPane gridMeal;
     @FXML
@@ -39,13 +40,16 @@ public class MealViewController {
     @FXML
     void initialize() {
         User loggedInUser = UserSession.getUser();
+        boolean isEditable = false;
         if (loggedInUser != null) {
-            boolean isEditable = loggedInUser.getRole() == User.Role.DIETITIAN ||
+            isEditable = loggedInUser.getRole() == User.Role.DIETITIAN ||
                     loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
                     loggedInUser.getRole() == User.Role.GENERAL_MANAGER;
             btnEdit.setVisible(isEditable);
+            specialMealBtn.setVisible(false);
         } else {
             btnEdit.setVisible(false);
+            specialMealBtn.setVisible(false);
         }
 
         Image bgImage = new Image(getClass().getResource("/images/NEWBACKGRND.jpg").toExternalForm());
@@ -61,7 +65,7 @@ public class MealViewController {
         UIUtil.styleTextField(txtPrdctName);
         UIUtil.styleTextField(txtPrdctPrice);
         UIUtil.styleTextField(txtPrdctIng);
-       // UIUtil.styleTextField(txtPrdctPrf);
+        // UIUtil.styleTextField(txtPrdctPrf);
     }
 
     private void updateMealBackground() {
@@ -85,6 +89,12 @@ public class MealViewController {
        // txtPrdctPrf.setEditable(true);
         txtPrdctIng.setEditable(true);
         btnDone.setVisible(true);
+        specialMealBtn.setVisible(true);
+    }
+
+    @FXML
+    private void specialMealBtnHandler(ActionEvent event) {
+        movedMeal = true;
     }
 
     @FXML
@@ -121,9 +131,14 @@ public class MealViewController {
 
         // Update the meal's preferences
         meal.setPreferences(updatedPreferences.toString());
+        //if(movedMeal == true){
+          //  meal.setBranchMeal(!(meal.getisBranchMeal()));
+            //movedMeal = false;
+        //}
 
         // Send updated meal to server
         try {
+            System.out.println("send to the server the meal" + meal.getName() + "with the isbranch = " + meal.getisBranchMeal());
             client.sendToServer(new Message(meal, "#Update Meal"));
         } catch (IOException e) {
             throw new RuntimeException("Error sending the updated meal to server", e);
