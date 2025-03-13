@@ -21,22 +21,22 @@ public class DataInitializer {
             session.saveOrUpdate(branch4);
 
             Meals meal1 = new Meals("Pizza", "Cheese, Tomato, Bail, Dough",
-                    "Olives, Mushrooms, Peppers, Extra Cheese, Onions, Pepperoni, Basil, Oregano", 10.99, Meals.Category.ITALIAN);
+                    "Olives, Mushrooms, Peppers, Extra Cheese, Onions, Pepperoni, Basil, Oregano", 10.99, Meals.Category.ITALIAN,false);
             Meals meal2 = new Meals("Burger", "Beef, Lettuce, Tomato, BBQ sauce",
-                    "Cheese, Lettuce, Tomato, Pickles, Onions, Bacon, Ketchup, Mayo", 89.00, Meals.Category.MEAT);
+                    "Cheese, Lettuce, Tomato, Pickles, Onions, Bacon, Ketchup, Mayo", 89.00, Meals.Category.MEAT,false);
             Meals meal3 = new Meals("Pasta", "Tomato Sauce, Parmesan",
-                    "Parmesan, Basil, Extra Sauce, Mushrooms, Garlic, Chili Flakes", 65.00, Meals.Category.ITALIAN);
-            Meals meal4 = new Meals("Mineral Water", "", "", 10.00, Meals.Category.DRINKS);
-            Meals meal5 = new Meals("Diet Coke", "", "", 13.00, Meals.Category.DRINKS);
-            Meals meal6 = new Meals("Orange juice", "made of fresh oranges", "", 17.00, Meals.Category.DRINKS);
+                    "Parmesan, Basil, Extra Sauce, Mushrooms, Garlic, Chili Flakes", 65.00, Meals.Category.ITALIAN,false);
+            Meals meal4 = new Meals("Mineral Water", "", "", 10.00, Meals.Category.DRINKS,false);
+            Meals meal5 = new Meals("Diet Coke", "", "", 13.00, Meals.Category.DRINKS,false);
+            Meals meal6 = new Meals("Orange juice", "made of fresh oranges", "", 17.00, Meals.Category.DRINKS,false);
             Meals meal7 = new Meals("Fillet Steak", "350 gr steak, french fries on the side",
-                    "Garlic Butter, Mushrooms, Grilled Onions, Herb Butter", 120.00, Meals.Category.MEAT);
+                    "Garlic Butter, Mushrooms, Grilled Onions, Herb Butter", 120.00, Meals.Category.MEAT,true);
             Meals meal8 = new Meals("Chicken Wings", "200 gr, with rice on the side",
-                    "BBQ Sauce, Spicy Sauce, Ranch Dip, Honey Mustard, Extra Crispy, Lemon Pepper", 119.00, Meals.Category.MEAT);
+                    "BBQ Sauce, Spicy Sauce, Ranch Dip, Honey Mustard, Extra Crispy, Lemon Pepper", 119.00, Meals.Category.MEAT,true);
             Meals meal9 = new Meals("cheese Ravioli", "Cream, Mushrooms, Parmesan",
-                    "No Mushrooms", 119.00, Meals.Category.ITALIAN);
+                    "No Mushrooms", 119.00, Meals.Category.ITALIAN,true);
             Meals meal10 = new Meals("Sezar Salad", "Lettuce, Chicken slices, Sezar Sauce, Parmesan",
-                    "No Cheese", 56.00, Meals.Category.ITALIAN);
+                    "No Cheese", 56.00, Meals.Category.ITALIAN,true);
 
             session.saveOrUpdate(meal1);
             session.saveOrUpdate(meal2);
