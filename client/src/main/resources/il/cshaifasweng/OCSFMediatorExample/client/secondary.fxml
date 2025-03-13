@@ -35,7 +35,6 @@
          <font>
             <Font name="Bauhaus 93" size="16.0" />
          </font></Label>
-      <ListView fx:id="specialsList" layoutX="53.0" layoutY="412.0" onMouseClicked="#handleMenuDoubleClick" prefHeight="126.0" prefWidth="336.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-control-inner-background: transparent;" stylesheets="@listview-style.css" />
 
       <Button fx:id="cartBtn" layoutX="276.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleCartBtn" style="-fx-background-color: #8ad4a8;" text="Cart" textFill="WHITE">
          <font>
@@ -45,7 +44,7 @@
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
-      <ListView fx:id="specialsList" layoutX="59.0" layoutY="419.0" prefHeight="167.0" prefWidth="297.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-control-inner-background: transparent;" stylesheets="@listview-style.css" />
+      <ListView fx:id="specialsList" layoutX="59.0" layoutY="419.0" onMouseClicked="#handleMenuDoubleClick" prefHeight="167.0" prefWidth="297.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-control-inner-background: transparent;" stylesheets="@listview-style.css" />
 
    </children>
 </AnchorPane>

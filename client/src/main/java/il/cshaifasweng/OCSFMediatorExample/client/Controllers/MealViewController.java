@@ -131,10 +131,10 @@ public class MealViewController {
 
         // Update the meal's preferences
         meal.setPreferences(updatedPreferences.toString());
-        if(movedMeal == true){
-            meal.setBranchMeal(!(meal.getisBranchMeal()));
-            movedMeal = false;
-        }
+        //if(movedMeal == true){
+          //  meal.setBranchMeal(!(meal.getisBranchMeal()));
+            //movedMeal = false;
+        //}
 
         // Send updated meal to server
         try {
