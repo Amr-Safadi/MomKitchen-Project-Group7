@@ -35,8 +35,8 @@ public class SimpleServer extends AbstractServer {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			// Uncomment the following lines if you wish to populate initial data and users:
-			 //DataInitializer.populateInitialData(session);
-			 //UserHandler.populateUsers(session);
+			//DataInitializer.populateInitialData(session);
+			// UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -61,6 +61,17 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
+			case "#ToggleMealType":
+				Object[] mealData = (Object[]) message.getObject();
+				int mealId = (int) mealData[0];
+				Integer branchId = (mealData[1] != null) ? (Integer) mealData[1] : null;
+
+				MealHandler.handleToggleMealType(mealId, branchId, sessionFactory);
+
+				// Send confirmation back to the client
+                    sendToAllClients(new Message("#MealTypeUpdated"));
+
+                break;
 
 			case "#CancelOrder":
 				CancelingHandler.cancelOrder((Orders) message.getObject() , sessionFactory);

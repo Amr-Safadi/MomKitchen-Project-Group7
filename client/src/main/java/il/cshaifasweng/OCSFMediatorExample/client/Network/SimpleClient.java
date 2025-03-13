@@ -26,7 +26,7 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
-			case "#UserValidated", "#ValidationFailed", "OrderCanceled":
+			case "#UserValidated", "#ValidationFailed", "OrderCanceled" ,"#MealTypeUpdated":
 				EventBus.getDefault().post(message);
 				break;
             case "#OrderPlacedSuccessfully":
@@ -88,13 +88,6 @@ public class SimpleClient extends AbstractClient {
 				System.out.println("✅ Received resolved complaints from server.");
 				EventBus.getDefault().post(message);
 				break;
-
-
-
-
-
-
-
 			case "#BranchFetched":
 				System.out.println("Received branch fetched message");
 				EventBus.getDefault().post(message);

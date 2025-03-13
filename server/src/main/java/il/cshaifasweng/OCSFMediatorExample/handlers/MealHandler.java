@@ -102,116 +102,81 @@ public class MealHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-}
-    /*public static void updateMealPlacement(Meals existingMeal,boolean moveToSpecial,String branchName,Session session) {
-        Branch targetBranch = session.createQuery("FROM Branch WHERE name = :branchName", Branch.class)
-                .setParameter("branchName", branchName)
-                .uniqueResult();
+    }public static void handleToggleMealType(int mealId, Integer branchId, SessionFactory sessionFactory) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = null;
 
-        if (targetBranch == null) {
-            System.out.println("Branch not found: " + branchName);
-            return;
-        }
-
-        if (moveToSpecial) {
-            // Remove meal from all branches first, then add only to the selected branch
-            for (Branch branch : existingMeal.getBranches()) {
-                branch.getMeals().remove(existingMeal);
-                session.merge(branch);
-            }
-            existingMeal.getBranches().clear();
-            existingMeal.getBranches().add(targetBranch);
-            targetBranch.getMeals().add(existingMeal);
-        } else {
-            // Move meal back to general (all branches should have it)
-            List<Branch> allBranches = session.createQuery("FROM Branch", Branch.class).getResultList();
-            for (Branch branch : allBranches) {
-                if (!branch.getMeals().contains(existingMeal)) {
-                    branch.getMeals().add(existingMeal);
-                }
-            }
-            existingMeal.getBranches().clear();
-            existingMeal.getBranches().addAll(allBranches);
-        }
-        session.merge(existingMeal);
-        session.merge(targetBranch);
-    }
-    public static void removeMealFromAllBranchesExceptOne(Meals meal, String exceptionBranchName, Session session) {
-        Transaction transaction = session.beginTransaction();
         try {
-            Branch exceptionBranch = session.createQuery(
-                            "FROM Branch WHERE name = :branchName", Branch.class)
-                    .setParameter("branchName", exceptionBranchName)
-                    .uniqueResult();
+            transaction = session.beginTransaction();
 
-            if (exceptionBranch == null) {
-                System.out.println("Branch not found: " + exceptionBranchName);
+            // Fetch the meal
+            Meals meal = session.get(Meals.class, mealId);
+            if (meal == null) {
+                System.out.println("❌ Meal not found!");
                 return;
             }
 
-            List<Branch> allBranches = session.createQuery("FROM Branch", Branch.class).getResultList();
+            // Toggle meal type
+            meal.setBranchMeal(!meal.getisBranchMeal());
 
-            for (Branch branch : allBranches) {
-                if (!branch.equals(exceptionBranch) && branch.getMeals().contains(meal)) {
+            if (!meal.getisBranchMeal()) {
+                // Convert to Network Meal: Assign to all branches
+                List<Branch> allBranches = session.createQuery("FROM Branch", Branch.class).getResultList();
+
+                // Remove meal from all branches to avoid duplicates
+                for (Branch branch : meal.getBranches()) {
                     branch.getMeals().remove(meal);
                     session.merge(branch);
                 }
-            }
 
-            Iterator<Branch> branchIterator = meal.getBranches().iterator();
-            while (branchIterator.hasNext()) {
-                Branch branch = branchIterator.next();
-                if (!branch.equals(exceptionBranch)) {
-                    branchIterator.remove();
-                }
-            }
+                meal.getBranches().clear();
+                meal.getBranches().addAll(allBranches);
 
-            session.merge(meal);
-            transaction.commit();
-            System.out.println("Meal removed from all branches except: " + exceptionBranchName);
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    public static void addMealToAllBranchesExceptOne(Meals meal, String exceptionBranchName,Session session) {
-        Transaction transaction = session.beginTransaction();
-        try {
-            Branch exceptionBranch = session.createQuery(
-                            "FROM Branch WHERE name = :branchName", Branch.class)
-                    .setParameter("branchName", exceptionBranchName)
-                    .uniqueResult();
-
-            if (exceptionBranch == null) {
-                System.out.println("Branch not found: " + exceptionBranchName);
-                return;
-            }
-
-            List<Branch> allBranches = session.createQuery("FROM Branch", Branch.class).getResultList();
-
-            for (Branch branch : allBranches) {
-                if (!branch.equals(exceptionBranch) && !branch.getMeals().contains(meal)) {
+                // Update each branch to include the meal
+                for (Branch branch : allBranches) {
                     branch.getMeals().add(meal);
                     session.merge(branch);
                 }
-            }
 
-            for (Branch branch : allBranches) {
-                if (!branch.equals(exceptionBranch) && !meal.getBranches().contains(branch)) {
-                    meal.getBranches().add(branch);
+                System.out.println("✅ Meal converted to a Network Meal and added to all branches.");
+            } else {
+                // Convert to Branch-Specific Meal: Assign only to the provided branch
+                if (branchId == null) {
+                    System.out.println("❌ No branch selected for conversion!");
+                    return;
                 }
+
+                Branch selectedBranch = session.get(Branch.class, branchId);
+                if (selectedBranch == null) {
+                    System.out.println("❌ Invalid branch ID: " + branchId);
+                    return;
+                }
+
+                // Remove from all other branches
+                for (Branch branch : meal.getBranches()) {
+                    if (!branch.equals(selectedBranch)) {
+                        branch.getMeals().remove(meal);
+                        session.merge(branch);
+                    }
+                }
+
+                meal.getBranches().clear();
+                meal.getBranches().add(selectedBranch);
+
+                System.out.println("✅ Meal converted to Branch-Specific and assigned to " + selectedBranch.getName());
             }
 
             session.merge(meal);
             transaction.commit();
-            System.out.println("Meal added to all branches except: " + exceptionBranchName);
+            System.out.println("✅ Meal type updated successfully!");
+
         } catch (Exception e) {
-            transaction.rollback();
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
+            System.out.println("❌ Error updating meal type.");
+        } finally {
+            session.close();
         }
-    }/*
+    }
 
-     */
-
+}

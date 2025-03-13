@@ -69,7 +69,7 @@ public class SecondaryController {
 
     @Subscribe
     public void onMealsInitialized(Message msg) {
-        if ("#Initialize Meals".equals(msg.toString())) {
+        if ("#Initialize Meals".equals(msg.toString()) || "#MealTypeUpdated".equals(msg.toString())) {
             Platform.runLater(() -> {
                 System.out.println("Initializing meals for branch: " + SecondaryService.getBranch());
                 ArrayList<Meals> receivedMeals = (ArrayList<Meals>) msg.getObject();
