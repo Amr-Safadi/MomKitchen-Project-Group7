@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import javax.persistence.*;
 
 @Entity
@@ -16,25 +17,63 @@ public class ContactRequest implements Serializable {
     private String branch;
     private String complaint;
     private boolean handled;
+    private String resolutionScript;
+    private boolean refundIssued;
+    private LocalDateTime submittedAt;
+    private LocalDateTime handledAt;
 
-    public ContactRequest() {}
+    // Ensure submittedAt is always set when a complaint is created
+    public ContactRequest() {
+        this.submittedAt = LocalDateTime.now();  // Ensure default constructor sets it
+        this.handled = false;
+    }
+
+    public ContactRequest(String name, String branch, String complaint) {
+        this.name = name;
+        this.branch = branch;
+        this.complaint = complaint;
+        this.handled = false;
+        this.submittedAt = LocalDateTime.now(); // Ensure timestamp is set
+    }
 
     public ContactRequest(String name, String branch, String complaint, boolean handled) {
         this.name = name;
         this.branch = branch;
         this.complaint = complaint;
         this.handled = handled;
+        this.submittedAt = LocalDateTime.now(); // Ensure timestamp is set
     }
 
+
+    // ✅ Constructor for resolving a complaint (handling date, resolution script, refund)
+    public ContactRequest(int id, boolean handled, String resolutionScript, boolean refundIssued) {
+        this.id = id;
+        this.handled = handled;
+        this.resolutionScript = resolutionScript;
+        this.refundIssued = refundIssued;
+        this.handledAt = LocalDateTime.now();
+    }
+
+    // ✅ Getters
     public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
     public String getBranch() { return branch; }
-    public void setBranch(String branch) { this.branch = branch; }
-
     public String getComplaint() { return complaint; }
-    public void setComplaint(String complaint) { this.complaint = complaint; }
+    public boolean isHandled() { return handled; }
+    public String getResolutionScript() { return resolutionScript; }
+    public boolean isRefundIssued() { return refundIssued; }
+    public LocalDateTime getSubmittedAt() { return submittedAt; }
+    public LocalDateTime getHandledAt() { return handledAt; }
+
+    // ✅ Setters
+    public void setHandled(boolean handled) {
+        this.handled = handled;
+        if (handled) {
+            this.handledAt = LocalDateTime.now();
+        }
+    }
+
+    public void setResolutionScript(String resolutionScript) { this.resolutionScript = resolutionScript; }
+    public void setRefundIssued(boolean refundIssued) { this.refundIssued = refundIssued; }
+    public void setHandledAt(LocalDateTime handledAt) { this.handledAt = handledAt; }
 }

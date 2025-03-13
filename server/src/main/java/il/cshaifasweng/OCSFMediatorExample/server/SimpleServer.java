@@ -12,14 +12,17 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil.getSessionFactory;
+
 public class SimpleServer extends AbstractServer {
 
 	private static final ConcurrentHashMap<ConnectionToClient, String> onlineUsers = new ConcurrentHashMap<>();
-	private static SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+	private static SessionFactory sessionFactory = getSessionFactory();
     private static Session session;
 
 	ArrayList<Meals> mealsArrayList;
@@ -32,8 +35,8 @@ public class SimpleServer extends AbstractServer {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			// Uncomment the following lines if you wish to populate initial data and users:
-			// DataInitializer.populateInitialData(session);
-			// UserHandler.populateUsers(session);
+			 //DataInitializer.populateInitialData(session);
+			 //UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -205,12 +208,82 @@ public class SimpleServer extends AbstractServer {
 					e.printStackTrace();
 				}
 				break;
+			case "#FetchComplaints":
+				try (Session session = getSessionFactory().openSession()) {
+					List<ContactRequest> complaints = session.createQuery("FROM ContactRequest", ContactRequest.class).list();
+					client.sendToClient(new Message(complaints, "#ComplaintList"));
+					System.out.println("✅ Sent all complaints to client.");
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.err.println("❌ Error fetching complaints from database.");
+				}
+				break;
+
+
+			case "#ResolveComplaint":
+				ContactRequest resolvedComplaint = (ContactRequest) message.getObject();
+				try (Session session = getSessionFactory().openSession()) {
+					Transaction tx = session.beginTransaction();
+
+					// Fetch the actual complaint from DB
+					ContactRequest complaintFromDB = session.get(ContactRequest.class, resolvedComplaint.getId());
+					if (complaintFromDB != null) {
+						complaintFromDB.setHandled(true);
+						complaintFromDB.setResolutionScript(resolvedComplaint.getResolutionScript());
+						complaintFromDB.setRefundIssued(resolvedComplaint.isRefundIssued());
+						complaintFromDB.setHandledAt(LocalDateTime.now());
+
+						session.update(complaintFromDB);
+						tx.commit();
+
+						// Send updated list back to all clients
+						List<ContactRequest> updatedUnresolved = session.createQuery(
+								"FROM ContactRequest WHERE handled = false", ContactRequest.class).getResultList();
+						List<ContactRequest> updatedResolved = session.createQuery(
+								"FROM ContactRequest WHERE handled = true", ContactRequest.class).getResultList();
+
+						sendToAllClients(new Message(updatedUnresolved, "#ComplaintList"));
+						sendToAllClients(new Message(updatedResolved, "#ResolvedComplaintList"));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+
+
 
 			default:
 				System.out.println("Unknown message received: " + msgStr);
 				break;
 		}
 	}
+	public void resolveComplaint(int complaintId, String resolutionScript, boolean refundIssued) {
+		try (Session session = sessionFactory.openSession()) {
+			Transaction tx = session.beginTransaction();
+			ContactRequest complaint = session.get(ContactRequest.class, complaintId);
+
+			if (complaint != null && !complaint.isHandled()) {
+				complaint.setHandled(true);
+				complaint.setHandledAt(LocalDateTime.now());
+				complaint.setResolutionScript(resolutionScript);
+
+				session.update(complaint);
+				tx.commit();
+
+				System.out.println("✅ Complaint #" + complaintId + " resolved.");
+				System.out.println("📜 Resolution: " + resolutionScript);
+
+				if (refundIssued) {
+					System.out.println("💰 Refund has been issued to the customer.");
+				}
+			} else {
+				System.out.println("⚠️ Complaint not found or already resolved.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 
 

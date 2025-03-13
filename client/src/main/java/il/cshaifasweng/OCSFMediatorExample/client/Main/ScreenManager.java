@@ -28,6 +28,7 @@ public class ScreenManager {
         screens.put("Contact Us", "ContactUs.fxml");
         screens.put("Validate User", "ValidateUser.fxml");
         screens.put("Cancel Order", "CancelOrder.fxml");
+        screens.put("Manage Complaints", "ComplaintManage.fxml");
     }
 
     public static void init(Stage stage) throws IOException {

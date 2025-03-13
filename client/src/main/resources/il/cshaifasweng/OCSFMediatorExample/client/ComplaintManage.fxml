@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ComplaintManageController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover; -fx-padding: 10;">
+
+    <content>
+        <AnchorPane fx:id="rootPane" prefHeight="900.0" prefWidth="800.0"
+                    style="-fx-background-color: transparent;">
+
+            <!-- Title -->
+            <Label layoutX="20" layoutY="20" text="Unresolved Complaints"
+                   style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+            <!-- Unresolved Complaints Table -->
+            <TableView fx:id="unresolvedTable" layoutX="20" layoutY="50" prefWidth="750" prefHeight="250">
+                <columns>
+                    <TableColumn text="ID" fx:id="idColumn" prefWidth="50"/>
+                    <TableColumn text="Customer Name" fx:id="nameColumn" prefWidth="150"/>
+                    <TableColumn text="Branch" fx:id="branchColumn" prefWidth="100"/>
+                    <TableColumn text="Complaint" fx:id="complaintColumn" prefWidth="250"/>
+                    <TableColumn text="Time Submitted" fx:id="submittedColumn" prefWidth="150"/>
+                </columns>
+            </TableView>
+
+            <!-- Resolution Section -->
+            <Label layoutX="20" layoutY="320" text="Resolution"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <TextArea fx:id="resolutionField" layoutX="20" layoutY="350" prefWidth="750" prefHeight="80"
+                      promptText="Enter resolution details here..."/>
+            <CheckBox fx:id="refundCheckbox" layoutX="20" layoutY="440" text="Issue Refund"/>
+
+            <!-- Buttons Row (Aligned Properly) -->
+            <HBox layoutX="20" layoutY="480" spacing="15">
+                <Button text="Resolve Complaint" onAction="#handleResolveComplaint"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;"/>
+                <Button text="View Resolved Complaints" onAction="#showResolvedComplaints"
+                        style="-fx-background-color: #008CBA; -fx-text-fill: white; -fx-font-size: 14px;"/>
+                <Button text="Export to CSV" fx:id="exportButton" onAction="#handleExportToCSV"
+                        style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 14px;"/>
+                <Button text="Back to Main" onAction="#handleBackToMain"
+                        style="-fx-background-color: #FF5733; -fx-text-fill: white; -fx-font-size: 14px;"/>
+            </HBox>
+
+            <!-- Resolved Complaints Table -->
+            <TableView fx:id="resolvedTable" layoutX="20" layoutY="530" prefWidth="750" prefHeight="250" visible="false">
+                <columns>
+                    <TableColumn text="ID" fx:id="resolvedIdColumn" prefWidth="50"/>
+                    <TableColumn text="Customer Name" fx:id="resolvedNameColumn" prefWidth="150"/>
+                    <TableColumn text="Branch" fx:id="resolvedBranchColumn" prefWidth="100"/>
+                    <TableColumn text="Resolution" fx:id="resolutionColumn" prefWidth="250"/>
+                    <TableColumn text="Time Handled" fx:id="handledColumn" prefWidth="150"/>
+                    <TableColumn text="Refund Issued" fx:id="refundColumn" prefWidth="100"/>
+                </columns>
+            </TableView>
+
+        </AnchorPane>
+    </content>
+
+</ScrollPane>

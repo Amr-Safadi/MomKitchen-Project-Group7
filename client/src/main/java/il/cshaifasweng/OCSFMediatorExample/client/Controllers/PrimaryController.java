@@ -5,7 +5,9 @@ import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
+import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -55,6 +57,8 @@ public class PrimaryController {
     @FXML
     private Button contactUsBtn;
 
+    @FXML
+    private Button complaintsButton;
 
     @FXML
     private ListView<?> branchListView;
@@ -66,6 +70,7 @@ public class PrimaryController {
     private void handleCancelOrder() {
         ScreenManager.switchScreen("Validate User");
     }
+
     @FXML
     private void handleHaifaBtn() {
         SecondaryService.setBranch("Haifa");
@@ -83,11 +88,6 @@ public class PrimaryController {
         SecondaryService.setBranch("Tel-Aviv");
         ScreenManager.switchScreen("Menu List");
     }
-    @FXML
-    private void handleContactUsBtn() {
-        ScreenManager.switchScreen("Contact Us");
-    }
-
 
     @FXML
     private void handleNetanyaBtn() {
@@ -96,9 +96,29 @@ public class PrimaryController {
     }
 
     @FXML
+    private void handleContactUsBtn() {
+        ScreenManager.switchScreen("Contact Us");
+    }
+
+    @FXML
     private void handleLOGINBtn() {
         ScreenManager.switchScreen("Login");
     }
+
+    @FXML
+    private void handleComplaints() {
+        if (UserSession.getUser() != null &&
+                (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER ||
+                        UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER ||
+                        UserSession.getUser().getRole() == User.Role.SERVICE_EMPLOYEE)) {
+            ScreenManager.switchScreen("Manage Complaints");
+        } else {
+            showAlert("Access Denied", "You do not have permission to access this page.");
+        }
+    }
+
+
+
 
     @FXML
     void initialize() {
@@ -109,18 +129,41 @@ public class PrimaryController {
         assert branchListView != null : "fx:id=\"branchListView\" was not injected: check your FXML file 'primary.fxml'.";
         assert branchesLabel != null : "fx:id=\"branchesLabel\" was not injected: check your FXML file 'primary.fxml'.";
         assert LOGINBtn != null : "fx:id=\"LOGINBtn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert complaintsButton != null : "fx:id=\"complaintsButton\" was not injected: check your FXML file 'primary.fxml'.";
 
-        if (SimpleClient.getUser() != null) {
+        User loggedInUser = SimpleClient.getUser();
+        complaintsButton.setVisible(false);
+
+
+        if (loggedInUser != null) {
             LOGINBtn.setDisable(true);
             LOGINBtn.setVisible(false);
+
+
+            if (loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
+                    loggedInUser.getRole() == User.Role.GENERAL_MANAGER ||
+                    loggedInUser.getRole() == User.Role.SERVICE_EMPLOYEE) {
+                complaintsButton.setVisible(true);
+            }
+        } else {
+            userRec.setVisible(false);
         }
 
-        if (UserSession.getUser() == null) {
-            userRec.setVisible(false);
-        } else {
+
+        if (UserSession.getUser() != null) {
             userRec.setText("Welcome " + UserSession.getUser().getFullName());
         }
 
         BackgroundUtil.setPaneBackground(secondaryAnchorPane, "/Images/NEWBACKGRND.jpg");
     }
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 }
+
+

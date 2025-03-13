@@ -34,14 +34,17 @@ public class Meals implements Serializable {
     @ManyToMany(mappedBy = "meals")
     private List<Branch> branches = new ArrayList<>();
 
+
     public Meals() {}
 
-    public Meals(String name, String ingredients, String preferences, double price, Category category) {
+    public Meals(String name, String ingredients, String preferences, double price, Category category,boolean isBranchMeal) {
         this.name = name;
         this.ingredients = ingredients;
         this.preferences = preferences;
         this.price = price;
         this.category = category;
+        this.isBranchMeal = isBranchMeal;
+
     }
 
     public int getId() { return id; }
@@ -55,6 +58,8 @@ public class Meals implements Serializable {
     public void setPrice(double price) { this.price = price; }
     public Enum<Category> getCategory() { return category; }
     public void setCategory(Category category) { this.category = category; }
+    public boolean getisBranchMeal() { return isBranchMeal; }
+    public void setBranchMeal(boolean isBranchMeal) { this.isBranchMeal = isBranchMeal; }
     public List<Branch> getBranches() {
         if (branches == null) {
             branches = new ArrayList<>();
