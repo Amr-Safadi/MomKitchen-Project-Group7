@@ -10,8 +10,7 @@
             fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.TableMapController">
     <children>
         <Label text="Table Map" layoutX="250" layoutY="20" style="-fx-font-size: 24px;" />
-        <GridPane fx:id="tableGrid" layoutX="50" layoutY="60" hgap="20" vgap="20">
-            <!-- The TableMapController will populate this grid -->
-        </GridPane>
+        <Button fx:id="backBtn" layoutX="20" layoutY="20" onAction="#handleBack" text="Back" />
+        <GridPane fx:id="tableGrid" layoutX="50" layoutY="60" hgap="20" vgap="20" />
     </children>
 </AnchorPane>

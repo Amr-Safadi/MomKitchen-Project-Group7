@@ -20,19 +20,22 @@ public class SimpleServer extends AbstractServer {
 
 	private static final ConcurrentHashMap<ConnectionToClient, String> onlineUsers = new ConcurrentHashMap<>();
 	private static SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-    private static Session session;
+	private static Session session;
 
-	ArrayList<Meals> mealsArrayList;
-	ArrayList<Meals> mealsByCategories;
-	String branch;
+	private ArrayList<Meals> mealsArrayList;
+	private ArrayList<Meals> mealsByCategories;
+	private String branch;
+
+	private static SimpleServer instance;
 
 	public SimpleServer(int port) {
 		super(port);
+		instance = this; // set instance for global access
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-//			DataInitializer.populateInitialData(session);
-//			UserHandler.populateUsers(session);
+//			 DataInitializer.populateInitialData(session);
+//			 UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -46,6 +49,10 @@ public class SimpleServer extends AbstractServer {
 		}
 	}
 
+	public static SimpleServer getInstance() {
+		return instance;
+	}
+
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		if (!(msg instanceof Message)) {
@@ -57,23 +64,22 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
-
 			case "#CancelOrder":
-				CancelingHandler.cancelOrder((Orders) message.getObject() , sessionFactory);
-                try {
-                    client.sendToClient(new Message("OrderCanceled"));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
+				CancelingHandler.cancelOrder((Orders) message.getObject(), sessionFactory);
+				try {
+					client.sendToClient(new Message("OrderCanceled"));
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+				break;
 			case "#ValidateUser": {
 				String[] userDetails = (String[]) message.getObject();
 				String email = userDetails[0];
 				String phone = userDetails[1];
 
-				List<Orders> userOrders = CancelingHandler.fetchOrders(email,phone,sessionFactory);
+				List<Orders> userOrders = CancelingHandler.fetchOrders(email, phone, sessionFactory);
 
-				System.out.println("fetched the following orders : ");
+				System.out.println("Fetched the following orders:");
 				for (Orders order : userOrders) {
 					System.out.println(
 							"Order ID: " + order.getId() +
@@ -81,42 +87,37 @@ public class SimpleServer extends AbstractServer {
 									" at " + order.getOrderPlacedTime().toLocalTime()
 					);
 				}
-					if (!userOrders.isEmpty()) {
-                        try {
-                            client.sendToClient(new Message(userOrders, "#UserValidated"));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    } else {
-                        try {
-                            client.sendToClient(new Message(null, "#ValidationFailed"));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+				if (!userOrders.isEmpty()) {
+					try {
+						client.sendToClient(new Message(userOrders, "#UserValidated"));
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				} else {
+					try {
+						client.sendToClient(new Message(null, "#ValidationFailed"));
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
 				}
+			}
 			break;
-
-			case "#PlaceOrder":
-			{
+			case "#PlaceOrder": {
 				try {
-					OrderHandler.placeOrder((Orders) message.getObject(),sessionFactory);
-					// Send success response back to client
+					OrderHandler.placeOrder((Orders) message.getObject(), sessionFactory);
 					Message response = new Message("#OrderPlacedSuccessfully");
 					client.sendToClient(response);
-
 				} catch (Exception e) {
 					e.printStackTrace();
 					try {
 						client.sendToClient(new Message("#OrderPlacementFailed"));
-						System.out.println("orderplacement failed - server");
+						System.out.println("Order placement failed - server");
 					} catch (IOException ioException) {
 						ioException.printStackTrace();
 					}
 				}
 			}
 			break;
-
 			case "fetchDrinks":
 				mealsByCategories = MealHandler.fetchMealByCategoriesAndBranch(branch, "Drinks", sessionFactory);
 				try {
@@ -192,17 +193,17 @@ public class SimpleServer extends AbstractServer {
 					}
 				}
 				break;
-
 			case "#ReserveTable":
 				RestaurantTable table = (RestaurantTable) message.getObject();
 				TableHandler.reserveTable(table, sessionFactory);
-				// Optionally send a confirmation message back to the client:
-				try {
-					client.sendToClient(new Message(table, "#TableReservedSuccess"));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				break;
+                sendToAllClients(new Message(table, "#TableReservedSuccess"));
+                break;
+
+			case "#CancelTableReservation":
+				RestaurantTable tableToCancel = (RestaurantTable) message.getObject();
+				TableHandler.cancelTableReservation(tableToCancel, sessionFactory);
+                sendToAllClients(new Message(tableToCancel, "#TableReservationCanceledSuccess"));
+                break;
 
 			case "#Update Complaint":
 				System.out.println("Storing complaint");
@@ -215,14 +216,11 @@ public class SimpleServer extends AbstractServer {
 					e.printStackTrace();
 				}
 				break;
-
 			default:
 				System.out.println("Unknown message received: " + msgStr);
 				break;
 		}
 	}
-
-
 
 	@Override
 	protected synchronized void clientDisconnected(ConnectionToClient client) {

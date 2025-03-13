@@ -77,9 +77,6 @@ public class SimpleClient extends AbstractClient {
 				EventBus.getDefault().post(new Message(null, "#ComplaintSubmissionSuccess"));
 				break;
 
-
-
-
 			case "#BranchFetched":
 				System.out.println("Received branch fetched message");
 				EventBus.getDefault().post(message);
@@ -90,22 +87,26 @@ public class SimpleClient extends AbstractClient {
 				EventBus.getDefault().post(message);
 				break;
 
+			case "#TableReservedSuccess":
+			case "#TableReservationCanceledSuccess":
+				System.out.println("Table Reservation Message");
+				EventBus.getDefault().post(message);
+				break;
+
 			default:
 				System.out.println("Unknown message received: " + message.toString());
 				break;
 		}
 	}
 
-
-
 	public static User getUser() {
 		return user;
 	}
+
 	public static SimpleClient getClient() {
 		if (client == null) {
 			client = new SimpleClient("localhost", 3000);
 		}
 		return client;
 	}
-
 }
