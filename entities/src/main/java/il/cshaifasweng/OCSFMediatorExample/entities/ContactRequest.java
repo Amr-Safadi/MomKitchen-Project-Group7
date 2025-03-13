@@ -15,13 +15,15 @@ public class ContactRequest implements Serializable {
     private String name;
     private String branch;
     private String complaint;
+    private boolean handled;
 
     public ContactRequest() {}
 
-    public ContactRequest(String name, String branch, String complaint) {
+    public ContactRequest(String name, String branch, String complaint, boolean handled) {
         this.name = name;
         this.branch = branch;
         this.complaint = complaint;
+        this.handled = handled;
     }
 
     public int getId() { return id; }
