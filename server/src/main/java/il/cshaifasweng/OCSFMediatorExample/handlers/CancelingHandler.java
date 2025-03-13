@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.handlers;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Orders;
+import il.cshaifasweng.OCSFMediatorExample.util.EmailSender;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -31,30 +32,44 @@ public class CancelingHandler {
         return userOrders; // Meals are already loaded before session closes
     }
     public static void cancelOrder(Orders order, SessionFactory sessionFactory) {
-        Transaction transaction = null;
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
 
-        try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
+        try {
+            // Get the refund amount based on cancellation rules
+            double refundAmount = calculateRefund(order);
 
-            // Fetch the order from the database
-            Orders orderToDelete = session.get(Orders.class, order.getId());
+            // Delete the order from the database
+            session.delete(order);
+            transaction.commit();
+            System.out.println("❌ Order ID " + order.getId() + " has been canceled.");
 
-            if (orderToDelete != null) {
-                session.delete(orderToDelete);
-                transaction.commit(); // Save changes
-                System.out.println("✅ Order ID " + order.getId() + " has been successfully deleted.");
-            } else {
-                System.out.println("⚠️ Order ID " + order.getId() + " not found in the database.");
-            }
+            // Send email notification
+            String emailSubject = "Your Order Cancellation Confirmation";
+            String emailBody = "Dear Customer,\n\n"
+                    + "Your order with ID " + order.getId() + " has been successfully canceled.\n"
+                    + "Refund Amount: $" + refundAmount + "\n\n"
+                    + "Thank you for using Mom's Kitchen!";
+
+            EmailSender.sendEmail(order.getEmail(), emailSubject, emailBody);
+            System.out.println("📧 Email sent to " + order.getEmail());
 
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback(); // Rollback in case of failure
-            }
+            transaction.rollback();
             e.printStackTrace();
-            System.out.println("❌ Failed to cancel order ID " + order.getId());
+        } finally {
+            session.close();
         }
     }
 
-
+    private static double calculateRefund(Orders order) {
+        long hoursLeft = java.time.Duration.between(java.time.LocalDateTime.now(), order.getDeliveryTime()).toHours();
+        if (hoursLeft >= 3) {
+            return order.getTotalPrice();  // Full refund
+        } else if (hoursLeft >= 1) {
+            return order.getTotalPrice() * 0.5;  // 50% refund
+        } else {
+            return 0;  // No refund
+        }
+    }
 }
