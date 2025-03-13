@@ -76,6 +76,21 @@ public class SimpleClient extends AbstractClient {
 				System.out.println("Complaint successfully stored!");
 				EventBus.getDefault().post(new Message(null, "#ComplaintSubmissionSuccess"));
 				break;
+			case "#ComplaintList":
+				System.out.println("📥 Received complaint list from server.");
+				EventBus.getDefault().post(message);
+				break;
+			case "#ComplaintResolved":
+				System.out.println("✅ Complaint successfully resolved.");
+				EventBus.getDefault().post(message);
+				break;
+			case "#ResolvedComplaintList":
+				System.out.println("✅ Received resolved complaints from server.");
+				EventBus.getDefault().post(message);
+				break;
+
+
+
 
 
 
