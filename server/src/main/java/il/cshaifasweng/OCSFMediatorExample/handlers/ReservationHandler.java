@@ -7,7 +7,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import java.time.LocalTime;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -25,8 +26,8 @@ public class ReservationHandler {
                     .setParameter("guestCount", reservation.getGuests())
                     .getResultList();
 
-            LocalTime reqStart = reservation.getTime();
-            LocalTime reqEnd = reqStart.plusMinutes(90);
+            LocalDateTime reqStart = LocalDateTime.of(reservation.getDate(), reservation.getTime());
+            LocalDateTime reqEnd = reqStart.plusMinutes(90);
 
             for (RestaurantTable table : candidateTables) {
                 List<Reservation> reservations = session.createQuery(
@@ -37,8 +38,8 @@ public class ReservationHandler {
 
                 boolean conflict = false;
                 for (Reservation r : reservations) {
-                    LocalTime existingStart = r.getTime();
-                    LocalTime existingEnd = existingStart.plusMinutes(90);
+                    LocalDateTime existingStart = LocalDateTime.of(r.getDate(), r.getTime());
+                    LocalDateTime existingEnd = existingStart.plusMinutes(90);
                     if (reqStart.isBefore(existingEnd) && existingStart.isBefore(reqEnd)) {
                         conflict = true;
                         break;
@@ -66,8 +67,16 @@ public class ReservationHandler {
                 return false;
             }
             reservation.setTable(allocatedTable);
-            allocatedTable.setReserved(true);
-            session.update(allocatedTable);
+
+            LocalDateTime requestedDateTime = LocalDateTime.of(reservation.getDate(), reservation.getTime());
+            LocalDateTime now = LocalDateTime.now();
+            if (!requestedDateTime.isAfter(now)) {
+                allocatedTable.setReserved(true);
+                session.update(allocatedTable);
+            } else {
+                long delayMillis = Duration.between(now, requestedDateTime).toMillis();
+                ReservationScheduler.scheduleReservationActivation(allocatedTable.getId(), delayMillis, sessionFactory);
+            }
             session.save(reservation);
             tx.commit();
             success = true;
@@ -82,14 +91,13 @@ public class ReservationHandler {
         if (branch == null) {
             return "Branch not specified";
         }
-        LocalTime branchOpen = branch.getOpenHour();
-        LocalTime branchClose = branch.getCloseHour();
-        LocalTime startAllowed = branchOpen.plusMinutes(15);
-        LocalTime endAllowed = branchClose.minusMinutes(60);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime branchOpenDT = LocalDateTime.of(now.toLocalDate(), branch.getOpenHour()).plusMinutes(15);
+        LocalDateTime branchCloseDT = LocalDateTime.of(now.toLocalDate(), branch.getCloseHour()).minusMinutes(60);
         List<String> alternatives = new ArrayList<>();
-        LocalTime slot = startAllowed;
-        while (!slot.isAfter(endAllowed)) {
-            alternatives.add(slot.toString());
+        LocalDateTime slot = branchOpenDT;
+        while (!slot.isAfter(branchCloseDT)) {
+            alternatives.add(slot.toLocalTime().toString());
             slot = slot.plusMinutes(15);
         }
         return String.join(", ", alternatives);

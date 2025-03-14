@@ -33,7 +33,7 @@ public class TableHandler {
         }
     }
 
-    private static void scheduleAutoRelease(int tableId, SessionFactory sessionFactory) {
+    static void scheduleAutoRelease(int tableId, SessionFactory sessionFactory) {
         scheduler.schedule(() -> {
             try (Session session = sessionFactory.openSession()) {
                 Transaction transaction = session.beginTransaction();
