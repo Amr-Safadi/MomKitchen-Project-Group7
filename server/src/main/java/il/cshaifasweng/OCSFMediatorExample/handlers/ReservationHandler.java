@@ -9,34 +9,33 @@ import org.hibernate.Transaction;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 
 public class ReservationHandler {
 
-    public static RestaurantTable allocateTableForReservation(Reservation reservation, SessionFactory sessionFactory) {
-        RestaurantTable allocatedTable = null;
+
+    public static List<RestaurantTable> allocateTablesForReservation(Reservation reservation, SessionFactory sessionFactory) {
+        List<RestaurantTable> availableTables = new ArrayList<>();
+        Branch branch = reservation.getBranch();
+
         try (Session session = sessionFactory.openSession()) {
-            Transaction tx = session.beginTransaction();
-            Branch branch = reservation.getBranch();
-            List<RestaurantTable> candidateTables = session.createQuery(
-                            "FROM RestaurantTable t WHERE t.branch.id = :branchId AND t.capacity >= :guestCount ORDER BY t.capacity ASC",
-                            RestaurantTable.class)
+            List<RestaurantTable> allTables = session.createQuery(
+                            "FROM RestaurantTable t WHERE t.branch.id = :branchId", RestaurantTable.class)
                     .setParameter("branchId", branch.getId())
-                    .setParameter("guestCount", reservation.getGuests())
                     .getResultList();
 
-            LocalDateTime reqStart = LocalDateTime.of(reservation.getDate(), reservation.getTime());
-            LocalDateTime reqEnd = reqStart.plusMinutes(90);
-
-            for (RestaurantTable table : candidateTables) {
+            for (RestaurantTable table : allTables) {
+                boolean conflict = false;
                 List<Reservation> reservations = session.createQuery(
                                 "FROM Reservation r WHERE r.table.id = :tableId AND r.date = :date", Reservation.class)
                         .setParameter("tableId", table.getId())
                         .setParameter("date", reservation.getDate())
                         .getResultList();
-
-                boolean conflict = false;
+                LocalDateTime reqStart = LocalDateTime.of(reservation.getDate(), reservation.getTime());
+                LocalDateTime reqEnd = reqStart.plusMinutes(90);
                 for (Reservation r : reservations) {
                     LocalDateTime existingStart = LocalDateTime.of(r.getDate(), r.getTime());
                     LocalDateTime existingEnd = existingStart.plusMinutes(90);
@@ -46,44 +45,96 @@ public class ReservationHandler {
                     }
                 }
                 if (!conflict) {
-                    allocatedTable = table;
-                    break;
+                    availableTables.add(table);
                 }
             }
-            tx.commit();
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return allocatedTable;
+
+        if (availableTables.isEmpty()) {
+            return null;
+        }
+
+        int guestCount = reservation.getGuests();
+        int maxCapacity = availableTables.stream().mapToInt(RestaurantTable::getCapacity).max().orElse(0);
+
+        if (guestCount > maxCapacity) {
+            return findTableCombination(availableTables, guestCount);
+        } else {
+            RestaurantTable bestSingle = availableTables.stream()
+                    .filter(t -> t.getCapacity() >= guestCount)
+                    .min(Comparator.comparingInt(RestaurantTable::getCapacity))
+                    .orElse(null);
+
+            List<RestaurantTable> merged = findTableCombination(availableTables, guestCount);
+
+            if (merged != null && merged.size() > 1) {
+                return merged;
+            } else {
+                return Collections.singletonList(bestSingle);
+            }
+        }
     }
 
-    public static boolean saveReservation(Reservation reservation, SessionFactory sessionFactory) {
-        boolean success = false;
+    private static List<RestaurantTable> findTableCombination(List<RestaurantTable> tables, int guests) {
+        List<RestaurantTable> bestCombination = null;
+        int bestCount = Integer.MAX_VALUE;
+        int bestTotalCapacity = Integer.MAX_VALUE;
+        int n = tables.size();
+        for (int mask = 1; mask < (1 << n); mask++) {
+            List<RestaurantTable> combination = new ArrayList<>();
+            int totalCapacity = 0;
+            int count = 0;
+            for (int j = 0; j < n; j++) {
+                if ((mask & (1 << j)) != 0) {
+                    RestaurantTable table = tables.get(j);
+                    combination.add(table);
+                    totalCapacity += table.getCapacity();
+                    count++;
+                }
+            }
+            if (totalCapacity >= guests) {
+                if (count < bestCount || (count == bestCount && totalCapacity < bestTotalCapacity)) {
+                    bestCombination = combination;
+                    bestCount = count;
+                    bestTotalCapacity = totalCapacity;
+                }
+            }
+        }
+        return bestCombination;
+    }
+
+    public static List<RestaurantTable> saveReservation(Reservation reservation, SessionFactory sessionFactory) {
+        List<RestaurantTable> allocatedTables = allocateTablesForReservation(reservation, sessionFactory);
+        if (allocatedTables == null || allocatedTables.isEmpty()) {
+            return null;
+        }
+
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
-            RestaurantTable allocatedTable = allocateTableForReservation(reservation, sessionFactory);
-            if (allocatedTable == null) {
-                tx.rollback();
-                return false;
-            }
-            reservation.setTable(allocatedTable);
 
-            LocalDateTime requestedDateTime = LocalDateTime.of(reservation.getDate(), reservation.getTime());
+            LocalDateTime reqDateTime = LocalDateTime.of(reservation.getDate(), reservation.getTime());
             LocalDateTime now = LocalDateTime.now();
-            if (!requestedDateTime.isAfter(now)) {
-                allocatedTable.setReserved(true);
-                session.update(allocatedTable);
-            } else {
-                long delayMillis = Duration.between(now, requestedDateTime).toMillis();
-                ReservationScheduler.scheduleReservationActivation(allocatedTable.getId(), delayMillis, sessionFactory);
+            for (RestaurantTable table : allocatedTables) {
+                if (!reqDateTime.isAfter(now)) {
+                    table.setReserved(true);
+                    session.update(table);
+                } else {
+                    long delayMillis = Duration.between(now, reqDateTime).toMillis();
+                    ReservationScheduler.scheduleReservationActivation(table.getId(), delayMillis, sessionFactory);
+                }
             }
+
+            reservation.setTable(allocatedTables.get(0));
             session.save(reservation);
             tx.commit();
-            success = true;
+            return allocatedTables;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return success;
     }
 
     public static String computeAlternativeTimes(Reservation reservation) {

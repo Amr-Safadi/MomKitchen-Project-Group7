@@ -23,7 +23,6 @@ public class TableHandler {
                 session.update(table);
                 transaction.commit();
                 System.out.println("Table " + table.getTableNumber() + " reserved successfully.");
-                // Schedule auto-release after 90 minutes.
                 scheduleAutoRelease(table.getId(), sessionFactory);
             } else {
                 System.out.println("Table not available or not found.");

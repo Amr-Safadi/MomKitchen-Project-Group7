@@ -177,12 +177,14 @@ public class SimpleServer extends AbstractServer {
 				break;
 			case "#ReservationRequest":
 				Reservation reservationRequest = (Reservation) message.getObject();
-				boolean saved = ReservationHandler.saveReservation(reservationRequest, sessionFactory);
-				if (saved) {
+				List<RestaurantTable> allocatedTables = ReservationHandler.saveReservation(reservationRequest, sessionFactory);
+				if (allocatedTables != null && !allocatedTables.isEmpty()) {
+					for (RestaurantTable table : allocatedTables) {
+						sendToAllClients(new Message(table, "#TableReservedSuccess"));
+					}
 					try {
-						sendToAllClients(new Message(reservationRequest.getTable(), "#TableReservedSuccess"));
 						client.sendToClient(new Message(reservationRequest, "#ReservationSuccess"));
-					} catch (IOException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				} else {
