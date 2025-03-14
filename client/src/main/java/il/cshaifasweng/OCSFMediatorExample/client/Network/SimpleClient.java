@@ -1,10 +1,13 @@
 package il.cshaifasweng.OCSFMediatorExample.client.Network;
 
+import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
+
+import java.io.IOException;
 
 public class SimpleClient extends AbstractClient {
 	
@@ -26,7 +29,8 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
-			case "#UserValidated", "#ValidationFailed", "OrderCanceled":
+			case "#MealAddedSuccessfully", "#UserValidated", "#ValidationFailed", "OrderCanceled",
+                 "#MealAdditionFailed":
 				EventBus.getDefault().post(message);
 				break;
             case "#OrderPlacedSuccessfully":
@@ -88,13 +92,6 @@ public class SimpleClient extends AbstractClient {
 				System.out.println("✅ Received resolved complaints from server.");
 				EventBus.getDefault().post(message);
 				break;
-
-
-
-
-
-
-
 			case "#BranchFetched":
 				System.out.println("Received branch fetched message");
 				EventBus.getDefault().post(message);

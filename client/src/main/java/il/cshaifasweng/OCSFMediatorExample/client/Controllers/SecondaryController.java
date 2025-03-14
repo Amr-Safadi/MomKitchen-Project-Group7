@@ -4,10 +4,12 @@ import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,6 +41,9 @@ public class SecondaryController {
 
     @FXML
     private AnchorPane pane;
+
+    @FXML
+    private Button addMealBtn;
 
     @FXML
     private Button backBtn;
@@ -74,7 +79,7 @@ public class SecondaryController {
                 System.out.println("Initializing meals for branch: " + SecondaryService.getBranch());
                 ArrayList<Meals> receivedMeals = (ArrayList<Meals>) msg.getObject();
                 ArrayList<Meals> generalMeals = new ArrayList<>();
-                ArrayList<Meals> specialMeals = new ArrayList<>() ;
+                ArrayList<Meals> specialMeals = new ArrayList<>();
 
                 for (Meals meal : receivedMeals) {
                     if (meal.getisBranchMeal() == false)
@@ -94,9 +99,26 @@ public class SecondaryController {
                 }
                 SecondaryService.setMealsList(receivedMeals);
             });
+            User loggedInUser = UserSession.getUser();
+            if (loggedInUser != null) {
+                if (
+                        loggedInUser.getRole() == User.Role.DIETITIAN ||
+                                loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
+                                loggedInUser.getRole() == User.Role.GENERAL_MANAGER) {
+                    addMealBtn.setVisible(true);
+                } else {
+                    addMealBtn.setVisible(false);
+                }
+            } else {
+                addMealBtn.setVisible(false);
+            }
         }
     }
 
+    @FXML
+    public void handleAddMeal(ActionEvent event) {
+        ScreenManager.switchScreen("AddMeal");
+    }
     @FXML
     public void handleSearchBtn(ActionEvent event) {
         ScreenManager.switchScreen("categories");
@@ -184,6 +206,15 @@ public class SecondaryController {
         System.out.println("Cart cleared after navigating back from the branch.");
     }
 
+    public void  init()
+    {
+
+        try {
+            client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @FXML
     void initialize() {
         if (!EventBus.getDefault().isRegistered(this)) {
@@ -196,11 +227,7 @@ public class SecondaryController {
             e.printStackTrace();
         }
 
-        try {
-            client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        init();
 
         mealsLabel.setText( mealsLabel.getText() + SecondaryService.getBranch());
         specialLabel.setText(SecondaryService.getBranch() + "'s specials");

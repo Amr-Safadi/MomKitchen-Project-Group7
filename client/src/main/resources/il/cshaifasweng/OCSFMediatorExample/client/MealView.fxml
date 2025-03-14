@@ -133,7 +133,7 @@
                   <Font name="Bauhaus 93" size="15.0" />
                </font>
             </Button>
-            <Button fx:id="specialMealBtn" mnemonicParsing="false" onAction="#specialMealBtnHandler" prefHeight="25.0" prefWidth="153.0" text="move to special/general" />
+            <Button fx:id="toggleMealTypeBtn" mnemonicParsing="false" onAction="#handleToggleMealType" prefHeight="25.0" prefWidth="153.0" text="Change Meal Type" />
                   <Button fx:id="btnDone" onAction="#btnDoneHandler" prefHeight="30.0" prefWidth="99.0" style="-fx-background-color: #69b588; -fx-text-fill: white; -fx-background-radius: 10;" text="Save" textFill="WHITE" visible="false">
                <font>
                   <Font name="Bauhaus 93" size="15.0" />

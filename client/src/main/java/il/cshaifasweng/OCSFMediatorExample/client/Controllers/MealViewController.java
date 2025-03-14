@@ -2,10 +2,12 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.client.util.UIUtil;
+import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
@@ -24,7 +26,7 @@ public class MealViewController {
     private boolean movedMeal = false;
 
     @FXML
-    private Button cartBtn, addToCartBtn, btnEdit, btnDone, btnBack, specialMealBtn;
+    private Button cartBtn, addToCartBtn, btnEdit, btnDone, btnBack, toggleMealTypeBtn;
     @FXML
     private GridPane gridMeal;
     @FXML
@@ -46,10 +48,10 @@ public class MealViewController {
                     loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
                     loggedInUser.getRole() == User.Role.GENERAL_MANAGER;
             btnEdit.setVisible(isEditable);
-            specialMealBtn.setVisible(false);
+            toggleMealTypeBtn.setVisible(false);
         } else {
             btnEdit.setVisible(false);
-            specialMealBtn.setVisible(false);
+            toggleMealTypeBtn.setVisible(false);
         }
 
         Image bgImage = new Image(getClass().getResource("/images/NEWBACKGRND.jpg").toExternalForm());
@@ -89,13 +91,33 @@ public class MealViewController {
        // txtPrdctPrf.setEditable(true);
         txtPrdctIng.setEditable(true);
         btnDone.setVisible(true);
-        specialMealBtn.setVisible(true);
+        toggleMealTypeBtn.setVisible(true);
+    }
+    @FXML
+    void handleToggleMealType() {
+        if (meal == null) {
+            showErrorAlert("Error", "No meal selected.");
+            return;
+        }
+
+        // If it's becoming a Branch Meal, we need the branch ID
+        Integer branchId = null;
+        if (!meal.getisBranchMeal()) {
+            branchId = SecondaryService.getBranchObj().getId();
+        }
+
+        // Create a request object (or just send an array with both values)
+        Message request = new Message(new Object[]{meal.getId(), branchId}, "#ToggleMealType");
+
+        try {
+            client.sendToServer(request);
+        } catch (IOException e) {
+            showErrorAlert("Error", "Failed to send meal update request.");
+        }
     }
 
-    @FXML
-    private void specialMealBtnHandler(ActionEvent event) {
-        movedMeal = true;
-    }
+
+
 
     @FXML
     public void btnDoneHandler(ActionEvent event) {
@@ -131,11 +153,6 @@ public class MealViewController {
 
         // Update the meal's preferences
         meal.setPreferences(updatedPreferences.toString());
-        //if(movedMeal == true){
-          //  meal.setBranchMeal(!(meal.getisBranchMeal()));
-            //movedMeal = false;
-        //}
-
         // Send updated meal to server
         try {
             System.out.println("send to the server the meal" + meal.getName() + "with the isbranch = " + meal.getisBranchMeal());
