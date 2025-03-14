@@ -2,69 +2,79 @@ package il.cshaifasweng.OCSFMediatorExample.handlers;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
+import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 public class ReservationHandler {
-    public static void handleReservation(Reservation reservationRequest,
-                                         org.hibernate.SessionFactory sessionFactory) {
-    }
 
-    public static boolean checkAvailability(Reservation reservation, SessionFactory sessionFactory) {
-        Branch branch = reservation.getBranch();
-        if (branch == null) {
-            System.out.println("Branch is null in reservation.");
-            return false;
-        }
-        LocalTime branchOpen = branch.getOpenHour();
-        LocalTime branchClose = branch.getCloseHour();
-        LocalTime startAllowed = branchOpen.plusMinutes(15);
-        LocalTime endAllowed = branchClose.minusMinutes(60);
-        LocalTime requested = reservation.getTime();
-        boolean withinRange = !requested.isBefore(startAllowed) && !requested.isAfter(endAllowed);
-        boolean isSlotFree = true;
+    public static RestaurantTable allocateTableForReservation(Reservation reservation, SessionFactory sessionFactory) {
+        RestaurantTable allocatedTable = null;
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
-            List<Reservation> reservations = session.createQuery(
-                            "FROM Reservation r WHERE r.branch.id = :branchId AND r.date = :date AND r.time = :time", Reservation.class)
+            Branch branch = reservation.getBranch();
+            List<RestaurantTable> candidateTables = session.createQuery(
+                            "FROM RestaurantTable t WHERE t.branch.id = :branchId AND t.capacity >= :guestCount ORDER BY t.capacity ASC",
+                            RestaurantTable.class)
                     .setParameter("branchId", branch.getId())
-                    .setParameter("date", reservation.getDate())
-                    .setParameter("time", requested)
+                    .setParameter("guestCount", reservation.getGuests())
                     .getResultList();
-            tx.commit();
-            if (reservations != null && !reservations.isEmpty()) {
-                isSlotFree = false;
+
+            LocalTime reqStart = reservation.getTime();
+            LocalTime reqEnd = reqStart.plusMinutes(90);
+
+            for (RestaurantTable table : candidateTables) {
+                List<Reservation> reservations = session.createQuery(
+                                "FROM Reservation r WHERE r.table.id = :tableId AND r.date = :date", Reservation.class)
+                        .setParameter("tableId", table.getId())
+                        .setParameter("date", reservation.getDate())
+                        .getResultList();
+
+                boolean conflict = false;
+                for (Reservation r : reservations) {
+                    LocalTime existingStart = r.getTime();
+                    LocalTime existingEnd = existingStart.plusMinutes(90);
+                    if (reqStart.isBefore(existingEnd) && existingStart.isBefore(reqEnd)) {
+                        conflict = true;
+                        break;
+                    }
+                }
+                if (!conflict) {
+                    allocatedTable = table;
+                    break;
+                }
             }
+            tx.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return withinRange && isSlotFree;
+        return allocatedTable;
     }
 
-    public static void saveReservation(Reservation reservation, SessionFactory sessionFactory) {
+    public static boolean saveReservation(Reservation reservation, SessionFactory sessionFactory) {
+        boolean success = false;
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
-            if (reservation.getBranch() == null || reservation.getBranch().getId() == 0) {
-                String branchName = reservation.getBranch() != null ? reservation.getBranch().getName() : "defaultBranch";
-                Branch persistentBranch = session.createQuery("FROM Branch WHERE name = :branchName", Branch.class)
-                        .setParameter("branchName", branchName)
-                        .uniqueResult();
-                if (persistentBranch == null) {
-                    throw new RuntimeException("Branch not found: " + branchName);
-                }
-                reservation.setBranch(persistentBranch);
+            RestaurantTable allocatedTable = allocateTableForReservation(reservation, sessionFactory);
+            if (allocatedTable == null) {
+                tx.rollback();
+                return false;
             }
+            reservation.setTable(allocatedTable);
+            allocatedTable.setReserved(true);
+            session.update(allocatedTable);
             session.save(reservation);
             tx.commit();
-            System.out.println("Reservation saved: " + reservation.getId());
+            success = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return success;
     }
 
     public static String computeAlternativeTimes(Reservation reservation) {

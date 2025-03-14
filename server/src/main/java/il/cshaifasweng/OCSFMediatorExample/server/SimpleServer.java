@@ -34,8 +34,8 @@ public class SimpleServer extends AbstractServer {
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-//			 DataInitializer.populateInitialData(session);
-//			 UserHandler.populateUsers(session);
+			 DataInitializer.populateInitialData(session);
+			 UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -177,22 +177,24 @@ public class SimpleServer extends AbstractServer {
 				break;
 			case "#ReservationRequest":
 				Reservation reservationRequest = (Reservation) message.getObject();
-				if (ReservationHandler.checkAvailability(reservationRequest, sessionFactory)) {
-					ReservationHandler.saveReservation(reservationRequest, sessionFactory);
+				boolean saved = ReservationHandler.saveReservation(reservationRequest, sessionFactory);
+				if (saved) {
 					try {
+						sendToAllClients(new Message(reservationRequest.getTable(), "#TableReservedSuccess"));
 						client.sendToClient(new Message(reservationRequest, "#ReservationSuccess"));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				} else {
-					String alternatives = ReservationHandler.computeAlternativeTimes(reservationRequest);
 					try {
+						String alternatives = ReservationHandler.computeAlternativeTimes(reservationRequest);
 						client.sendToClient(new Message(alternatives, "#NoAvailability"));
-					} catch (IOException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 				break;
+
 			case "#ReserveTable":
 				RestaurantTable table = (RestaurantTable) message.getObject();
 				TableHandler.reserveTable(table, sessionFactory);

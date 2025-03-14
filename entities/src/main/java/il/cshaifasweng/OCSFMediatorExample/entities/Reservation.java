@@ -40,6 +40,10 @@ public class Reservation implements Serializable {
     @Column(nullable = false)
     private String creditCard;
 
+    @ManyToOne
+    @JoinColumn(name = "table_id")
+    private RestaurantTable table;
+
     public Reservation() {}
 
     public int getId() { return id; }
@@ -69,4 +73,11 @@ public class Reservation implements Serializable {
 
     public String getCreditCard() { return creditCard; }
     public void setCreditCard(String creditCard) { this.creditCard = creditCard; }
+
+    public RestaurantTable getTable() {
+        return table;
+    }
+    public void setTable(RestaurantTable table) {
+        this.table = table;
+    }
 }
