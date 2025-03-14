@@ -45,6 +45,7 @@
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
       <ListView fx:id="specialsList" layoutX="59.0" layoutY="419.0" onMouseClicked="#handleMenuDoubleClick" prefHeight="167.0" prefWidth="297.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-control-inner-background: transparent;" stylesheets="@listview-style.css" />
+      <Button fx:id="addMealBtn" layoutX="442.0" layoutY="453.0" mnemonicParsing="false" onAction="#handleAddMeal" text="Add  Meal" />
 
    </children>
 </AnchorPane>

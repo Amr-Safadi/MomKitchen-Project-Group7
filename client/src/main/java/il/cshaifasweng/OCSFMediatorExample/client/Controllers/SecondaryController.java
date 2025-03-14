@@ -41,6 +41,9 @@ public class SecondaryController {
     private AnchorPane pane;
 
     @FXML
+    private Button addMealBtn;
+
+    @FXML
     private Button backBtn;
 
     @FXML
@@ -94,9 +97,26 @@ public class SecondaryController {
                 }
                 SecondaryService.setMealsList(receivedMeals);
             });
+            User loggedInUser = UserSession.getUser();
+            if (loggedInUser != null) {
+                if (
+                        loggedInUser.getRole() == User.Role.DIETITIAN ||
+                                loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
+                                loggedInUser.getRole() == User.Role.GENERAL_MANAGER) {
+                    addMealBtn.setVisible(true);
+                } else {
+                    addMealBtn.setVisible(false);
+                }
+            } else {
+                addMealBtn.setVisible(false);
+            }
         }
     }
 
+    @FXML
+    public void handleAddMeal(ActionEvent event) {
+        ScreenManager.switchScreen("AddMeal");
+    }
     @FXML
     public void handleSearchBtn(ActionEvent event) {
         ScreenManager.switchScreen("categories");

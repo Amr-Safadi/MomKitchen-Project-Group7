@@ -35,8 +35,8 @@ public class SimpleServer extends AbstractServer {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			// Uncomment the following lines if you wish to populate initial data and users:
-			//DataInitializer.populateInitialData(session);
-			// UserHandler.populateUsers(session);
+		//	DataInitializer.populateInitialData(session);
+		//	 UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -61,6 +61,27 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
+			case "#AddMeal":
+				Meals newMeal = (Meals) message.getObject();
+				boolean success = MealHandler.addMeal(newMeal, branch, sessionFactory);
+				if (success) {
+                    try {
+						client.sendToClient(new Message("#MealAddedSuccessfully"));
+						sendToAllClients(new Message("#Update All Meals"));
+					} catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("✅ Meal added: " + newMeal.getName() + " to " + branch);
+				} else {
+                    try {
+                        client.sendToClient(new Message("#MealAdditionFailed"));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("❌ Failed to add meal.");
+				}
+				break;
+
 			case "#ToggleMealType":
 				Object[] mealData = (Object[]) message.getObject();
 				int mealId = (int) mealData[0];
@@ -68,8 +89,12 @@ public class SimpleServer extends AbstractServer {
 
 				MealHandler.handleToggleMealType(mealId, branchId, sessionFactory);
 
-				// Send confirmation back to the client
-                    sendToAllClients(new Message("#MealTypeUpdated"));
+				mealsArrayList = MealHandler.getMeals(branch, sessionFactory);
+                try {
+					sendToAllClients(new Message("#Update All Meals"));
+                } catch (Exception e) {
+					System.out.println("Error - simple server - toggle meal type");
+                }
 
                 break;
 

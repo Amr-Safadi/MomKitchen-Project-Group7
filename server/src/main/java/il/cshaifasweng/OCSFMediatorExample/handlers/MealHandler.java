@@ -89,10 +89,6 @@ public class MealHandler {
                 if (updatedMeal.getPrice() != 0) {
                     existingMeal.setPrice(updatedMeal.getPrice());
                 }
-                //if (updatedMeal.getisBranchMeal() != existingMeal.getisBranchMeal()) {
-                    //updateMealPlacement(existingMeal, updatedMeal.getisBranchMeal(), branchName, session);
-               //     existingMeal.setBranchMeal(updatedMeal.getisBranchMeal());
-                //}
                 session.merge(existingMeal);
                 transaction.commit();
                 System.out.println("Meal updated successfully.");
@@ -178,5 +174,43 @@ public class MealHandler {
             session.close();
         }
     }
+    public static boolean addMeal(Meals meal, String branchName, SessionFactory sessionFactory) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
 
+        try {
+            // Save the meal to the database
+            session.save(meal);
+
+            // Find the branch by name
+            List<Branch> branches;
+
+            if (meal.getisBranchMeal()) {
+                // If it's a branch meal, find the specific branch
+                branches = session.createQuery(
+                                "FROM Branch WHERE name = :branchName", Branch.class)
+                        .setParameter("branchName", branchName)
+                        .getResultList();
+            } else {
+                // If it's a network-wide meal, fetch ALL branches
+                branches = session.createQuery("FROM Branch", Branch.class).getResultList();
+            }
+
+            for (Branch branch : branches) {
+                branch.getMeals().add(meal);
+                meal.getBranches().add(branch);
+                session.update(branch);
+            }
+
+            transaction.commit();
+            return true; // Success
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+            return false; // Failure
+        } finally {
+            session.close();
+        }
+    }
 }
+
