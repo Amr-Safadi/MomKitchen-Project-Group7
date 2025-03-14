@@ -4,10 +4,12 @@ import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
+import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -72,12 +74,12 @@ public class SecondaryController {
 
     @Subscribe
     public void onMealsInitialized(Message msg) {
-        if ("#Initialize Meals".equals(msg.toString()) || "#MealTypeUpdated".equals(msg.toString())) {
+        if ("#Initialize Meals".equals(msg.toString())) {
             Platform.runLater(() -> {
                 System.out.println("Initializing meals for branch: " + SecondaryService.getBranch());
                 ArrayList<Meals> receivedMeals = (ArrayList<Meals>) msg.getObject();
                 ArrayList<Meals> generalMeals = new ArrayList<>();
-                ArrayList<Meals> specialMeals = new ArrayList<>() ;
+                ArrayList<Meals> specialMeals = new ArrayList<>();
 
                 for (Meals meal : receivedMeals) {
                     if (meal.getisBranchMeal() == false)
@@ -204,6 +206,15 @@ public class SecondaryController {
         System.out.println("Cart cleared after navigating back from the branch.");
     }
 
+    public void  init()
+    {
+
+        try {
+            client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @FXML
     void initialize() {
         if (!EventBus.getDefault().isRegistered(this)) {
@@ -216,11 +227,7 @@ public class SecondaryController {
             e.printStackTrace();
         }
 
-        try {
-            client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        init();
 
         mealsLabel.setText( mealsLabel.getText() + SecondaryService.getBranch());
         specialLabel.setText(SecondaryService.getBranch() + "'s specials");
