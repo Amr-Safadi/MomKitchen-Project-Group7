@@ -50,6 +50,7 @@
             <children>
                 <Button text="Back" onAction="#handleBack"/>
                 <Button text="Reserve" onAction="#handleReserve"/>
+                <Button text="Cancel Reservation" onAction="#handleCancelReservation"/>
             </children>
         </HBox>
     </children>

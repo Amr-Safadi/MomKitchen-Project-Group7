@@ -93,6 +93,13 @@ public class SimpleClient extends AbstractClient {
 				EventBus.getDefault().post(message);
 				break;
 
+			case "#UserReservations":
+				EventBus.getDefault().post(message);
+				break;
+			case "#CancelReservationSuccess":
+				EventBus.getDefault().post(message);
+				break;
+
 			default:
 				System.out.println("Unknown message received: " + message.toString());
 				break;

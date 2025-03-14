@@ -107,7 +107,6 @@ public class ReservationController {
         }
     }
 
-
     @Subscribe
     public void onReservationResponse(il.cshaifasweng.OCSFMediatorExample.entities.Message message) {
         String msgText = message.toString();
@@ -119,6 +118,11 @@ public class ReservationController {
                 showAlert("No Availability", "No reservation available at requested time. Alternatives: " + alternatives);
             }
         });
+    }
+
+    @FXML
+    public void handleCancelReservation(ActionEvent event) {
+        ScreenManager.switchScreen("CancelReservationSearch");
     }
 
     @FXML

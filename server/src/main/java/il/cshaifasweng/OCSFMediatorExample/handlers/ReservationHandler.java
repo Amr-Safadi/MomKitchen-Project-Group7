@@ -16,6 +16,40 @@ import java.util.ArrayList;
 
 public class ReservationHandler {
 
+    public static List<Reservation> getReservationsByUser(String fullName, String phone, SessionFactory sessionFactory) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Reservation r WHERE r.fullName = :fullName AND r.phone = :phone", Reservation.class)
+                    .setParameter("fullName", fullName)
+                    .setParameter("phone", phone)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static boolean cancelReservation(Reservation reservation, SessionFactory sessionFactory) {
+        boolean feeApplied = false;
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+            Reservation res = session.get(Reservation.class, reservation.getId());
+            if (res != null) {
+                LocalDateTime reservationDateTime = LocalDateTime.of(res.getDate(), res.getTime());
+                if (!LocalDateTime.now().isAfter(reservationDateTime)) {
+                    long minutesUntilReservation = java.time.Duration.between(LocalDateTime.now(), reservationDateTime).toMinutes();
+                    if (minutesUntilReservation <= 60) {
+                        feeApplied = true;
+                    }
+                }
+                session.delete(res);
+                tx.commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return feeApplied;
+    }
 
     public static List<RestaurantTable> allocateTablesForReservation(Reservation reservation, SessionFactory sessionFactory) {
         List<RestaurantTable> availableTables = new ArrayList<>();

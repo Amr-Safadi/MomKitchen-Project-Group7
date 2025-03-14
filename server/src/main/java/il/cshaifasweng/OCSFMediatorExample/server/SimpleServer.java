@@ -9,7 +9,6 @@ import il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,12 +29,12 @@ public class SimpleServer extends AbstractServer {
 
 	public SimpleServer(int port) {
 		super(port);
-		instance = this; // set instance for global access
+		instance = this;
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			DataInitializer.populateInitialData(session);
-			UserHandler.populateUsers(session);
+//			DataInitializer.populateInitialData(session);
+//			UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -207,6 +206,29 @@ public class SimpleServer extends AbstractServer {
 				RestaurantTable tableToCancel = (RestaurantTable) message.getObject();
 				TableHandler.cancelTableReservation(tableToCancel, sessionFactory);
 				sendToAllClients(new Message(tableToCancel, "#TableReservationCanceledSuccess"));
+				break;
+
+			case "#FetchReservations":
+				String[] details = (String[]) message.getObject();
+				String fullName = details[0];
+				String phone = details[1];
+				List<Reservation> userReservations = ReservationHandler.getReservationsByUser(fullName, phone, sessionFactory);
+				try {
+					client.sendToClient(new Message(userReservations, "#UserReservations"));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
+			case "#CancelReservation":
+				Reservation reservationToCancel = (Reservation) message.getObject();
+				boolean feeApplied = ReservationHandler.cancelReservation(reservationToCancel, sessionFactory);
+				String responseDetail = feeApplied ? "CancellationSuccessWithFee" : "CancellationSuccess";
+				try {
+					client.sendToClient(new Message(responseDetail, "#CancelReservationSuccess"));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				break;
 
 			case "#Update Complaint":

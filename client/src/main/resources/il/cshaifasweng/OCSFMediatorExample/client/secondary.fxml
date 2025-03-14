@@ -23,7 +23,7 @@
             <Font name="Bauhaus 93" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="reservationBtn" layoutX="270.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleReservation" style="-fx-background-color: #8ad4a8;" text="Make Reservation" textFill="WHITE">
+      <Button fx:id="reservationBtn" layoutX="270.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleReservation" style="-fx-background-color: #8ad4a8;" text="Make / Cancel Reservation" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="14.0" />
          </font>
