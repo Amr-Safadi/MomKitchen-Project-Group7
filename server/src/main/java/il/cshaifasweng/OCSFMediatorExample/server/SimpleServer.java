@@ -34,8 +34,8 @@ public class SimpleServer extends AbstractServer {
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			 DataInitializer.populateInitialData(session);
-			 UserHandler.populateUsers(session);
+			DataInitializer.populateInitialData(session);
+			UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -198,14 +198,14 @@ public class SimpleServer extends AbstractServer {
 			case "#ReserveTable":
 				RestaurantTable table = (RestaurantTable) message.getObject();
 				TableHandler.reserveTable(table, sessionFactory);
-                sendToAllClients(new Message(table, "#TableReservedSuccess"));
-                break;
+				sendToAllClients(new Message(table, "#TableReservedSuccess"));
+				break;
 
 			case "#CancelTableReservation":
 				RestaurantTable tableToCancel = (RestaurantTable) message.getObject();
 				TableHandler.cancelTableReservation(tableToCancel, sessionFactory);
-                sendToAllClients(new Message(tableToCancel, "#TableReservationCanceledSuccess"));
-                break;
+				sendToAllClients(new Message(tableToCancel, "#TableReservationCanceledSuccess"));
+				break;
 
 			case "#Update Complaint":
 				System.out.println("Storing complaint");
