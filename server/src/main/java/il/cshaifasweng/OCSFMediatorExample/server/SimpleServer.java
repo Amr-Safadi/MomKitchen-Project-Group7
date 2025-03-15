@@ -35,8 +35,8 @@ public class SimpleServer extends AbstractServer {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			// Uncomment the following lines if you wish to populate initial data and users:
-		//	DataInitializer.populateInitialData(session);
-		//	 UserHandler.populateUsers(session);
+			DataInitializer.populateInitialData(session);
+			 UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -61,9 +61,29 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
+			case "#DeleteMeal":
+				Meals mealToDelete = (Meals) message.getObject();
+				boolean success = MealHandler.deleteMeal(mealToDelete, sessionFactory);
+
+				if (success) {
+					try {
+						client.sendToClient(new Message("#MealDeleted"));
+						sendToAllClients(new Message("#Update All Meals"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					try {
+						client.sendToClient(new Message("#MealDeletionFailed"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
+
 			case "#AddMeal":
 				Meals newMeal = (Meals) message.getObject();
-				boolean success = MealHandler.addMeal(newMeal, branch, sessionFactory);
+				 success = MealHandler.addMeal(newMeal, branch, sessionFactory);
 				if (success) {
                     try {
 						client.sendToClient(new Message("#MealAddedSuccessfully"));

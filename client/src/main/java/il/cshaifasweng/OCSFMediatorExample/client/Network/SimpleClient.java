@@ -30,7 +30,7 @@ public class SimpleClient extends AbstractClient {
 
 		switch (message.toString()) {
 			case "#MealAddedSuccessfully", "#UserValidated", "#ValidationFailed", "OrderCanceled",
-                 "#MealAdditionFailed":
+                 "#MealAdditionFailed" ,"#MealDeleted", "#MealDeletionFailed":
 				EventBus.getDefault().post(message);
 				break;
             case "#OrderPlacedSuccessfully":

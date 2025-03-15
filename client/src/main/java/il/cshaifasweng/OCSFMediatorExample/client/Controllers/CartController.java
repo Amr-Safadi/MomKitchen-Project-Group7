@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 
 public class CartController {
 
@@ -75,6 +76,55 @@ public class CartController {
 
     @FXML
     void checkOutHandler(ActionEvent event) {
-        ScreenManager.switchScreen("check out");
+        // Create the selection dialog
+        Dialog<String[]> dialog = new Dialog<>();
+        dialog.setTitle("Order Preferences");
+        dialog.setHeaderText("Select your order type and payment method");
+
+        // Buttons for Delivery or Pickup
+        ToggleGroup deliveryGroup = new ToggleGroup();
+        RadioButton deliveryOption = new RadioButton("Delivery");
+        deliveryOption.setToggleGroup(deliveryGroup);
+        deliveryOption.setSelected(true); // Default
+
+        RadioButton pickupOption = new RadioButton("Pickup");
+        pickupOption.setToggleGroup(deliveryGroup);
+
+        // Buttons for Cash or Card Payment
+        ToggleGroup paymentGroup = new ToggleGroup();
+        RadioButton cashOption = new RadioButton("Cash");
+        cashOption.setToggleGroup(paymentGroup);
+        cashOption.setSelected(true); // Default
+
+        RadioButton cardOption = new RadioButton("Card");
+        cardOption.setToggleGroup(paymentGroup);
+
+        // Layout for options
+        VBox optionsBox = new VBox(10,
+                new Label("Order Type:"), deliveryOption, pickupOption,
+                new Label("Payment Method:"), cashOption, cardOption);
+        dialog.getDialogPane().setContent(optionsBox);
+
+        // Add OK & Cancel buttons
+        ButtonType confirmButton = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmButton, ButtonType.CANCEL);
+
+        // Handle result
+        dialog.setResultConverter(button -> {
+            if (button == confirmButton) {
+                String orderType = deliveryOption.isSelected() ? "Delivery" : "Pickup";
+                String paymentMethod = cashOption.isSelected() ? "Cash" : "Card";
+                return new String[]{orderType, paymentMethod};
+            }
+            return null;
+        });
+
+        // Show the dialog and process the response
+        dialog.showAndWait().ifPresent(result -> {
+            // Pass order type and payment method to checkout screen
+            CheckOutController.setOrderPreferences(result[0], result[1]);
+            ScreenManager.switchScreen("check out");
+        });
     }
+
 }

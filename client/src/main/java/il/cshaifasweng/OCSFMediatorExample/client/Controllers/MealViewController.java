@@ -11,11 +11,14 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 
@@ -25,6 +28,7 @@ public class MealViewController {
     private Meals meal = new Meals();
     private boolean movedMeal = false;
 
+    @FXML private Button deleteMealBtn;
     @FXML
     private Button cartBtn, addToCartBtn, btnEdit, btnDone, btnBack, toggleMealTypeBtn;
     @FXML
@@ -41,6 +45,11 @@ public class MealViewController {
 
     @FXML
     void initialize() {
+        EventBus.getDefault().register(this);
+
+        toggleMealTypeBtn.setVisible(false);
+        deleteMealBtn.setVisible(false);
+
         User loggedInUser = UserSession.getUser();
         boolean isEditable = false;
         if (loggedInUser != null) {
@@ -48,10 +57,6 @@ public class MealViewController {
                     loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
                     loggedInUser.getRole() == User.Role.GENERAL_MANAGER;
             btnEdit.setVisible(isEditable);
-            toggleMealTypeBtn.setVisible(false);
-        } else {
-            btnEdit.setVisible(false);
-            toggleMealTypeBtn.setVisible(false);
         }
 
         Image bgImage = new Image(getClass().getResource("/images/NEWBACKGRND.jpg").toExternalForm());
@@ -67,7 +72,76 @@ public class MealViewController {
         UIUtil.styleTextField(txtPrdctName);
         UIUtil.styleTextField(txtPrdctPrice);
         UIUtil.styleTextField(txtPrdctIng);
-        // UIUtil.styleTextField(txtPrdctPrf);
+
+    }
+
+    /*
+    @Subscribe
+    public void onUpdateMeal(Message message) {
+        Platform.runLater(() -> {
+            if (message.toString().equals("#Update All Meals")) {
+                System.out.println("lol");
+                Meals updatedMeal = findUpdatedMeal(meal.getId());
+
+                if (updatedMeal != null) {
+                    setMeal(updatedMeal); // Refresh UI with updated meal details
+                    showConfirmationAlert("Meal Updated", "The meal details have been refreshed.");
+                } else {
+                    showErrorAlert("Error", "Failed to find updated meal details.");
+                }
+            }
+        });
+    }
+
+    private Meals findUpdatedMeal(int mealId) {
+        for (Meals m : SecondaryService.getMealsList()) {
+            if (m.getId() == mealId) {
+                return m;
+            }
+        }
+        return null; // If not found, return null
+    }
+*/
+
+    @FXML
+    void handleDeleteMeal() {
+        if (meal == null) {
+            showErrorAlert("Error", "Please select a meal to delete.");
+            return;
+        }
+
+        // Show confirmation alert
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Delete Meal");
+        confirmation.setHeaderText("Are you sure you want to delete this meal?");
+        confirmation.setContentText("Meal: " + meal.getName());
+
+
+        // If user confirms deletion
+        confirmation.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    SimpleClient.getClient().sendToServer(new Message(meal, "#DeleteMeal"));
+                } catch (IOException e) {
+                    showErrorAlert("Error", "Failed to send delete request.");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Subscribe
+    public void onMealDeletionResponse(Message message) {
+        Platform.runLater(() -> {
+            if (message.toString().equals("#MealDeleted")) {
+                showConfirmationAlert("Success", "Meal has been successfully deleted.");
+                ScreenManager.switchScreen("Menu List"); // Go back to menu after deletion
+            }
+            if (message.toString().equals("#MealDeletionFailed"))
+            {
+                showErrorAlert("Error", "Failed to delete the meal.");
+            }
+        });
     }
 
     private void updateMealBackground() {
@@ -88,10 +162,10 @@ public class MealViewController {
     public void btnEditHandler(ActionEvent event) {
         txtPrdctPrice.setEditable(true);
         txtPrdctName.setEditable(true);
-       // txtPrdctPrf.setEditable(true);
         txtPrdctIng.setEditable(true);
         btnDone.setVisible(true);
         toggleMealTypeBtn.setVisible(true);
+        deleteMealBtn.setVisible(true);
     }
     @FXML
     void handleToggleMealType() {
@@ -111,6 +185,14 @@ public class MealViewController {
 
         try {
             client.sendToServer(request);
+
+            if (meal.getisBranchMeal())
+            {
+                showConfirmationAlert("Meal Type Change" , meal.getName() + " type has been changed to a Network Meal");
+            }
+            else {
+                showConfirmationAlert("Meal Type Change", meal.getName() +" type has been changed to a Branch Meal");
+            }
         } catch (IOException e) {
             showErrorAlert("Error", "Failed to send meal update request.");
         }
@@ -229,6 +311,13 @@ public class MealViewController {
 
     private void showErrorAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+    private void showConfirmationAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);

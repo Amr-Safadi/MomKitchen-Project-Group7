@@ -212,5 +212,35 @@ public class MealHandler {
             session.close();
         }
     }
+    public static boolean deleteMeal(Meals meal, SessionFactory sessionFactory) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+
+            // Fetch meal from DB
+            Meals mealFromDB = session.get(Meals.class, meal.getId());
+            if (mealFromDB != null) {
+
+                // ✅ Remove meal from all branches first
+                for (Branch branch : mealFromDB.getBranches()) {
+                    branch.getMeals().remove(mealFromDB);
+                    session.update(branch); // Update each branch
+                }
+
+                // ✅ Remove all associations from branch_meal table
+                mealFromDB.getBranches().clear();
+                session.update(mealFromDB);
+
+                // ✅ Delete meal after associations are removed
+                session.delete(mealFromDB);
+                tx.commit();
+                System.out.println("✅ Meal deleted successfully: " + meal.getName());
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
 

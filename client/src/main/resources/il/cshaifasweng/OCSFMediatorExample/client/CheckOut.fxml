@@ -31,7 +31,6 @@
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -39,16 +38,14 @@
          <children>
             <Label contentDisplay="CENTER" prefHeight="17.0" prefWidth="248.0" text="Name:" />
             <Label contentDisplay="CENTER" prefHeight="17.0" prefWidth="235.0" text="Address:" GridPane.rowIndex="1" />
-            <Label contentDisplay="CENTER" prefHeight="17.0" prefWidth="233.0" text="ID:" GridPane.rowIndex="2" />
-            <Label contentDisplay="CENTER" prefHeight="17.0" prefWidth="137.0" text="Mail:" GridPane.rowIndex="3" />
-            <Label contentDisplay="CENTER" prefHeight="17.0" prefWidth="139.0" text="Credit-Card number:" GridPane.rowIndex="4" />
+            <Label contentDisplay="CENTER" prefHeight="17.0" prefWidth="137.0" text="Mail:" GridPane.rowIndex="2" />
             <TextField fx:id="nameTxt" GridPane.columnIndex="1" />
             <TextField fx:id="addressTxt" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="idTxt" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="mailTxt" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="mailTxt" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="cardTxt" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <TextField fx:id="phoneTxt" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Label prefHeight="17.0" prefWidth="117.0" text="Phone number:" GridPane.rowIndex="5" />
+            <Label prefHeight="17.0" prefWidth="117.0" text="Phone number:" GridPane.rowIndex="3" />
+            <Label contentDisplay="CENTER" prefHeight="17.0" prefWidth="139.0" text="Credit-Card number:" GridPane.rowIndex="4" />
+            <TextField fx:id="phoneTxt" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
       <Button fx:id="backBtn" layoutX="57.0" layoutY="34.0" mnemonicParsing="false" onMouseClicked="#backHandler" text="Back" />

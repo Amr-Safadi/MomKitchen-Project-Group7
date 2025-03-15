@@ -13,7 +13,7 @@ public class OrderHandler {
         try {
             transaction = session.beginTransaction();
 
-            order.printOrder(); // Debugging: Print the order details
+           // order.printOrder(); // Debugging: Print the order details
             session.save(order); // Save the order (DO NOT use saveOrUpdate)
             transaction.commit(); // Commit the transaction
 

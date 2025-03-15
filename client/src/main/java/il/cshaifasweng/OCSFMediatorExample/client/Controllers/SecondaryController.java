@@ -188,6 +188,7 @@ public class SecondaryController {
             try {
                 System.out.println("Re-fetching meals for branch: " + SecondaryService.getBranch());
                 client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
