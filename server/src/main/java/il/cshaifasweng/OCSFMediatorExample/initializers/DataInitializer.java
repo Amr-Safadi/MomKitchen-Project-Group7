@@ -22,10 +22,11 @@ public class DataInitializer {
 
             int tableNumber = 1;
             for (int i = 0; i < 5; i++) {
-                RestaurantTable t1 = new RestaurantTable(tableNumber++, 2, branch1);
-                RestaurantTable t2 = new RestaurantTable(tableNumber++, 2, branch2);
-                RestaurantTable t3 = new RestaurantTable(tableNumber++, 2, branch3);
-                RestaurantTable t4 = new RestaurantTable(tableNumber++, 2, branch4);
+                String seating = (i % 2 == 0) ? "Indoor" : "Outdoor";
+                RestaurantTable t1 = new RestaurantTable(tableNumber++, 2, branch1, seating);
+                RestaurantTable t2 = new RestaurantTable(tableNumber++, 2, branch2, seating);
+                RestaurantTable t3 = new RestaurantTable(tableNumber++, 2, branch3, seating);
+                RestaurantTable t4 = new RestaurantTable(tableNumber++, 2, branch4, seating);
                 branch1.getTables().add(t1);
                 branch2.getTables().add(t2);
                 branch3.getTables().add(t3);
@@ -36,10 +37,11 @@ public class DataInitializer {
                 session.saveOrUpdate(t4);
             }
             for (int i = 0; i < 3; i++) {
-                RestaurantTable t1 = new RestaurantTable(tableNumber++, 3, branch1);
-                RestaurantTable t2 = new RestaurantTable(tableNumber++, 3, branch2);
-                RestaurantTable t3 = new RestaurantTable(tableNumber++, 3, branch3);
-                RestaurantTable t4 = new RestaurantTable(tableNumber++, 3, branch4);
+                String seating = (i % 2 == 0) ? "Indoor" : "Outdoor";
+                RestaurantTable t1 = new RestaurantTable(tableNumber++, 3, branch1, seating);
+                RestaurantTable t2 = new RestaurantTable(tableNumber++, 3, branch2, seating);
+                RestaurantTable t3 = new RestaurantTable(tableNumber++, 3, branch3, seating);
+                RestaurantTable t4 = new RestaurantTable(tableNumber++, 3, branch4, seating);
                 branch1.getTables().add(t1);
                 branch2.getTables().add(t2);
                 branch3.getTables().add(t3);
@@ -50,10 +52,11 @@ public class DataInitializer {
                 session.saveOrUpdate(t4);
             }
             for (int i = 0; i < 2; i++) {
-                RestaurantTable t1 = new RestaurantTable(tableNumber++, 4, branch1);
-                RestaurantTable t2 = new RestaurantTable(tableNumber++, 4, branch2);
-                RestaurantTable t3 = new RestaurantTable(tableNumber++, 4, branch3);
-                RestaurantTable t4 = new RestaurantTable(tableNumber++, 4, branch4);
+                String seating = (i % 2 == 0) ? "Indoor" : "Outdoor";
+                RestaurantTable t1 = new RestaurantTable(tableNumber++, 4, branch1, seating);
+                RestaurantTable t2 = new RestaurantTable(tableNumber++, 4, branch2, seating);
+                RestaurantTable t3 = new RestaurantTable(tableNumber++, 4, branch3, seating);
+                RestaurantTable t4 = new RestaurantTable(tableNumber++, 4, branch4, seating);
                 branch1.getTables().add(t1);
                 branch2.getTables().add(t2);
                 branch3.getTables().add(t3);

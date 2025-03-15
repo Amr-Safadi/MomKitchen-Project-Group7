@@ -19,16 +19,20 @@ public class RestaurantTable implements Serializable {
     @Column(nullable = false)
     private boolean reserved = false;
 
+    @Column(nullable = false)
+    private String seatingArea;
+
     @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
     public RestaurantTable() {}
 
-    public RestaurantTable(int tableNumber, int capacity, Branch branch) {
+    public RestaurantTable(int tableNumber, int capacity, Branch branch, String seatingArea) {
         this.tableNumber = tableNumber;
         this.capacity = capacity;
         this.branch = branch;
+        this.seatingArea = seatingArea;
     }
 
     public int getId() {
@@ -49,6 +53,14 @@ public class RestaurantTable implements Serializable {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public String getSeatingArea() {
+        return seatingArea;
+    }
+
+    public void setSeatingArea(String seatingArea) {
+        this.seatingArea = seatingArea;
     }
 
     public boolean isReserved() {

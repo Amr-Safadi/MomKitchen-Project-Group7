@@ -9,8 +9,6 @@ import org.hibernate.Transaction;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -36,7 +34,7 @@ public class ReservationHandler {
             if (res != null) {
                 LocalDateTime reservationDateTime = LocalDateTime.of(res.getDate(), res.getTime());
                 if (!LocalDateTime.now().isAfter(reservationDateTime)) {
-                    long minutesUntilReservation = java.time.Duration.between(LocalDateTime.now(), reservationDateTime).toMinutes();
+                    long minutesUntilReservation = Duration.between(LocalDateTime.now(), reservationDateTime).toMinutes();
                     if (minutesUntilReservation <= 60) {
                         feeApplied = true;
                     }
@@ -52,8 +50,10 @@ public class ReservationHandler {
     }
 
     public static List<RestaurantTable> allocateTablesForReservation(Reservation reservation, SessionFactory sessionFactory) {
-        List<RestaurantTable> availableTables = new ArrayList<>();
+        List<RestaurantTable> matchingTables = new ArrayList<>();
+        List<RestaurantTable> otherTables = new ArrayList<>();
         Branch branch = reservation.getBranch();
+        String requestedSeating = reservation.getSeatingArea();
 
         try (Session session = sessionFactory.openSession()) {
             List<RestaurantTable> allTables = session.createQuery(
@@ -79,7 +79,11 @@ public class ReservationHandler {
                     }
                 }
                 if (!conflict) {
-                    availableTables.add(table);
+                    if (table.getSeatingArea().equalsIgnoreCase(requestedSeating)) {
+                        matchingTables.add(table);
+                    } else {
+                        otherTables.add(table);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -87,29 +91,14 @@ public class ReservationHandler {
             return null;
         }
 
-        if (availableTables.isEmpty()) {
-            return null;
+        List<RestaurantTable> allocated = findTableCombination(matchingTables, reservation.getGuests());
+        if (allocated == null) {
+            List<RestaurantTable> combined = new ArrayList<>();
+            combined.addAll(matchingTables);
+            combined.addAll(otherTables);
+            allocated = findTableCombination(combined, reservation.getGuests());
         }
-
-        int guestCount = reservation.getGuests();
-        int maxCapacity = availableTables.stream().mapToInt(RestaurantTable::getCapacity).max().orElse(0);
-
-        if (guestCount > maxCapacity) {
-            return findTableCombination(availableTables, guestCount);
-        } else {
-            RestaurantTable bestSingle = availableTables.stream()
-                    .filter(t -> t.getCapacity() >= guestCount)
-                    .min(Comparator.comparingInt(RestaurantTable::getCapacity))
-                    .orElse(null);
-
-            List<RestaurantTable> merged = findTableCombination(availableTables, guestCount);
-
-            if (merged != null && merged.size() > 1) {
-                return merged;
-            } else {
-                return Collections.singletonList(bestSingle);
-            }
-        }
+        return allocated;
     }
 
     private static List<RestaurantTable> findTableCombination(List<RestaurantTable> tables, int guests) {
@@ -171,7 +160,7 @@ public class ReservationHandler {
         }
     }
 
-    public static String computeAlternativeTimes(Reservation reservation) {
+    public static String computeAlternativeTimes(Reservation reservation, SessionFactory sessionFactory) {
         Branch branch = reservation.getBranch();
         if (branch == null) {
             return "Branch not specified";
@@ -185,6 +174,22 @@ public class ReservationHandler {
             alternatives.add(slot.toLocalTime().toString());
             slot = slot.plusMinutes(15);
         }
+
+        String requestedSeating = reservation.getSeatingArea();
+        String oppositeSeating = requestedSeating.equalsIgnoreCase("Indoor") ? "Outdoor" : "Indoor";
+        try (Session session = sessionFactory.openSession()) {
+            List<RestaurantTable> alternativeTables = session.createQuery(
+                            "FROM RestaurantTable t WHERE t.branch.id = :branchId AND t.seatingArea = :seating AND t.reserved = false", RestaurantTable.class)
+                    .setParameter("branchId", branch.getId())
+                    .setParameter("seating", oppositeSeating)
+                    .getResultList();
+            if (!alternativeTables.isEmpty()) {
+                alternatives.add("Alternative " + oppositeSeating + " tables available");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return String.join(", ", alternatives);
     }
 }

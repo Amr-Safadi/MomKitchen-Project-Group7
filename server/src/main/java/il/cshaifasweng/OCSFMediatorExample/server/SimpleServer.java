@@ -33,8 +33,8 @@ public class SimpleServer extends AbstractServer {
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-//			DataInitializer.populateInitialData(session);
-//			UserHandler.populateUsers(session);
+			DataInitializer.populateInitialData(session);
+			UserHandler.populateUsers(session);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			if (session != null && session.getTransaction().isActive()) {
@@ -188,7 +188,7 @@ public class SimpleServer extends AbstractServer {
 					}
 				} else {
 					try {
-						String alternatives = ReservationHandler.computeAlternativeTimes(reservationRequest);
+						String alternatives = ReservationHandler.computeAlternativeTimes(reservationRequest, sessionFactory);
 						client.sendToClient(new Message(alternatives, "#NoAvailability"));
 					} catch (Exception e) {
 						e.printStackTrace();

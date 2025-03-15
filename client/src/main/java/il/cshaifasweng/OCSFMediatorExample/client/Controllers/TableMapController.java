@@ -55,6 +55,7 @@ public class TableMapController {
         box.setStyle("-fx-padding: 10; -fx-border-color: gray; -fx-border-width: 1; -fx-background-color: #f0f0f0;");
 
         Label tableLabel = new Label("Table " + table.getTableNumber() + " (" + table.getCapacity() + " ppl)");
+        Label seatingLabel = new Label("Seating: " + table.getSeatingArea());
         Label statusLabel = new Label(table.isReserved() ? "Reserved" : "Available");
 
         Button toggleBtn = new Button();
@@ -68,13 +69,12 @@ public class TableMapController {
             }
         });
 
-        box.getChildren().addAll(tableLabel, statusLabel, toggleBtn);
+        box.getChildren().addAll(tableLabel, seatingLabel, statusLabel, toggleBtn);
         return box;
     }
 
     private void reserveTable(RestaurantTable table) {
         try {
-            // Immediately update local object and UI
             table.setReserved(true);
             SimpleClient.getClient().sendToServer(new Message(table, "#ReserveTable"));
             System.out.println("ReserveTable message sent for Table " + table.getTableNumber());
@@ -101,7 +101,6 @@ public class TableMapController {
         System.out.println("Received broadcast message: " + msg);
         if (msg.equals("#TableReservedSuccess") || msg.equals("#TableReservationCanceledSuccess")) {
             RestaurantTable updatedTable = (RestaurantTable) message.getObject();
-            // Update the corresponding table in the branch object
             for (RestaurantTable t : SecondaryService.getBranchObj().getTables()) {
                 if (t.getId() == updatedTable.getId()) {
                     t.setReserved(updatedTable.isReserved());
