@@ -1,11 +1,15 @@
 package il.cshaifasweng.OCSFMediatorExample.handlers;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
 import il.cshaifasweng.OCSFMediatorExample.server.SimpleServer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +23,9 @@ public class TableHandler {
             Transaction transaction = session.beginTransaction();
             RestaurantTable table = session.get(RestaurantTable.class, tableToReserve.getId());
             if (table != null && !table.isReserved()) {
+                Reservation reservation = new Reservation(table.getBranch(), LocalDate.now(),
+                        LocalTime.now(), table.getCapacity(), table.getSeatingArea(), "name", "0", "email", "0", table);
+                ReservationHandler.saveReservation(reservation, sessionFactory);
                 table.setReserved(true);
                 session.update(table);
                 transaction.commit();

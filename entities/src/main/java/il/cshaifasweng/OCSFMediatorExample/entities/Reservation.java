@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Reservations")
@@ -40,11 +42,31 @@ public class Reservation implements Serializable {
     @Column(nullable = false)
     private String creditCard;
 
-    @ManyToOne
-    @JoinColumn(name = "table_id")
-    private RestaurantTable table;
+    @ManyToMany
+    @JoinTable(
+            name = "reservation_tables",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "table_id")
+    )
+    private List<RestaurantTable> tables = new ArrayList<>();
 
     public Reservation() {}
+
+    public Reservation(Branch branch, LocalDate date, LocalTime time, int guests, String seatingArea, String fullName, String phone, String email, String creditCard, RestaurantTable table) {
+        this.branch = branch;
+        this.date = date;
+        this.time = time;
+        this.guests = guests;
+        this.seatingArea = seatingArea;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.email = email;
+        this.creditCard = creditCard;
+        this.tables = new ArrayList<>();
+        if (table != null) {
+            this.tables.add(table);
+        }
+    }
 
     public int getId() { return id; }
     public Branch getBranch() { return branch; }
@@ -74,10 +96,11 @@ public class Reservation implements Serializable {
     public String getCreditCard() { return creditCard; }
     public void setCreditCard(String creditCard) { this.creditCard = creditCard; }
 
-    public RestaurantTable getTable() {
-        return table;
+    public List<RestaurantTable> getTables() {
+        return tables;
     }
-    public void setTable(RestaurantTable table) {
-        this.table = table;
+
+    public void setTables(List<RestaurantTable> tables) {
+        this.tables = tables;
     }
 }

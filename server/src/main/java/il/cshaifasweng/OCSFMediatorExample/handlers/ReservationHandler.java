@@ -64,7 +64,7 @@ public class ReservationHandler {
             for (RestaurantTable table : allTables) {
                 boolean conflict = false;
                 List<Reservation> reservations = session.createQuery(
-                                "FROM Reservation r WHERE r.table.id = :tableId AND r.date = :date", Reservation.class)
+                                "SELECT r FROM Reservation r JOIN r.tables t WHERE t.id = :tableId AND r.date = :date", Reservation.class)
                         .setParameter("tableId", table.getId())
                         .setParameter("date", reservation.getDate())
                         .getResultList();
@@ -134,7 +134,7 @@ public class ReservationHandler {
         if (allocatedTables == null || allocatedTables.isEmpty()) {
             return null;
         }
-
+        System.out.println("here");
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
 
@@ -150,7 +150,7 @@ public class ReservationHandler {
                 }
             }
 
-            reservation.setTable(allocatedTables.get(0));
+            reservation.setTables(allocatedTables);
             session.save(reservation);
             tx.commit();
             return allocatedTables;

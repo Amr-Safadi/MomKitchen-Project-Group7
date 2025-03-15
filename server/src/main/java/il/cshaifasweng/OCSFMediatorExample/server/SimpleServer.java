@@ -249,7 +249,6 @@ public class SimpleServer extends AbstractServer {
 						e.printStackTrace();
 					}
 				} else {
-					String alternatives = ReservationHandler.computeAlternativeTimes(reservationRequest);
 					try {
 						String alternatives = ReservationHandler.computeAlternativeTimes(reservationRequest, sessionFactory);
 						client.sendToClient(new Message(alternatives, "#NoAvailability"));
