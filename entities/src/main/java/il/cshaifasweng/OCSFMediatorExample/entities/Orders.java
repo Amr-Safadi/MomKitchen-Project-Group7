@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-
 @Entity
 @Table(name = "orders")
 public class Orders implements Serializable {
@@ -16,19 +15,25 @@ public class Orders implements Serializable {
     @ManyToMany
     private List<Meals> meals;
 
-    private String name;       // Customer Name
-    private String address;    // Delivery Address
+    private String name;
+    private String address;
     private String phoneNumber;
     private String email;
     private String creditCard;
     private double totalPrice;
     private String status; // PENDING, COMPLETED, CANCELED
-    private LocalDateTime orderPlacedTime;  // Automatically filled
+    private LocalDateTime orderPlacedTime;
     private LocalDateTime deliveryTime;
+
+    // New Fields
+    private String orderType;  // "Delivery" or "Pickup"
+    private String paymentMethod; // "Cash" or "Card"
 
     public Orders() {}
 
-    public Orders(List<Meals> meals, String name, String address, String phoneNumber, String email, String creditCard, double totalPrice, LocalDateTime deliveryTime) {
+    public Orders(List<Meals> meals, String name, String address, String phoneNumber,
+                  String email, String creditCard, double totalPrice,
+                  LocalDateTime deliveryTime, String orderType, String paymentMethod) {
         this.meals = meals;
         this.name = name;
         this.address = address;
@@ -37,8 +42,10 @@ public class Orders implements Serializable {
         this.creditCard = creditCard;
         this.totalPrice = totalPrice;
         this.status = "PENDING";
-        this.orderPlacedTime = LocalDateTime.now(); // Automatically set order time
+        this.orderPlacedTime = LocalDateTime.now();
         this.deliveryTime = deliveryTime;
+        this.orderType = orderType;
+        this.paymentMethod = paymentMethod;
     }
 
     public int getId() { return id; }
@@ -52,32 +59,18 @@ public class Orders implements Serializable {
     public String getStatus() { return status; }
     public LocalDateTime getOrderPlacedTime() { return orderPlacedTime; }
     public LocalDateTime getDeliveryTime() { return deliveryTime; }
-    public void printOrder() {
-        System.out.println("==== Order Receipt ====");
-        System.out.println("Order ID: " + this.id);
-        System.out.println("Name: " + this.name);
-        System.out.println("Address: " + this.address);
-        System.out.println("Phone: " + this.phoneNumber);
-        System.out.println("Email: " + this.email);
-        System.out.println("Placed On: " + this.orderPlacedTime);
-        System.out.println("Delivery Time: " + this.deliveryTime);
-        System.out.println("\nItems Ordered:");
+    public String getOrderType() { return orderType; }
+    public String getPaymentMethod() { return paymentMethod; }
 
-        for (Meals meal : this.meals) {
-            System.out.println(" - " + meal.getName() + " ($" + meal.getPrice() + ")");
-        }
-
-        System.out.println("\nTotal Price: $" + this.totalPrice);
-        System.out.println("=======================");
-    }
+    public void setStatus(String status) { this.status = status; }
 
     @Override
     public String toString() {
-       return  "Order ID: " + this.getId() +
+        return "Order ID: " + this.getId() +
+                " | Type: " + this.getOrderType() +
+                " | Payment: " + this.getPaymentMethod() +
                 " | Placed: " + this.getOrderPlacedTime().toLocalDate() +
                 " at " + this.getOrderPlacedTime().toLocalTime() +
-               " by " + this.getName();
+                " by " + this.getName();
     }
-
-    public void setStatus(String status) { this.status = status; }
 }
