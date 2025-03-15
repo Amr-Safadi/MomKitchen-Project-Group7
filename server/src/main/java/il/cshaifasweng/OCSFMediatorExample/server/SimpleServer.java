@@ -9,17 +9,21 @@ import il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil.getSessionFactory;
+
 public class SimpleServer extends AbstractServer {
 
 	private static final ConcurrentHashMap<ConnectionToClient, String> onlineUsers = new ConcurrentHashMap<>();
-	private static SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-	private static Session session;
+	private static SessionFactory sessionFactory = getSessionFactory();
+    private static Session session;
 
 	private ArrayList<Meals> mealsArrayList;
 	private ArrayList<Meals> mealsByCategories;
@@ -63,6 +67,63 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
+			case "#DeleteMeal":
+				Meals mealToDelete = (Meals) message.getObject();
+				boolean success = MealHandler.deleteMeal(mealToDelete, sessionFactory);
+
+				if (success) {
+					try {
+						client.sendToClient(new Message("#MealDeleted"));
+						sendToAllClients(new Message("#Update All Meals"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					try {
+						client.sendToClient(new Message("#MealDeletionFailed"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
+
+			case "#AddMeal":
+				Meals newMeal = (Meals) message.getObject();
+				 success = MealHandler.addMeal(newMeal, branch, sessionFactory);
+				if (success) {
+                    try {
+						client.sendToClient(new Message("#MealAddedSuccessfully"));
+						sendToAllClients(new Message("#Update All Meals"));
+					} catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("✅ Meal added: " + newMeal.getName() + " to " + branch);
+				} else {
+                    try {
+                        client.sendToClient(new Message("#MealAdditionFailed"));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("❌ Failed to add meal.");
+				}
+				break;
+
+			case "#ToggleMealType":
+				Object[] mealData = (Object[]) message.getObject();
+				int mealId = (int) mealData[0];
+				Integer branchId = (mealData[1] != null) ? (Integer) mealData[1] : null;
+
+				MealHandler.handleToggleMealType(mealId, branchId, sessionFactory);
+
+				mealsArrayList = MealHandler.getMeals(branch, sessionFactory);
+                try {
+					sendToAllClients(new Message("#Update All Meals"));
+                } catch (Exception e) {
+					System.out.println("Error - simple server - toggle meal type");
+                }
+
+                break;
+
 			case "#CancelOrder":
 				CancelingHandler.cancelOrder((Orders) message.getObject(), sessionFactory);
 				try {
@@ -78,7 +139,7 @@ public class SimpleServer extends AbstractServer {
 
 				List<Orders> userOrders = CancelingHandler.fetchOrders(email, phone, sessionFactory);
 
-				System.out.println("Fetched the following orders:");
+				System.out.println("fetched the following orders : ");
 				for (Orders order : userOrders) {
 					System.out.println(
 							"Order ID: " + order.getId() +
@@ -106,6 +167,7 @@ public class SimpleServer extends AbstractServer {
 					OrderHandler.placeOrder((Orders) message.getObject(), sessionFactory);
 					Message response = new Message("#OrderPlacedSuccessfully");
 					client.sendToClient(response);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 					try {
@@ -187,6 +249,7 @@ public class SimpleServer extends AbstractServer {
 						e.printStackTrace();
 					}
 				} else {
+					String alternatives = ReservationHandler.computeAlternativeTimes(reservationRequest);
 					try {
 						String alternatives = ReservationHandler.computeAlternativeTimes(reservationRequest, sessionFactory);
 						client.sendToClient(new Message(alternatives, "#NoAvailability"));
@@ -242,11 +305,84 @@ public class SimpleServer extends AbstractServer {
 					e.printStackTrace();
 				}
 				break;
+			case "#FetchComplaints":
+				try (Session session = getSessionFactory().openSession()) {
+					List<ContactRequest> complaints = session.createQuery("FROM ContactRequest", ContactRequest.class).list();
+					client.sendToClient(new Message(complaints, "#ComplaintList"));
+					System.out.println("✅ Sent all complaints to client.");
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.err.println("❌ Error fetching complaints from database.");
+				}
+				break;
+
+
+			case "#ResolveComplaint":
+				ContactRequest resolvedComplaint = (ContactRequest) message.getObject();
+				try (Session session = getSessionFactory().openSession()) {
+					Transaction tx = session.beginTransaction();
+
+					// Fetch the actual complaint from DB
+					ContactRequest complaintFromDB = session.get(ContactRequest.class, resolvedComplaint.getId());
+					if (complaintFromDB != null) {
+						complaintFromDB.setHandled(true);
+						complaintFromDB.setResolutionScript(resolvedComplaint.getResolutionScript());
+						complaintFromDB.setRefundIssued(resolvedComplaint.isRefundIssued());
+						complaintFromDB.setHandledAt(LocalDateTime.now());
+
+						session.update(complaintFromDB);
+						tx.commit();
+
+						// Send updated list back to all clients
+						List<ContactRequest> updatedUnresolved = session.createQuery(
+								"FROM ContactRequest WHERE handled = false", ContactRequest.class).getResultList();
+						List<ContactRequest> updatedResolved = session.createQuery(
+								"FROM ContactRequest WHERE handled = true", ContactRequest.class).getResultList();
+
+						sendToAllClients(new Message(updatedUnresolved, "#ComplaintList"));
+						sendToAllClients(new Message(updatedResolved, "#ResolvedComplaintList"));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+
+
+
 			default:
 				System.out.println("Unknown message received: " + msgStr);
 				break;
 		}
 	}
+	public void resolveComplaint(int complaintId, String resolutionScript, boolean refundIssued) {
+		try (Session session = sessionFactory.openSession()) {
+			Transaction tx = session.beginTransaction();
+			ContactRequest complaint = session.get(ContactRequest.class, complaintId);
+
+			if (complaint != null && !complaint.isHandled()) {
+				complaint.setHandled(true);
+				complaint.setHandledAt(LocalDateTime.now());
+				complaint.setResolutionScript(resolutionScript);
+
+				session.update(complaint);
+				tx.commit();
+
+				System.out.println("✅ Complaint #" + complaintId + " resolved.");
+				System.out.println("📜 Resolution: " + resolutionScript);
+
+				if (refundIssued) {
+					System.out.println("💰 Refund has been issued to the customer.");
+				}
+			} else {
+				System.out.println("⚠️ Complaint not found or already resolved.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
 
 	@Override
 	protected synchronized void clientDisconnected(ConnectionToClient client) {

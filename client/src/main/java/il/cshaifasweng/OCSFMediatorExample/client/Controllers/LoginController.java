@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,6 +15,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.scene.control.Alert;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 
@@ -30,6 +32,9 @@ public class LoginController {
 
     @FXML
     private Button backBtn;
+
+    @FXML
+    private AnchorPane logpane;
 
 
     @FXML
@@ -95,5 +100,7 @@ public class LoginController {
     @FXML
     void initialize() {
         EventBus.getDefault().register(this);
+        BackgroundUtil.setPaneBackground(logpane, "/Images/NEWBACKGRND.jpg");
+
     }
 }

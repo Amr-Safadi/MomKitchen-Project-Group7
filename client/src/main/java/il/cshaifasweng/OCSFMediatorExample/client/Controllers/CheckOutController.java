@@ -22,20 +22,45 @@ public class CheckOutController {
     private Button backBtn, placeOrderBtn;
     @FXML
     private Label priceLabel;
+    @FXML
+    private Label orderTypeLabel, paymentMethodLabel; // Add labels for the selections
+
+    private static String orderType = "Delivery"; // Default
+    private static String paymentMethod = "Cash"; // Default
+
+    // Setter method to update selections
+    public static void setOrderPreferences(String type, String payment) {
+        orderType = type;
+        paymentMethod = payment;
+    }
 
     private final SimpleClient client = SimpleClient.getClient();
 
     @FXML
     void initialize() {
         priceLabel.setText("Total Price: $" + CartSession.getCart().getTotalPrice());
-        EventBus.getDefault().register(this); // Register for event handling
+
+        // Update labels
+       // orderTypeLabel.setText("Order Type: " + orderType);
+       // paymentMethodLabel.setText("Payment Method: " + paymentMethod);
+
+        // If pickup, disable address input
+        if (orderType.equals("Pickup")) {
+            addressTxt.setDisable(true);
+            addressTxt.setText("Pickup from Branch");
+        }
+
+        // If cash, disable credit card input
+        if (paymentMethod.equals("Cash")) {
+            cardTxt.setDisable(true);
+            cardTxt.setText("Paying in Cash");
+        }
     }
 
     @FXML
     void backHandler() {
         ScreenManager.switchScreen("Cart");
     }
-
     @FXML
     void handlePlaceOrderBtn() {
         if (CartSession.getCart().getMeals().isEmpty()) {
@@ -45,31 +70,30 @@ public class CheckOutController {
 
         // Collect user input
         String name = nameTxt.getText();
-        String address = addressTxt.getText();
+        String address = orderType.equals("Pickup") ? "Pickup" : addressTxt.getText();
         String phone = phoneTxt.getText();
         String email = mailTxt.getText();
-        String creditCard = cardTxt.getText();
-        LocalDateTime deliveryTime = LocalDateTime.now().plusHours(2); // Default delivery time in 2 hours
+        String creditCard = paymentMethod.equals("Cash") ? "Cash Payment" : cardTxt.getText();
+        LocalDateTime deliveryTime = orderType.equals("Pickup") ? LocalDateTime.now() : LocalDateTime.now().plusHours(2);
 
         // Validate input fields
-        if (name.isEmpty() || address.isEmpty() || phone.isEmpty() || email.isEmpty() || creditCard.isEmpty()) {
-            showAlert("Error", "All fields are required. Please fill them in.");
+        if (name.isEmpty() || phone.isEmpty() || email.isEmpty() || (paymentMethod.equals("Card") && creditCard.isEmpty())) {
+            showAlert("Error", "Please fill in all required fields.");
             return;
         }
 
-        // Create an Orders object
+        // Create an Orders object with the new fields
         Orders newOrder = new Orders(
                 CartSession.getCart().getMeals(),
                 name, address, phone, email, creditCard,
                 CartSession.getCart().getTotalPrice(),
-                deliveryTime
+                deliveryTime,
+                orderType, paymentMethod // Pass new fields
         );
 
         // Send order to server
         try {
             client.sendToServer(new Message(newOrder, "#PlaceOrder"));
-            newOrder.printOrder();
-           // showAlert("Processing Order", "Your order is being placed...");
         } catch (IOException e) {
             showAlert("Connection Error", "Failed to send order to the server. Please check your connection.");
         }

@@ -5,19 +5,38 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="logpane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.LoginController">
 
    <children>
-      <Label layoutX="259.0" layoutY="50.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Log In" />
-
-      <Label layoutX="125.0" layoutY="150.0" text="Email:" />
-      <TextField fx:id="emailInput" layoutX="200.0" layoutY="146.0" prefWidth="250.0" />
-
-      <Label layoutX="125.0" layoutY="200.0" text="Password:" />
-      <PasswordField fx:id="passwordInput" layoutX="200.0" layoutY="196.0" prefWidth="250.0" />
-
-      <Button fx:id="loginButton" layoutX="250.0" layoutY="260.0" mnemonicParsing="false" onAction="#handleLogin" text="Log In" />
-      <Button fx:id="backBtn" layoutX="484.0" layoutY="334.0" mnemonicParsing="false" onAction="#handleBackBtn" text="Back" />
+      <Label layoutX="42.0" layoutY="202.0" prefHeight="25.0" prefWidth="89.0" text="Username:" textFill="#3c822c">
+         <font>
+            <Font name="Bauhaus 93" size="18.0" />
+         </font></Label>
+      <TextField fx:id="emailInput" layoutX="131.0" layoutY="202.0" prefHeight="25.0" prefWidth="191.0" />
+      <Label layoutX="42.0" layoutY="302.0" prefHeight="20.0" prefWidth="102.0" text="Password:" textFill="#2a803a">
+         <font>
+            <Font name="Bauhaus 93" size="18.0" />
+         </font></Label>
+      <PasswordField fx:id="passwordInput" layoutX="131.0" layoutY="299.0" prefHeight="25.0" prefWidth="191.0" />
+      <Button fx:id="loginButton" layoutX="42.0" layoutY="378.0" mnemonicParsing="false" onAction="#handleLogin" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="Log In" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="17.0" />
+         </font></Button>
+      <Button fx:id="backBtn" layoutX="41.0" layoutY="52.0" mnemonicParsing="false" onAction="#handleBackBtn" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="Back" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="17.0" />
+         </font></Button>
+      <Label layoutX="42.0" layoutY="254.0" prefHeight="17.0" prefWidth="232.0" text="Enter your password" textFill="#38883b">
+         <font>
+            <Font name="Bauhaus 93" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="41.0" layoutY="153.0" prefHeight="17.0" prefWidth="250.0" text="Enter your Username" textFill="#488d46">
+         <font>
+            <Font name="Bauhaus 93" size="17.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

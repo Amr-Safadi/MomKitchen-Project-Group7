@@ -64,6 +64,12 @@
       </plugin>
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <id>eclipse-angus</id>
+      <url>https://repo.eclipse.org/content/groups/angus/</url>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

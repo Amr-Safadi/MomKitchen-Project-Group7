@@ -9,6 +9,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -42,6 +43,9 @@ public class SecondaryController {
     private AnchorPane pane;
 
     @FXML
+    private Button addMealBtn;
+
+    @FXML
     private Button backBtn;
 
     @FXML
@@ -57,7 +61,16 @@ public class SecondaryController {
     private Label mealsLabel;
 
     @FXML
+    private Label specialLabel;
+
+    @FXML
+    private Label hoursLabel;
+
+    @FXML
     private ListView<String> mealsList;
+
+    @FXML
+    private ListView<String> specialsList;
 
     @FXML
     private Button reservationBtn;
@@ -68,16 +81,47 @@ public class SecondaryController {
             Platform.runLater(() -> {
                 System.out.println("Initializing meals for branch: " + SecondaryService.getBranch());
                 ArrayList<Meals> receivedMeals = (ArrayList<Meals>) msg.getObject();
-                SecondaryService.setMealsList(receivedMeals);
+                ArrayList<Meals> generalMeals = new ArrayList<>();
+                ArrayList<Meals> specialMeals = new ArrayList<>();
 
+                for (Meals meal : receivedMeals) {
+                    if (meal.getisBranchMeal() == false)
+                        generalMeals.add(meal);
+                    else
+                        specialMeals.add(meal);
+                }
+                SecondaryService.setMealsList(generalMeals);
                 mealsList.getItems().clear();
                 for (Meals meal : SecondaryService.getMealsList()) {
                     mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
                 }
+                SecondaryService.setMealsList(specialMeals);
+                specialsList.getItems().clear();
+                for (Meals meal : SecondaryService.getMealsList()) {
+                    specialsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
+                }
+                SecondaryService.setMealsList(receivedMeals);
             });
+            User loggedInUser = UserSession.getUser();
+            if (loggedInUser != null) {
+                if (
+                        loggedInUser.getRole() == User.Role.DIETITIAN ||
+                                loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
+                                loggedInUser.getRole() == User.Role.GENERAL_MANAGER) {
+                    addMealBtn.setVisible(true);
+                } else {
+                    addMealBtn.setVisible(false);
+                }
+            } else {
+                addMealBtn.setVisible(false);
+            }
         }
     }
 
+    @FXML
+    public void handleAddMeal(ActionEvent event) {
+        ScreenManager.switchScreen("AddMeal");
+    }
     @FXML
     public void handleSearchBtn(ActionEvent event) {
         ScreenManager.switchScreen("categories");
@@ -87,9 +131,14 @@ public class SecondaryController {
     public void handleMenuDoubleClick(MouseEvent event) {
         if (event.getClickCount() == 2) {
             String selectedMealInfo = mealsList.getSelectionModel().getSelectedItem();
+            String selectedSpecialInfo = specialsList.getSelectionModel().getSelectedItem();
             if (selectedMealInfo != null) {
                 String selectedMealName = selectedMealInfo.split(" - ")[0];
                 openMealView(selectedMealName);
+            }
+            if (selectedSpecialInfo != null) {
+                String selectedSpecialName = selectedSpecialInfo.split(" - ")[0];
+                openMealView(selectedSpecialName);
             }
         }
     }
@@ -183,6 +232,14 @@ public class SecondaryController {
             throw new RuntimeException(e);
         }
 
+        mealsLabel.setText( mealsLabel.getText() + SecondaryService.getBranch());
+        specialLabel.setText(SecondaryService.getBranch() + "'s specials");
+        switch (SecondaryService.getBranch()){
+            case "Haifa": hoursLabel.setText("Openning hours: " + "8:00 - 23:00"); break;
+            case "Acre": hoursLabel.setText("Openning hours: " + "9:00 - 21:00"); break;
+            case "Tel-Aviv": hoursLabel.setText("Openning hours: " + "10:00 - 22:00"); break;
+            case "Netanya": hoursLabel.setText("Openning hours: " + "10:00 - 21:00"); break;
+        }
         if (UserSession.getUser() != null) {
             switch (UserSession.getUser().getRole()) {
                 case BRANCH_MANAGER:

@@ -31,6 +31,8 @@ public class ScreenManager {
         screens.put("TableMap", "TableMap.fxml");
         screens.put("Validate User", "ValidateUser.fxml");
         screens.put("Cancel Order", "CancelOrder.fxml");
+        screens.put("Manage Complaints", "ComplaintManage.fxml");
+        screens.put("AddMeal", "AddMeal.fxml");
     }
 
     public static void init(Stage stage) throws IOException {

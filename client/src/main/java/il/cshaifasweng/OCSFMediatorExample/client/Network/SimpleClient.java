@@ -1,10 +1,13 @@
 package il.cshaifasweng.OCSFMediatorExample.client.Network;
 
+import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
+
+import java.io.IOException;
 
 public class SimpleClient extends AbstractClient {
 	
@@ -26,7 +29,8 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
-			case "#UserValidated", "#ValidationFailed", "OrderCanceled":
+			case "#MealAddedSuccessfully", "#UserValidated", "#ValidationFailed", "OrderCanceled",
+                 "#MealAdditionFailed" ,"#MealDeleted", "#MealDeletionFailed":
 				EventBus.getDefault().post(message);
 				break;
             case "#OrderPlacedSuccessfully":
@@ -76,7 +80,18 @@ public class SimpleClient extends AbstractClient {
 				System.out.println("Complaint successfully stored!");
 				EventBus.getDefault().post(new Message(null, "#ComplaintSubmissionSuccess"));
 				break;
-
+			case "#ComplaintList":
+				System.out.println("📥 Received complaint list from server.");
+				EventBus.getDefault().post(message);
+				break;
+			case "#ComplaintResolved":
+				System.out.println("✅ Complaint successfully resolved.");
+				EventBus.getDefault().post(message);
+				break;
+			case "#ResolvedComplaintList":
+				System.out.println("✅ Received resolved complaints from server.");
+				EventBus.getDefault().post(message);
+				break;
 			case "#BranchFetched":
 				System.out.println("Received branch fetched message");
 				EventBus.getDefault().post(message);
@@ -106,14 +121,16 @@ public class SimpleClient extends AbstractClient {
 		}
 	}
 
+
+
 	public static User getUser() {
 		return user;
 	}
-
 	public static SimpleClient getClient() {
 		if (client == null) {
 			client = new SimpleClient("localhost", 3000);
 		}
 		return client;
 	}
+
 }
