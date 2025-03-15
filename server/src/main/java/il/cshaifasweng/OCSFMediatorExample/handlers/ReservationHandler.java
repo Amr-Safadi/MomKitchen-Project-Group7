@@ -2,86 +2,194 @@ package il.cshaifasweng.OCSFMediatorExample.handlers;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
+import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import java.time.LocalTime;
-import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 public class ReservationHandler {
-    public static void handleReservation(Reservation reservationRequest,
-                                         org.hibernate.SessionFactory sessionFactory) {
+
+    public static List<Reservation> getReservationsByUser(String fullName, String phone, SessionFactory sessionFactory) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Reservation r WHERE r.fullName = :fullName AND r.phone = :phone", Reservation.class)
+                    .setParameter("fullName", fullName)
+                    .setParameter("phone", phone)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public static boolean checkAvailability(Reservation reservation, SessionFactory sessionFactory) {
-        Branch branch = reservation.getBranch();
-        if (branch == null) {
-            System.out.println("Branch is null in reservation.");
+    public static boolean cancelReservation(Reservation reservation, SessionFactory sessionFactory) {
+        boolean feeApplied = false;
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+            Reservation res = session.get(Reservation.class, reservation.getId());
+            if (res != null) {
+                LocalDateTime reservationDateTime = LocalDateTime.of(res.getDate(), res.getTime());
+                if (!LocalDateTime.now().isAfter(reservationDateTime)) {
+                    long minutesUntilReservation = Duration.between(LocalDateTime.now(), reservationDateTime).toMinutes();
+                    if (minutesUntilReservation <= 60) {
+                        feeApplied = true;
+                    }
+                }
+                session.delete(res);
+                tx.commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
-        LocalTime branchOpen = branch.getOpenHour();
-        LocalTime branchClose = branch.getCloseHour();
-        LocalTime startAllowed = branchOpen.plusMinutes(15);
-        LocalTime endAllowed = branchClose.minusMinutes(60);
-        LocalTime requested = reservation.getTime();
-        boolean withinRange = !requested.isBefore(startAllowed) && !requested.isAfter(endAllowed);
-        boolean isSlotFree = true;
+        return feeApplied;
+    }
+
+    public static List<RestaurantTable> allocateTablesForReservation(Reservation reservation, SessionFactory sessionFactory) {
+        List<RestaurantTable> matchingTables = new ArrayList<>();
+        List<RestaurantTable> otherTables = new ArrayList<>();
+        Branch branch = reservation.getBranch();
+        String requestedSeating = reservation.getSeatingArea();
+
         try (Session session = sessionFactory.openSession()) {
-            Transaction tx = session.beginTransaction();
-            List<Reservation> reservations = session.createQuery(
-                            "FROM Reservation r WHERE r.branch.id = :branchId AND r.date = :date AND r.time = :time", Reservation.class)
+            List<RestaurantTable> allTables = session.createQuery(
+                            "FROM RestaurantTable t WHERE t.branch.id = :branchId", RestaurantTable.class)
                     .setParameter("branchId", branch.getId())
-                    .setParameter("date", reservation.getDate())
-                    .setParameter("time", requested)
                     .getResultList();
-            tx.commit();
-            if (reservations != null && !reservations.isEmpty()) {
-                isSlotFree = false;
+
+            for (RestaurantTable table : allTables) {
+                boolean conflict = false;
+                List<Reservation> reservations = session.createQuery(
+                                "SELECT r FROM Reservation r JOIN r.tables t WHERE t.id = :tableId AND r.date = :date", Reservation.class)
+                        .setParameter("tableId", table.getId())
+                        .setParameter("date", reservation.getDate())
+                        .getResultList();
+                LocalDateTime reqStart = LocalDateTime.of(reservation.getDate(), reservation.getTime());
+                LocalDateTime reqEnd = reqStart.plusMinutes(90);
+                for (Reservation r : reservations) {
+                    LocalDateTime existingStart = LocalDateTime.of(r.getDate(), r.getTime());
+                    LocalDateTime existingEnd = existingStart.plusMinutes(90);
+                    if (reqStart.isBefore(existingEnd) && existingStart.isBefore(reqEnd)) {
+                        conflict = true;
+                        break;
+                    }
+                }
+                if (!conflict) {
+                    if (table.getSeatingArea().equalsIgnoreCase(requestedSeating)) {
+                        matchingTables.add(table);
+                    } else {
+                        otherTables.add(table);
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return withinRange && isSlotFree;
+
+        List<RestaurantTable> allocated = findTableCombination(matchingTables, reservation.getGuests());
+        if (allocated == null) {
+            List<RestaurantTable> combined = new ArrayList<>();
+            combined.addAll(matchingTables);
+            combined.addAll(otherTables);
+            allocated = findTableCombination(combined, reservation.getGuests());
+        }
+        return allocated;
     }
 
-    public static void saveReservation(Reservation reservation, SessionFactory sessionFactory) {
+    private static List<RestaurantTable> findTableCombination(List<RestaurantTable> tables, int guests) {
+        List<RestaurantTable> bestCombination = null;
+        int bestCount = Integer.MAX_VALUE;
+        int bestTotalCapacity = Integer.MAX_VALUE;
+        int n = tables.size();
+        for (int mask = 1; mask < (1 << n); mask++) {
+            List<RestaurantTable> combination = new ArrayList<>();
+            int totalCapacity = 0;
+            int count = 0;
+            for (int j = 0; j < n; j++) {
+                if ((mask & (1 << j)) != 0) {
+                    RestaurantTable table = tables.get(j);
+                    combination.add(table);
+                    totalCapacity += table.getCapacity();
+                    count++;
+                }
+            }
+            if (totalCapacity >= guests) {
+                if (count < bestCount || (count == bestCount && totalCapacity < bestTotalCapacity)) {
+                    bestCombination = combination;
+                    bestCount = count;
+                    bestTotalCapacity = totalCapacity;
+                }
+            }
+        }
+        return bestCombination;
+    }
+
+    public static List<RestaurantTable> saveReservation(Reservation reservation, SessionFactory sessionFactory) {
+        List<RestaurantTable> allocatedTables = allocateTablesForReservation(reservation, sessionFactory);
+        if (allocatedTables == null || allocatedTables.isEmpty()) {
+            return null;
+        }
+        System.out.println("here");
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
-            if (reservation.getBranch() == null || reservation.getBranch().getId() == 0) {
-                String branchName = reservation.getBranch() != null ? reservation.getBranch().getName() : "defaultBranch";
-                Branch persistentBranch = session.createQuery("FROM Branch WHERE name = :branchName", Branch.class)
-                        .setParameter("branchName", branchName)
-                        .uniqueResult();
-                if (persistentBranch == null) {
-                    throw new RuntimeException("Branch not found: " + branchName);
+
+            LocalDateTime reqDateTime = LocalDateTime.of(reservation.getDate(), reservation.getTime());
+            LocalDateTime now = LocalDateTime.now();
+            for (RestaurantTable table : allocatedTables) {
+                if (!reqDateTime.isAfter(now)) {
+                    table.setReserved(true);
+                    session.update(table);
+                } else {
+                    long delayMillis = Duration.between(now, reqDateTime).toMillis();
+                    ReservationScheduler.scheduleReservationActivation(table.getId(), delayMillis, sessionFactory);
                 }
-                reservation.setBranch(persistentBranch);
             }
+
+            reservation.setTables(allocatedTables);
             session.save(reservation);
             tx.commit();
-            System.out.println("Reservation saved: " + reservation.getId());
+            return allocatedTables;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 
-    public static String computeAlternativeTimes(Reservation reservation) {
+    public static String computeAlternativeTimes(Reservation reservation, SessionFactory sessionFactory) {
         Branch branch = reservation.getBranch();
         if (branch == null) {
             return "Branch not specified";
         }
-        LocalTime branchOpen = branch.getOpenHour();
-        LocalTime branchClose = branch.getCloseHour();
-        LocalTime startAllowed = branchOpen.plusMinutes(15);
-        LocalTime endAllowed = branchClose.minusMinutes(60);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime branchOpenDT = LocalDateTime.of(now.toLocalDate(), branch.getOpenHour()).plusMinutes(15);
+        LocalDateTime branchCloseDT = LocalDateTime.of(now.toLocalDate(), branch.getCloseHour()).minusMinutes(60);
         List<String> alternatives = new ArrayList<>();
-        LocalTime slot = startAllowed;
-        while (!slot.isAfter(endAllowed)) {
-            alternatives.add(slot.toString());
+        LocalDateTime slot = branchOpenDT;
+        while (!slot.isAfter(branchCloseDT)) {
+            alternatives.add(slot.toLocalTime().toString());
             slot = slot.plusMinutes(15);
         }
+
+        String requestedSeating = reservation.getSeatingArea();
+        String oppositeSeating = requestedSeating.equalsIgnoreCase("Indoor") ? "Outdoor" : "Indoor";
+        try (Session session = sessionFactory.openSession()) {
+            List<RestaurantTable> alternativeTables = session.createQuery(
+                            "FROM RestaurantTable t WHERE t.branch.id = :branchId AND t.seatingArea = :seating AND t.reserved = false", RestaurantTable.class)
+                    .setParameter("branchId", branch.getId())
+                    .setParameter("seating", oppositeSeating)
+                    .getResultList();
+            if (!alternativeTables.isEmpty()) {
+                alternatives.add("Alternative " + oppositeSeating + " tables available");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return String.join(", ", alternatives);
     }
 }

@@ -55,6 +55,9 @@ public class SecondaryController {
     private Button cartBtn;
 
     @FXML
+    private Button manageTablesBtn;
+
+    @FXML
     private Label mealsLabel;
 
     @FXML
@@ -188,7 +191,6 @@ public class SecondaryController {
             try {
                 System.out.println("Re-fetching meals for branch: " + SecondaryService.getBranch());
                 client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
-
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -207,15 +209,11 @@ public class SecondaryController {
         System.out.println("Cart cleared after navigating back from the branch.");
     }
 
-    public void  init()
-    {
-
-        try {
-            client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @FXML
+    void handleManageTables() {
+        ScreenManager.switchScreen("TableMap");
     }
+
     @FXML
     void initialize() {
         if (!EventBus.getDefault().isRegistered(this)) {
@@ -228,7 +226,11 @@ public class SecondaryController {
             e.printStackTrace();
         }
 
-        init();
+        try {
+            client.sendToServer(new Message(SecondaryService.getBranch(), "#Meals Request"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         mealsLabel.setText( mealsLabel.getText() + SecondaryService.getBranch());
         specialLabel.setText(SecondaryService.getBranch() + "'s specials");
@@ -238,6 +240,24 @@ public class SecondaryController {
             case "Tel-Aviv": hoursLabel.setText("Openning hours: " + "10:00 - 22:00"); break;
             case "Netanya": hoursLabel.setText("Openning hours: " + "10:00 - 21:00"); break;
         }
+        if (UserSession.getUser() != null) {
+            switch (UserSession.getUser().getRole()) {
+                case BRANCH_MANAGER:
+                case GENERAL_MANAGER:
+                case DIETITIAN:
+                case SERVICE_EMPLOYEE:
+                    manageTablesBtn.setVisible(true);
+                    break;
+                default:
+                    manageTablesBtn.setVisible(false);
+                    break;
+            }
+        } else {
+            manageTablesBtn.setVisible(false);
+        }
+
+        mealsLabel.setText(SecondaryService.getBranch() + "'s " + mealsLabel.getText());
+
         BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
     }
 }

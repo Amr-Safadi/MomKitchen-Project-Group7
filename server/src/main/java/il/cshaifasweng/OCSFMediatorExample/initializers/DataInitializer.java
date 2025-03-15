@@ -2,10 +2,10 @@ package il.cshaifasweng.OCSFMediatorExample.initializers;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
+import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
 import org.hibernate.Session;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 
 public class DataInitializer {
     public static void populateInitialData(Session session) {
@@ -19,6 +19,53 @@ public class DataInitializer {
             session.saveOrUpdate(branch2);
             session.saveOrUpdate(branch3);
             session.saveOrUpdate(branch4);
+
+            int tableNumber = 1;
+            for (int i = 0; i < 5; i++) {
+                String seating = (i % 2 == 0) ? "Indoor" : "Outdoor";
+                RestaurantTable t1 = new RestaurantTable(tableNumber++, 2, branch1, seating);
+                RestaurantTable t2 = new RestaurantTable(tableNumber++, 2, branch2, seating);
+                RestaurantTable t3 = new RestaurantTable(tableNumber++, 2, branch3, seating);
+                RestaurantTable t4 = new RestaurantTable(tableNumber++, 2, branch4, seating);
+                branch1.getTables().add(t1);
+                branch2.getTables().add(t2);
+                branch3.getTables().add(t3);
+                branch4.getTables().add(t4);
+                session.saveOrUpdate(t1);
+                session.saveOrUpdate(t2);
+                session.saveOrUpdate(t3);
+                session.saveOrUpdate(t4);
+            }
+            for (int i = 0; i < 3; i++) {
+                String seating = (i % 2 == 0) ? "Indoor" : "Outdoor";
+                RestaurantTable t1 = new RestaurantTable(tableNumber++, 3, branch1, seating);
+                RestaurantTable t2 = new RestaurantTable(tableNumber++, 3, branch2, seating);
+                RestaurantTable t3 = new RestaurantTable(tableNumber++, 3, branch3, seating);
+                RestaurantTable t4 = new RestaurantTable(tableNumber++, 3, branch4, seating);
+                branch1.getTables().add(t1);
+                branch2.getTables().add(t2);
+                branch3.getTables().add(t3);
+                branch4.getTables().add(t4);
+                session.saveOrUpdate(t1);
+                session.saveOrUpdate(t2);
+                session.saveOrUpdate(t3);
+                session.saveOrUpdate(t4);
+            }
+            for (int i = 0; i < 2; i++) {
+                String seating = (i % 2 == 0) ? "Indoor" : "Outdoor";
+                RestaurantTable t1 = new RestaurantTable(tableNumber++, 4, branch1, seating);
+                RestaurantTable t2 = new RestaurantTable(tableNumber++, 4, branch2, seating);
+                RestaurantTable t3 = new RestaurantTable(tableNumber++, 4, branch3, seating);
+                RestaurantTable t4 = new RestaurantTable(tableNumber++, 4, branch4, seating);
+                branch1.getTables().add(t1);
+                branch2.getTables().add(t2);
+                branch3.getTables().add(t3);
+                branch4.getTables().add(t4);
+                session.saveOrUpdate(t1);
+                session.saveOrUpdate(t2);
+                session.saveOrUpdate(t3);
+                session.saveOrUpdate(t4);
+            }
 
             Meals meal1 = new Meals("Pizza", "Cheese, Tomato, Bail, Dough",
                     "Olives, Mushrooms, Peppers, Extra Cheese, Onions, Pepperoni, Basil, Oregano", 10.99, Meals.Category.ITALIAN,false);

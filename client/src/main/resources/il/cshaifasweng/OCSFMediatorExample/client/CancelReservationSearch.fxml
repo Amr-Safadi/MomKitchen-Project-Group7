@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="400.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.CancelReservationSearchController">
+    <children>
+        <Label text="Enter your details:" layoutX="150" layoutY="30" style="-fx-font-size: 18px;"/>
+        <Label text="Full Name:" layoutX="50" layoutY="100"/>
+        <TextField fx:id="fullNameField" layoutX="150" layoutY="100"/>
+        <Label text="Phone:" layoutX="50" layoutY="150"/>
+        <TextField fx:id="phoneField" layoutX="150" layoutY="150"/>
+        <Button text="Search Reservations" layoutX="150" layoutY="200" onAction="#handleSearch"/>
+        <Button text="Back" layoutX="50" layoutY="350" onAction="#handleBack"/>
+    </children>
+</AnchorPane>

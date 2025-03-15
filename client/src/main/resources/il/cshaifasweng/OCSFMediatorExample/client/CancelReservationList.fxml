@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.CancelReservationListController">
+    <children>
+        <Label text="Your Reservations:" layoutX="250" layoutY="30" style="-fx-font-size: 18px;"/>
+        <ListView fx:id="reservationList" layoutX="50" layoutY="70" prefHeight="250" prefWidth="500"/>
+        <Button text="Cancel Selected" layoutX="50" layoutY="350" onAction="#handleCancelSelected"/>
+        <Button text="Back" layoutX="500" layoutY="350" onAction="#handleBack"/>
+    </children>
+</AnchorPane>
