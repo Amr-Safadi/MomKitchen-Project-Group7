@@ -52,10 +52,12 @@ public class UserHandler {
         User Amr = new User("amr", EncryptionUtil.passwordEncrypt("Amr123"), "Amr Safadi", User.Role.GENERAL_MANAGER);
         User Marian = new User("marian", EncryptionUtil.passwordEncrypt("Marian123"), "Marian Dahmoush", User.Role.BRANCH_MANAGER);
         User Kanar = new User("kanar", EncryptionUtil.passwordEncrypt("Kanar123"), "Kanar Arrabi", User.Role.DIETITIAN);
+        User Abdallah = new User("abdallah", EncryptionUtil.passwordEncrypt("abdallah1212"), "Abdallah Khaldi", User.Role.SERVICE_EMPLOYEE);
 
         session.saveOrUpdate(Amr);
         session.saveOrUpdate(Marian);
         session.saveOrUpdate(Kanar);
+        session.saveOrUpdate(Abdallah);
         System.out.println("Users added to the database.");
     }
 }

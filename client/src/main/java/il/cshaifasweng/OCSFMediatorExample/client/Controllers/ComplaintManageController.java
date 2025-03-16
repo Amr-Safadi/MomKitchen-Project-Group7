@@ -44,6 +44,8 @@ public class ComplaintManageController {
     private TableColumn<ContactRequest, String> complaintColumn;
     @FXML
     private TableColumn<ContactRequest, String> submittedColumn;
+    @FXML
+    private TableColumn<ContactRequest, String> emailColumn;
 
     @FXML
     private TableView<ContactRequest> resolvedTable;
@@ -60,12 +62,22 @@ public class ComplaintManageController {
     private TableColumn<ContactRequest, String> refundColumn;
     @FXML
     private TableColumn<ContactRequest, String> handledColumn;
+    @FXML
+    private TableColumn<ContactRequest, String> resolvedEmailColumn;
+    @FXML
+    private TableColumn<ContactRequest, String> refundAmountColumn;
+    @FXML private TableColumn<ContactRequest, String> resolvedComplaintColumn;
+    @FXML private TableColumn<ContactRequest, String> resolvedSubmittedColumn;
+
 
     @FXML
     private TextArea resolutionField;
 
+
     @FXML
     private CheckBox refundCheckbox;
+    @FXML
+    private TextField refundAmountField;
 
     @FXML
     private Button resolveButton;
@@ -93,13 +105,25 @@ public class ComplaintManageController {
         setupTables();
         fetchComplaints();
         rootPane.setStyle("-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover;");
+        unresolvedTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                showComplaintDetails();
+            }
+        });
 
+        resolvedTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                showResolvedDetails();
+            }
+        });
     }
+
 
     private void setupTables() {
         // ✅ Unresolved complaints table
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         branchColumn.setCellValueFactory(new PropertyValueFactory<>("branch"));
         complaintColumn.setCellValueFactory(new PropertyValueFactory<>("complaint"));
         submittedColumn.setCellFactory(column -> new TableCell<ContactRequest, String>() {
@@ -136,18 +160,25 @@ public class ComplaintManageController {
         // ✅ Resolved complaints table
         resolvedIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         resolvedNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        resolvedEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         resolvedBranchColumn.setCellValueFactory(new PropertyValueFactory<>("branch"));
         resolutionColumn.setCellValueFactory(new PropertyValueFactory<>("resolutionScript"));
         handledColumn.setCellValueFactory(cellData -> {
             LocalDateTime handledAt = cellData.getValue().getHandledAt();
             return new SimpleStringProperty((handledAt != null) ? handledAt.toString() : "N/A");
         });
+        resolvedComplaintColumn.setCellValueFactory(new PropertyValueFactory<>("complaint")); // ✅ Updated
+        resolvedSubmittedColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getSubmittedAt() != null ?
+                        cellData.getValue().getSubmittedAt().toString() : "N/A")); // ✅ Updated
 
         // ✅ **Refund Status Column**
         refundColumn.setCellValueFactory(cellData -> {
             boolean refund = cellData.getValue().isRefundIssued();
             return new SimpleStringProperty(refund ? "Yes" : "No");
         });
+        refundAmountColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.valueOf(cellData.getValue().getRefundAmount())));
 
         // ✅ Load complaints immediately
         fetchComplaints();
@@ -163,32 +194,83 @@ public class ComplaintManageController {
             e.printStackTrace();
         }
     }
+    @FXML
+    private void showComplaintDetails() {
+        ContactRequest selectedComplaint = unresolvedTable.getSelectionModel().getSelectedItem();
+
+        if (selectedComplaint == null) {
+            showAlert("Error", "Please select a complaint to view.");
+            return;
+        }
+
+        String message = String.format(
+                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\n\nSubmitted At: %s",
+                selectedComplaint.getName(),
+                selectedComplaint.getBranch(),
+                selectedComplaint.getEmail(),
+                selectedComplaint.getComplaint(),
+                selectedComplaint.getSubmittedAt() != null ? selectedComplaint.getSubmittedAt().toString() : "N/A"
+        );
+
+        showAlert("Complaint Details", message);
+    }
+    @FXML
+    private void showResolvedDetails() {
+        ContactRequest selectedComplaint = resolvedTable.getSelectionModel().getSelectedItem();
+
+        if (selectedComplaint == null) {
+            showAlert("Error", "Please select a complaint to view.");
+            return;
+        }
+
+        String message = String.format(
+                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\n\nSubmitted At: %s",
+                selectedComplaint.getName(),
+                selectedComplaint.getBranch(),
+                selectedComplaint.getEmail(),
+                selectedComplaint.getComplaint(),
+                selectedComplaint.getSubmittedAt() != null ? selectedComplaint.getSubmittedAt().toString() : "N/A"
+        );
+
+        showAlert("Complaint Details", message);
+    }
+
+
+
+
 
 
 
     // Receive Complaints from Server
     @Subscribe
     public void onComplaintsReceived(Message message) {
-        if (message.toString().equals("#ComplaintList")) {
-            List<ContactRequest> complaints = (List<ContactRequest>) message.getObject();
-            Platform.runLater(() -> {
-                unresolvedComplaints.setAll(
-                        complaints.stream().filter(c -> !c.isHandled()).toList());
-                resolvedComplaints.setAll(
-                        complaints.stream().filter(ContactRequest::isHandled).toList());
-            });
-        }
-    }
-    @Subscribe
-    public void handleComplaintList(Message message) {
-        if (message.toString().equals("#ComplaintList")) {
+        if (message.getText().equals("#ComplaintList")) {
             List<ContactRequest> complaints = (List<ContactRequest>) message.getObject();
             Platform.runLater(() -> {
                 unresolvedComplaints.setAll(complaints.stream().filter(c -> !c.isHandled()).toList());
                 resolvedComplaints.setAll(complaints.stream().filter(ContactRequest::isHandled).toList());
+            });
+        }
+    }
 
-                unresolvedTable.setItems(unresolvedComplaints);
-                resolvedTable.setItems(resolvedComplaints);
+    @Subscribe
+    public void handleComplaintList(Message message) {
+        if ("#ComplaintList".equals(message.getText())) {
+            List<ContactRequest> complaints = (List<ContactRequest>) message.getObject();
+            Platform.runLater(() -> {
+                unresolvedTable.getItems().setAll(complaints);
+                System.out.println("✅ Unresolved complaints loaded successfully!");
+            });
+        }
+    }
+
+    @Subscribe
+    public void handleResolvedComplaintList(Message message) {
+        if ("#ResolvedComplaintList".equals(message.getText())) {
+            List<ContactRequest> resolvedComplaintsList = (List<ContactRequest>) message.getObject();
+            Platform.runLater(() -> {
+                resolvedTable.getItems().setAll(resolvedComplaintsList);
+                System.out.println("✅ Resolved complaints loaded successfully!");
             });
         }
     }
@@ -212,10 +294,23 @@ public class ComplaintManageController {
             return;
         }
 
+        // Parse refund amount if refund is issued
+        double refundAmount = 0.0;
+        if (refundIssued) {
+            try {
+                selectedComplaint.setRefundAmount(Double.parseDouble(refundAmountField.getText().trim()));
+            } catch (NumberFormatException e) {
+                showAlert("Error", "Invalid refund amount.");
+                return;
+            }
+        }
+
+
         // Update the complaint object
         selectedComplaint.setHandled(true);
         selectedComplaint.setResolutionScript(resolutionText);
         selectedComplaint.setRefundIssued(refundIssued);
+        selectedComplaint.setRefundAmount(refundAmount);
         selectedComplaint.setHandledAt(LocalDateTime.now());
 
         // Send updated complaint to the server
@@ -227,15 +322,19 @@ public class ComplaintManageController {
             return;
         }
 
-        // ✅ **Update UI Immediately**
-        Platform.runLater(() -> {
-            unresolvedComplaints.remove(selectedComplaint);
-            resolvedComplaints.add(selectedComplaint);
-            resolutionField.clear();
-            refundCheckbox.setSelected(false);
-            showAlert("Success", "Complaint resolved successfully!");
-        });
+        // Remove from unresolved and add to resolved
+        unresolvedComplaints.remove(selectedComplaint);
+        resolvedComplaints.add(selectedComplaint);
+
+        // Clear input fields
+        resolutionField.clear();
+        refundCheckbox.setSelected(false);
+        refundAmountField.clear(); // ✅ Clear refund input field
     }
+
+
+
+
     @FXML
     private void handleExportToCSV() {
         FileChooser fileChooser = new FileChooser();
@@ -345,4 +444,52 @@ public class ComplaintManageController {
     public void onClose() {
         EventBus.getDefault().unregister(this);
     }
+    @FXML
+    private void handleResolvedComplaintDoubleClick() {
+        ContactRequest selectedComplaint = resolvedTable.getSelectionModel().getSelectedItem();
+        if (selectedComplaint == null) {
+            showAlert("Error", "Please select a complaint to view.");
+            return;
+        }
+        showComplaintPopup("Resolved Complaint Details", selectedComplaint);
+    }
+    private void showComplaintPopup(String title, ContactRequest complaint) {
+        String message = String.format(
+                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\nSubmitted At: %s\nResolution: %s\nRefund: %s ($%.2f)",
+                complaint.getName(), complaint.getBranch(), complaint.getEmail(),
+                complaint.getComplaint(), complaint.getSubmittedAt(),
+                complaint.getResolutionScript(), complaint.isRefundIssued() ? "Yes" : "No",
+                complaint.getRefundAmount());
+        showAlert(title, message);
+    }
+    @FXML
+    private void handleComplaintDoubleClick() {
+        ContactRequest selectedComplaint = unresolvedTable.getSelectionModel().getSelectedItem();
+        if (selectedComplaint == null) {
+            showAlert("Error", "Please select a complaint to view.");
+            return;
+        }
+        showComplaintPopup("Complaint Details", selectedComplaint);
+    }
+    @FXML
+    private void handleViewComplaintDetails() {
+        ContactRequest selectedComplaint = unresolvedTable.getSelectionModel().getSelectedItem();
+
+        if (selectedComplaint == null) {
+            showAlert("Error", "Please select a complaint to view details.");
+            return;
+        }
+
+        String message = String.format(
+                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\n\nSubmitted At: %s",
+                selectedComplaint.getName(),
+                selectedComplaint.getBranch(),
+                selectedComplaint.getEmail(),
+                selectedComplaint.getComplaint(),
+                selectedComplaint.getSubmittedAt() != null ? selectedComplaint.getSubmittedAt().toString() : "N/A"
+        );
+
+        showAlert("Complaint Details", message);
+    }
+
 }

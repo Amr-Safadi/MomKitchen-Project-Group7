@@ -294,26 +294,33 @@ public class SimpleServer extends AbstractServer {
 				break;
 
 			case "#Update Complaint":
-				System.out.println("Storing complaint");
-				ContactRequest complaint = (ContactRequest) message.getObject();
-				ComplaintHandler.saveComplaint(complaint, sessionFactory);
-				try {
+				ContactRequest newComplaint = (ContactRequest) message.getObject();
+				try (Session session = getSessionFactory().openSession()) {
+					Transaction tx = session.beginTransaction();
+					session.save(newComplaint);
+					tx.commit();
 					client.sendToClient(new Message(null, "#ComplaintSubmissionSuccess"));
-					System.out.println("Complaint stored and confirmation sent to client.");
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				break;
 			case "#FetchComplaints":
 				try (Session session = getSessionFactory().openSession()) {
-					List<ContactRequest> complaints = session.createQuery("FROM ContactRequest", ContactRequest.class).list();
-					client.sendToClient(new Message(complaints, "#ComplaintList"));
-					System.out.println("✅ Sent all complaints to client.");
+					List<ContactRequest> unresolvedComplaints = session.createQuery(
+							"FROM ContactRequest WHERE handled = false", ContactRequest.class).getResultList();
+
+					List<ContactRequest> resolvedComplaints = session.createQuery(
+							"FROM ContactRequest WHERE handled = true", ContactRequest.class).getResultList();
+
+					client.sendToClient(new Message(unresolvedComplaints, "#ComplaintList"));
+					client.sendToClient(new Message(resolvedComplaints, "#ResolvedComplaintList"));
+
+					System.out.println("📤 Sent unresolved and resolved complaints to client.");
 				} catch (Exception e) {
 					e.printStackTrace();
-					System.err.println("❌ Error fetching complaints from database.");
 				}
 				break;
+
 
 
 			case "#ResolveComplaint":
@@ -321,18 +328,18 @@ public class SimpleServer extends AbstractServer {
 				try (Session session = getSessionFactory().openSession()) {
 					Transaction tx = session.beginTransaction();
 
-					// Fetch the actual complaint from DB
 					ContactRequest complaintFromDB = session.get(ContactRequest.class, resolvedComplaint.getId());
 					if (complaintFromDB != null) {
 						complaintFromDB.setHandled(true);
 						complaintFromDB.setResolutionScript(resolvedComplaint.getResolutionScript());
 						complaintFromDB.setRefundIssued(resolvedComplaint.isRefundIssued());
+						complaintFromDB.setRefundAmount(resolvedComplaint.getRefundAmount()); // ✅ Store refund amount
 						complaintFromDB.setHandledAt(LocalDateTime.now());
 
 						session.update(complaintFromDB);
 						tx.commit();
 
-						// Send updated list back to all clients
+						// Send updated complaints to clients
 						List<ContactRequest> updatedUnresolved = session.createQuery(
 								"FROM ContactRequest WHERE handled = false", ContactRequest.class).getResultList();
 						List<ContactRequest> updatedResolved = session.createQuery(
@@ -340,11 +347,18 @@ public class SimpleServer extends AbstractServer {
 
 						sendToAllClients(new Message(updatedUnresolved, "#ComplaintList"));
 						sendToAllClients(new Message(updatedResolved, "#ResolvedComplaintList"));
+						ComplaintHandler.sendResolutionEmail(complaintFromDB);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				break;
+
+
+
+
+
+
 
 
 

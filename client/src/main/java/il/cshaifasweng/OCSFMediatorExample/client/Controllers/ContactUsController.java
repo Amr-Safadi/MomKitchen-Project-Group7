@@ -27,6 +27,8 @@ public class ContactUsController {
 
     @FXML
     private TextArea complaintField;
+    @FXML
+    private TextField emailField;
 
     @FXML
     void initialize() {
@@ -40,16 +42,17 @@ public class ContactUsController {
     @FXML
     void handleSubmit() {
         String name = nameField.getText().trim();
+        String email = emailField.getText().trim();
         String branch = branchComboBox.getValue();
         String complaint = complaintField.getText().trim();
 
-        if (name.isEmpty() || branch == null || complaint.isEmpty()) {
+        if (name.isEmpty() || email.isEmpty() || branch == null || complaint.isEmpty()) {
             showAlert("Error", "All fields must be filled.");
             return;
         }
 
         try {
-            client.sendToServer(new Message(new ContactRequest(name, branch, complaint,false), "#Update Complaint"));
+            client.sendToServer(new Message(new ContactRequest(name, email, branch, complaint), "#Update Complaint"));
         } catch (IOException e) {
             showAlert("Error", "Failed to send the complaint.");
             e.printStackTrace();
