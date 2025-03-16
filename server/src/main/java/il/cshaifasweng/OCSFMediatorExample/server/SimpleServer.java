@@ -34,22 +34,7 @@ public class SimpleServer extends AbstractServer {
 	public SimpleServer(int port) {
 		super(port);
 		instance = this;
-		try {
-			session = sessionFactory.openSession();
-			session.beginTransaction();
-			DataInitializer.populateInitialData(session);
-			UserHandler.populateUsers(session);
-			session.getTransaction().commit();
-		} catch (Exception e) {
-			if (session != null && session.getTransaction().isActive()) {
-				session.getTransaction().rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-		}
+		DataInitializer.initializeDatabaseIfEmpty(sessionFactory);
 	}
 
 	public static SimpleServer getInstance() {

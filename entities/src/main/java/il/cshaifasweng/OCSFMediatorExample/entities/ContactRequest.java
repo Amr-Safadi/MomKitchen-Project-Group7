@@ -18,7 +18,7 @@ public class ContactRequest implements Serializable {
     private String branch;
     private String complaint;
     private boolean handled;
-    private String resolutionScript;
+    private String resolutionScript ="";
     private boolean refundIssued;
     private LocalDateTime submittedAt;
     private LocalDateTime handledAt;
@@ -42,12 +42,13 @@ public class ContactRequest implements Serializable {
     }
 
 
-    public ContactRequest(int id, boolean handled, String resolutionScript, boolean refundIssued) {
+    public ContactRequest(int id, boolean handled, String resolutionScript, boolean refundIssued, double refundAmount) {
         this.id = id;
         this.handled = handled;
         this.resolutionScript = resolutionScript;
         this.refundIssued = refundIssued;
         this.handledAt = LocalDateTime.now();
+        this.refundAmount = refundAmount;
     }
 
 

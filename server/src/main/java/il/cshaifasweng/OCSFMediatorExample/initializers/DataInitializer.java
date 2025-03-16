@@ -3,7 +3,9 @@ package il.cshaifasweng.OCSFMediatorExample.initializers;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
+import il.cshaifasweng.OCSFMediatorExample.handlers.UserHandler;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import java.time.LocalTime;
 
@@ -188,4 +190,30 @@ public class DataInitializer {
             e.printStackTrace();
         }
     }
+
+    public static void initializeDatabaseIfEmpty(SessionFactory sessionFactory) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            if (isDatabaseEmpty(session)) {
+                System.out.println("⚠️ Database is empty. Initializing data...");
+                populateInitialData(session);
+                UserHandler.populateUsers(session);
+                session.getTransaction().commit();
+            } else {
+                System.out.println("✅ Database already contains data. Skipping initialization.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private static boolean isDatabaseEmpty(Session session) {
+        Long mealCount = (Long) session.createQuery("SELECT COUNT(m) FROM Meals m").uniqueResult();
+        Long userCount = (Long) session.createQuery("SELECT COUNT(u) FROM User u").uniqueResult();
+
+        return (mealCount == 0 && userCount == 0);  // If both are 0, the DB is empty
+    }
+
+
+
 }

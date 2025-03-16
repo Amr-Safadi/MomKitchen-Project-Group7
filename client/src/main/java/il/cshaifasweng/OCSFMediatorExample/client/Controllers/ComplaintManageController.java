@@ -125,7 +125,7 @@ public class ComplaintManageController {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         branchColumn.setCellValueFactory(new PropertyValueFactory<>("branch"));
-        complaintColumn.setCellValueFactory(new PropertyValueFactory<>("complaint"));
+       // complaintColumn.setCellValueFactory(new PropertyValueFactory<>("complaint"));
         submittedColumn.setCellFactory(column -> new TableCell<ContactRequest, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -167,7 +167,7 @@ public class ComplaintManageController {
             LocalDateTime handledAt = cellData.getValue().getHandledAt();
             return new SimpleStringProperty((handledAt != null) ? handledAt.toString() : "N/A");
         });
-        resolvedComplaintColumn.setCellValueFactory(new PropertyValueFactory<>("complaint")); // ✅ Updated
+        //resolvedComplaintColumn.setCellValueFactory(new PropertyValueFactory<>("complaint")); // ✅ Updated
         resolvedSubmittedColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getSubmittedAt() != null ?
                         cellData.getValue().getSubmittedAt().toString() : "N/A")); // ✅ Updated
@@ -204,12 +204,13 @@ public class ComplaintManageController {
         }
 
         String message = String.format(
-                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\n\nSubmitted At: %s",
+                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\n\nSubmitted At: %s %s",
                 selectedComplaint.getName(),
                 selectedComplaint.getBranch(),
                 selectedComplaint.getEmail(),
                 selectedComplaint.getComplaint(),
                 selectedComplaint.getSubmittedAt() != null ? selectedComplaint.getSubmittedAt().toString() : "N/A"
+
         );
 
         showAlert("Complaint Details", message);
@@ -224,12 +225,14 @@ public class ComplaintManageController {
         }
 
         String message = String.format(
-                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\n\nSubmitted At: %s",
+                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\n\nSubmitted At: %s \n\n Resolution Script: %s \n Refund Amount: %s",
                 selectedComplaint.getName(),
                 selectedComplaint.getBranch(),
                 selectedComplaint.getEmail(),
                 selectedComplaint.getComplaint(),
-                selectedComplaint.getSubmittedAt() != null ? selectedComplaint.getSubmittedAt().toString() : "N/A"
+                selectedComplaint.getSubmittedAt() != null ? selectedComplaint.getSubmittedAt().toString() : "N/A" ,
+                selectedComplaint.getResolutionScript() ,
+           /**/     selectedComplaint.getRefundAmount()
         );
 
         showAlert("Complaint Details", message);
@@ -294,8 +297,6 @@ public class ComplaintManageController {
             return;
         }
 
-        // Parse refund amount if refund is issued
-        double refundAmount = 0.0;
         if (refundIssued) {
             try {
                 selectedComplaint.setRefundAmount(Double.parseDouble(refundAmountField.getText().trim()));
@@ -310,7 +311,6 @@ public class ComplaintManageController {
         selectedComplaint.setHandled(true);
         selectedComplaint.setResolutionScript(resolutionText);
         selectedComplaint.setRefundIssued(refundIssued);
-        selectedComplaint.setRefundAmount(refundAmount);
         selectedComplaint.setHandledAt(LocalDateTime.now());
 
         // Send updated complaint to the server
@@ -334,61 +334,6 @@ public class ComplaintManageController {
 
 
 
-
-    @FXML
-    private void handleExportToCSV() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Complaints as CSV");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-        fileChooser.setInitialFileName("complaints.csv");
-
-        // Show save dialog
-        java.io.File file = fileChooser.showSaveDialog(null);
-        if (file != null) {
-            exportComplaintsToCSV(file);
-        }
-    }
-    private void exportComplaintsToCSV(java.io.File file) {
-        try (FileWriter writer = new FileWriter(file)) {
-            // Write header
-            writer.append("ID,Customer Name,Branch,Complaint,Time Submitted,Resolved,Resolution,Time Handled,Refund Issued\n");
-
-            // Write unresolved complaints
-            for (ContactRequest complaint : unresolvedTable.getItems()) {
-                writer.append(String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s\n",
-                        complaint.getId(),
-                        complaint.getName(),
-                        complaint.getBranch(),
-                        complaint.getComplaint(),
-                        (complaint.getSubmittedAt() != null) ? complaint.getSubmittedAt().toString() : "N/A",
-                        complaint.isHandled() ? "Yes" : "No",
-                        complaint.getResolutionScript() != null ? complaint.getResolutionScript() : "N/A",
-                        (complaint.getHandledAt() != null) ? complaint.getHandledAt().toString() : "N/A",
-                        complaint.isRefundIssued() ? "Yes" : "No"
-                ));
-            }
-
-            // Write resolved complaints
-            for (ContactRequest complaint : resolvedTable.getItems()) {
-                writer.append(String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s\n",
-                        complaint.getId(),
-                        complaint.getName(),
-                        complaint.getBranch(),
-                        complaint.getComplaint(),
-                        (complaint.getSubmittedAt() != null) ? complaint.getSubmittedAt().toString() : "N/A",
-                        complaint.isHandled() ? "Yes" : "No",
-                        complaint.getResolutionScript() != null ? complaint.getResolutionScript() : "N/A",
-                        (complaint.getHandledAt() != null) ? complaint.getHandledAt().toString() : "N/A",
-                        complaint.isRefundIssued() ? "Yes" : "No"
-                ));
-            }
-
-            showAlert("Success", "Complaints exported successfully!");
-        } catch (IOException e) {
-            showAlert("Error", "Failed to export complaints.");
-            e.printStackTrace();
-        }
-    }
 
 
 
@@ -417,8 +362,6 @@ public class ComplaintManageController {
         }
     }
 
-
-
     // Show Resolved Complaints
     @FXML
     private void showResolvedComplaints() {
@@ -445,6 +388,8 @@ public class ComplaintManageController {
         EventBus.getDefault().unregister(this);
     }
     @FXML
+
+
     private void handleResolvedComplaintDoubleClick() {
         ContactRequest selectedComplaint = resolvedTable.getSelectionModel().getSelectedItem();
         if (selectedComplaint == null) {
@@ -453,6 +398,7 @@ public class ComplaintManageController {
         }
         showComplaintPopup("Resolved Complaint Details", selectedComplaint);
     }
+
     private void showComplaintPopup(String title, ContactRequest complaint) {
         String message = String.format(
                 "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\nSubmitted At: %s\nResolution: %s\nRefund: %s ($%.2f)",
@@ -471,6 +417,7 @@ public class ComplaintManageController {
         }
         showComplaintPopup("Complaint Details", selectedComplaint);
     }
+
     @FXML
     private void handleViewComplaintDetails() {
         ContactRequest selectedComplaint = unresolvedTable.getSelectionModel().getSelectedItem();
