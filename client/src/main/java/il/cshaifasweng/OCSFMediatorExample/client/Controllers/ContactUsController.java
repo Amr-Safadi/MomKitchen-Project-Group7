@@ -45,7 +45,6 @@ public class ContactUsController {
         String email = emailField.getText().trim();
         String branch = branchComboBox.getValue();
         String complaint = complaintField.getText().trim();
-
         if (name.isEmpty() || email.isEmpty() || branch == null || complaint.isEmpty()) {
             showAlert("Error", "All fields must be filled.");
             return;
