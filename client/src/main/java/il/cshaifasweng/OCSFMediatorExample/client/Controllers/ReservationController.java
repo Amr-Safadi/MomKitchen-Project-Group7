@@ -122,12 +122,12 @@ public class ReservationController {
 
     @FXML
     public void handleCancelReservation(ActionEvent event) {
-        ScreenManager.switchScreen("CancelReservationSearch");
+        Platform.runLater(() -> ScreenManager.switchScreen("CancelReservationSearch"));
     }
 
     @FXML
     public void handleBack(ActionEvent event) {
-        ScreenManager.switchScreen("Menu List");
+        Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
     private void showAlert(String title, String message) {

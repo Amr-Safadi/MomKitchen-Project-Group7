@@ -59,7 +59,7 @@ public class CheckOutController {
 
     @FXML
     void backHandler() {
-        ScreenManager.switchScreen("Cart");
+        Platform.runLater(() ->ScreenManager.switchScreen("Cart"));
     }
     @FXML
     void handlePlaceOrderBtn() {
@@ -98,7 +98,7 @@ public class CheckOutController {
             showAlert("Connection Error", "Failed to send order to the server. Please check your connection.");
         }
 
-        ScreenManager.switchScreen("Primary");
+        Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
         showAlert("Order Placed", "Your order has been placed successfully!");
         CartSession.getCart().clearCart();
 

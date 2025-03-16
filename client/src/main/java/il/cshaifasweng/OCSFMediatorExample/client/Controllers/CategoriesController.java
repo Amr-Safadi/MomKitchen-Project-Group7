@@ -68,7 +68,7 @@ public class CategoriesController {
 
     @FXML
     void handleBackBtn(ActionEvent event) {
-        ScreenManager.switchScreen("Menu List");
+        Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
     @FXML

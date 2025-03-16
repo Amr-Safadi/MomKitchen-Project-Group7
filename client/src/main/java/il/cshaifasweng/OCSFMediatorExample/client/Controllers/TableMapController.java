@@ -114,6 +114,6 @@ public class TableMapController {
 
     @FXML
     void handleBack(ActionEvent event) {
-        ScreenManager.switchScreen("Menu List");
+        Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 }

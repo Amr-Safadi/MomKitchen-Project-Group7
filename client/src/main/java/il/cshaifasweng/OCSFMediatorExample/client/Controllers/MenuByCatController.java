@@ -88,12 +88,12 @@ public class MenuByCatController {
 
     @FXML
     void handleBackBtn(ActionEvent event) {
-        ScreenManager.switchScreen("categories");
+        Platform.runLater(() -> ScreenManager.switchScreen("categories"));
     }
 
     @FXML
     void handleCartBtn(ActionEvent event) {
-        ScreenManager.switchScreen("Cart");
+        Platform.runLater(() ->  ScreenManager.switchScreen("Cart"));
     }
 
     @FXML

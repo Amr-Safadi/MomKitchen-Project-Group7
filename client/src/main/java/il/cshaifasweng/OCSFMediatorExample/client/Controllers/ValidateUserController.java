@@ -30,7 +30,7 @@ public class ValidateUserController {
 
     @FXML
     void backHandler(ActionEvent event) {
-        ScreenManager.switchScreen("Primary");
+        Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
     }
     @FXML
     void validateUser() {
@@ -62,7 +62,7 @@ public class ValidateUserController {
                 }
 
                 // Move to the order cancellation screen
-                ScreenManager.switchScreen("Cancel Order");
+                Platform.runLater(() ->  ScreenManager.switchScreen("Cancel Order"));
                 CancelOrderController.Orders = userOrders;
             }
         });

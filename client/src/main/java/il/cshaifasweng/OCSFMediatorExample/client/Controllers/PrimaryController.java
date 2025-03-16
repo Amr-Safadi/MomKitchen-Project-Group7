@@ -69,7 +69,7 @@ public class PrimaryController {
 
     @FXML
     private void handleCancelOrder() {
-        ScreenManager.switchScreen("Validate User");
+        Platform.runLater(() -> ScreenManager.switchScreen("Validate User"));
     }
 
     @FXML
@@ -113,7 +113,7 @@ public class PrimaryController {
                 (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER ||
                         UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER ||
                         UserSession.getUser().getRole() == User.Role.SERVICE_EMPLOYEE)) {
-            ScreenManager.switchScreen("Manage Complaints");
+            Platform.runLater(() ->  ScreenManager.switchScreen("Manage Complaints"));
         } else {
             showAlert("Access Denied", "You do not have permission to access this page.");
         }

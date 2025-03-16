@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -61,7 +62,7 @@ public class CartController {
 
     @FXML
     void backHandler() {
-        ScreenManager.switchScreen("Menu List");
+        Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
     @FXML
@@ -123,7 +124,7 @@ public class CartController {
         dialog.showAndWait().ifPresent(result -> {
             // Pass order type and payment method to checkout screen
             CheckOutController.setOrderPreferences(result[0], result[1]);
-            ScreenManager.switchScreen("check out");
+            Platform.runLater(() ->   ScreenManager.switchScreen("check out"));
         });
     }
 

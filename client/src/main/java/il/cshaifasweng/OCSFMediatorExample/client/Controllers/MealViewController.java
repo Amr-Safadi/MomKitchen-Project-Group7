@@ -156,7 +156,7 @@ public class MealViewController {
 
     @FXML
     void btnCartHandler(ActionEvent event) {
-        ScreenManager.switchScreen("Cart");
+        Platform.runLater(() -> ScreenManager.switchScreen("Cart"));
     }
 
     public void btnEditHandler(ActionEvent event) {
@@ -247,7 +247,7 @@ public class MealViewController {
     }
 
     public void btnBackHandler(ActionEvent event) {
-        ScreenManager.switchScreen("Menu List");
+        Platform.runLater(() ->ScreenManager.switchScreen("Menu List"));
     }
 
     public void setMeal(Meals meal) {
