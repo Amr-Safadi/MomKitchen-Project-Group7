@@ -97,6 +97,11 @@ public class CheckOutController {
         } catch (IOException e) {
             showAlert("Connection Error", "Failed to send order to the server. Please check your connection.");
         }
+
+        ScreenManager.switchScreen("Primary");
+        showAlert("Order Placed", "Your order has been placed successfully!");
+        CartSession.getCart().clearCart();
+
     }
 
     @Subscribe

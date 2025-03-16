@@ -5,6 +5,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.MenuByCatService;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -40,38 +41,29 @@ public class CategoriesController {
 
     @FXML
     void handleDrinksBtn(ActionEvent event) {
-        try {
-            client.sendToServer(new Message("fetchDrinks"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error handling drinks - CategoriesController", e);
-        }
-        MenuByCatService.setCurrentCategory("Drinks");
-        ScreenManager.switchScreen("MenuByCategory");
+        Platform.runLater(() -> {
+            MenuByCatService.setCurrentCategory("Drinks");
+            ScreenManager.switchScreen("MenuByCategory");
+        });
+
     }
 
     @FXML
     void handleItalianBtn(ActionEvent event) {
-        try {
-            client.sendToServer(new Message("fetchItalian"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error handling Italian - CategoriesController", e);
-        }
-        MenuByCatService.setCurrentCategory("Italian");
-        ScreenManager.switchScreen("MenuByCategory");
+        Platform.runLater(() -> {
+            MenuByCatService.setCurrentCategory("Italian");
+            ScreenManager.switchScreen("MenuByCategory");
+        });
+
     }
 
     @FXML
     void HandleMeatBtn(ActionEvent event) {
-        try {
-            client.sendToServer(new Message("fetchMeat"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error handling Meat - CategoriesController", e);
-        }
-        MenuByCatService.setCurrentCategory("Meat");
-        ScreenManager.switchScreen("MenuByCategory");
+        Platform.runLater(() -> {
+            MenuByCatService.setCurrentCategory("Meat");
+            ScreenManager.switchScreen("MenuByCategory");
+        });
+
     }
 
     @FXML
