@@ -105,6 +105,7 @@ public class ComplaintManageController {
         setupTables();
         fetchComplaints();
         rootPane.setStyle("-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover;");
+
         unresolvedTable.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 showComplaintDetails();
@@ -204,7 +205,7 @@ public class ComplaintManageController {
         }
 
         String message = String.format(
-                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\n\nSubmitted At: %s %s",
+                "Customer: %s\nBranch: %s\nEmail: %s\nComplaint:\n%s\n\nSubmitted At: %s",
                 selectedComplaint.getName(),
                 selectedComplaint.getBranch(),
                 selectedComplaint.getEmail(),
