@@ -278,6 +278,7 @@ public class MealViewController {
                 checkBoxes[i].setSelected(true); // By default, all preferences are checked
             }
         }
+        updateMealBackground();
     }
 
     @FXML
