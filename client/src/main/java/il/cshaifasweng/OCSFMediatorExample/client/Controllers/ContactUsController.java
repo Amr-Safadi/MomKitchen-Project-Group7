@@ -61,19 +61,20 @@ public class ContactUsController {
 
     @Subscribe
     public void onComplaintSuccess(Message message) {
+        if (message.toString().equals("#ComplaintSubmissionSuccess")) {
         Platform.runLater(() -> { // Ensure UI updates run on the JavaFX thread
-            if (message.toString().equals("#ComplaintSubmissionSuccess")) {
+
                 showAlert("Success", "Your complaint has been submitted!");
                 ScreenManager.switchScreen("Primary");
             }
-        });
+        );}
     }
 
 
     @FXML
     void handleBack() {
         // Switch back to the main screen
-        ScreenManager.switchScreen("Primary");
+        Platform.runLater(() ->  ScreenManager.switchScreen("Primary"));
     }
 
     private void showAlert(String title, String message) {

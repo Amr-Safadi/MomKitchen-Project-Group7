@@ -39,7 +39,7 @@ public class LoginController {
 
     @FXML
     void handleBackBtn(ActionEvent event) {
-        ScreenManager.switchScreen("Primary");
+        Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
     }
 
     @FXML

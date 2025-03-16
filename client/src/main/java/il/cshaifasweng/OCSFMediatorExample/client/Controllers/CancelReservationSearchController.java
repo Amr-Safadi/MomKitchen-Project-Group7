@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -45,12 +46,12 @@ public class CancelReservationSearchController {
         if ("#UserReservations".equals(message.toString())) {
             CancelReservationListController.setReservationsList((List) message.getObject());
             EventBus.getDefault().unregister(this);
-            ScreenManager.switchScreen("CancelReservationList");
+            Platform.runLater(() -> ScreenManager.switchScreen("CancelReservationList"));
         }
     }
 
     @FXML
     public void handleBack(ActionEvent event) {
-        ScreenManager.switchScreen("Reservation");
+        Platform.runLater(() ->  ScreenManager.switchScreen("Reservation"));
     }
 }

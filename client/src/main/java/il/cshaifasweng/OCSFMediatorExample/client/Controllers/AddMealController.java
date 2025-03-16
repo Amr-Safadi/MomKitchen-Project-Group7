@@ -111,7 +111,8 @@ public class AddMealController {
 
     @FXML
     void handleBack() {
-        ScreenManager.switchScreen("Primary");
+        Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
+
     }
 
     private void showAlert(String title, String content) {

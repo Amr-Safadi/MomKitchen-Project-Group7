@@ -120,11 +120,11 @@ public class SecondaryController {
 
     @FXML
     public void handleAddMeal(ActionEvent event) {
-        ScreenManager.switchScreen("AddMeal");
+        Platform.runLater(() -> ScreenManager.switchScreen("AddMeal"));
     }
     @FXML
     public void handleSearchBtn(ActionEvent event) {
-        ScreenManager.switchScreen("categories");
+        Platform.runLater(() -> ScreenManager.switchScreen("categories"));
     }
 
     @FXML
@@ -145,7 +145,7 @@ public class SecondaryController {
 
     @FXML
     public void handleReservation(ActionEvent event) {
-        ScreenManager.switchScreen("Reservation");
+        Platform.runLater(() -> ScreenManager.switchScreen("Reservation"));
     }
 
     private void openMealView(String mealName) {
@@ -199,19 +199,19 @@ public class SecondaryController {
 
     @FXML
     void handleCartBtn(ActionEvent event) {
-        ScreenManager.switchScreen("Cart");
+        Platform.runLater(() -> ScreenManager.switchScreen("Cart"));
     }
 
     @FXML
     void handleBackBtn(ActionEvent event) {
-        ScreenManager.switchScreen("Primary");
+        Platform.runLater(() ->   ScreenManager.switchScreen("Primary"));
         CartSession.clearCart();
         System.out.println("Cart cleared after navigating back from the branch.");
     }
 
     @FXML
     void handleManageTables() {
-        ScreenManager.switchScreen("TableMap");
+        Platform.runLater(() -> ScreenManager.switchScreen("TableMap"));
     }
 
     @FXML

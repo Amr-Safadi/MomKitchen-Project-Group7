@@ -6,6 +6,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -68,41 +69,42 @@ public class PrimaryController {
 
     @FXML
     private void handleCancelOrder() {
-        ScreenManager.switchScreen("Validate User");
+        Platform.runLater(() -> ScreenManager.switchScreen("Validate User"));
     }
 
     @FXML
     private void handleHaifaBtn() {
         SecondaryService.setBranch("Haifa");
-        ScreenManager.switchScreen("Menu List");
+        Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
+
     }
 
     @FXML
     private void handleAcreBtn() {
         SecondaryService.setBranch("Acre");
-        ScreenManager.switchScreen("Menu List");
+        Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
     @FXML
     private void handleTelavivBtn() {
         SecondaryService.setBranch("Tel-Aviv");
-        ScreenManager.switchScreen("Menu List");
+        Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
     @FXML
     private void handleNetanyaBtn() {
         SecondaryService.setBranch("Netanya");
-        ScreenManager.switchScreen("Menu List");
+        Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
     @FXML
     private void handleContactUsBtn() {
-        ScreenManager.switchScreen("Contact Us");
+        Platform.runLater(() ->  ScreenManager.switchScreen("Contact Us"));
     }
 
     @FXML
     private void handleLOGINBtn() {
-        ScreenManager.switchScreen("Login");
+        Platform.runLater(() ->   ScreenManager.switchScreen("Login"));
     }
 
     @FXML
@@ -111,7 +113,7 @@ public class PrimaryController {
                 (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER ||
                         UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER ||
                         UserSession.getUser().getRole() == User.Role.SERVICE_EMPLOYEE)) {
-            ScreenManager.switchScreen("Manage Complaints");
+            Platform.runLater(() ->  ScreenManager.switchScreen("Manage Complaints"));
         } else {
             showAlert("Access Denied", "You do not have permission to access this page.");
         }

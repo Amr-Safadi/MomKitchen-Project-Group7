@@ -45,7 +45,7 @@
          <font>
             <Font name="Bauhaus 93" size="14.0" />
          </font></Button>
-      <Button fx:id="searchBtn" layoutX="114.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleSearchBtn" onMouseClicked="#handleSearchBtn" prefHeight="29.0" prefWidth="149.0" style="-fx-background-color: #8ad4a8;" text="Search by category" textFill="WHITE">
+      <Button fx:id="searchBtn" layoutX="114.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleSearchBtn" prefHeight="29.0" prefWidth="149.0" style="-fx-background-color: #8ad4a8;" text="Search by category" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>

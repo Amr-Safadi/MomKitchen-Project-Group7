@@ -98,7 +98,7 @@ public class ComplaintManageController {
                         UserSession.getUser().getRole() == User.Role.SERVICE_EMPLOYEE)) {
 
             showAlert("Access Denied", "You do not have permission to access this page.");
-            ScreenManager.switchScreen("Primary");  // Redirect unauthorized users
+            Platform.runLater(() ->  ScreenManager.switchScreen("Primary"));  // Redirect unauthorized users
             return;
         }
         EventBus.getDefault().register(this);
@@ -372,7 +372,7 @@ public class ComplaintManageController {
     // Navigate Back to Main Screen
     @FXML
     private void handleBackToMain() {
-        ScreenManager.switchScreen("Primary");
+        Platform.runLater(() ->ScreenManager.switchScreen("Primary"));
     }
 
     // Show Alert Helper Method

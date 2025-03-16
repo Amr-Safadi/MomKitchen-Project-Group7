@@ -7,6 +7,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -53,19 +54,24 @@ public class MenuByCatController {
 
     @Subscribe
     public void onMealsFetched(Message message) {
-        if ("Category Fetched".equals(message.toString())) {
-            mealsList.getItems().clear();
-            MenuByCatService.setMealsList((ArrayList<Meals>) message.getObject());
+            if ("Category Fetched".equals(message.toString())) {
+                Platform.runLater(() -> {
+                    mealsList.getItems().clear();
+                    mealsList.refresh();
+                    MenuByCatService.setMealsList((ArrayList<Meals>) message.getObject());
 
-            if (MenuByCatService.getMealsList().isEmpty()) {
-                System.out.println("No meals found for this category.");
-            } else {
-                for (Meals meal : MenuByCatService.getMealsList()) {
-                    mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
-                }
+                    if (MenuByCatService.getMealsList().isEmpty()) {
+                        System.out.println("No meals found for this category.");
+                    } else {
+                        for (Meals meal : MenuByCatService.getMealsList()) {
+                            mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
+                        }
+                    }
+                    System.out.println("Meals list updated for category: " + MenuByCatService.getCurrentCategory());
+                });
             }
-            System.out.println("Meals list updated for category: " + MenuByCatService.getCurrentCategory());
-        }
+
+            mealsList.refresh();
     }
 
     @Subscribe
@@ -82,12 +88,12 @@ public class MenuByCatController {
 
     @FXML
     void handleBackBtn(ActionEvent event) {
-        ScreenManager.switchScreen("categories");
+        Platform.runLater(() -> ScreenManager.switchScreen("categories"));
     }
 
     @FXML
     void handleCartBtn(ActionEvent event) {
-        ScreenManager.switchScreen("Cart");
+        Platform.runLater(() ->  ScreenManager.switchScreen("Cart"));
     }
 
     @FXML
@@ -130,14 +136,34 @@ public class MenuByCatController {
 
     @FXML
     void initialize() {
-        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
-        }
 
         if (MenuByCatService.getCurrentCategory() != null) {
-            mealsLabel.setText(MenuByCatService.getCurrentCategory() + " " + mealsLabel.getText());
+            mealsLabel.setText(MenuByCatService.getCurrentCategory());
         }
 
         BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
+
+
+        // Request meals again in case first request was missed
+        if (!MenuByCatService.getMealsList().isEmpty()) {
+            updateMealsList(); // Load existing meals
+        } else {
+            try {
+                client.sendToServer(new Message("fetch" + MenuByCatService.getCurrentCategory()));
+                System.out.println("Retrying meal fetch: " + MenuByCatService.getCurrentCategory());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void updateMealsList() {
+        mealsList.getItems().clear();
+        for (Meals meal : MenuByCatService.getMealsList()) {
+            mealsList.getItems().add(meal.getName() + " - $" + meal.getPrice());
+        }
+        mealsList.refresh();
     }
 }

@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.handlers;
 import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
+import il.cshaifasweng.OCSFMediatorExample.util.EmailSender;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -39,6 +40,22 @@ public class ReservationHandler {
                         feeApplied = true;
                     }
                 }
+                // Send email notification
+                String emailSubject = "❌ Table Reservation Canceled - Mom's Kitchen";
+                String emailBody = "Dear " + reservation.getFullName()+ ",\n\n"
+                        + "Your table reservation at Mom's Kitchen has been successfully canceled.\n"
+                        + "Reservation Details:\n"
+                        + "📅 Date: " + reservation.getDate() + "\n"
+                        + "⏰ Time: " + reservation.getTime() + "\n"
+                        + "👥 Guests: " + reservation.getGuests() + "\n\n"
+                        + "We hope to serve you in the future. Let us know if you’d like to book again!\n\n"
+                        + "Best regards,\n"
+                        + "Mom's Kitchen Team";
+
+                EmailSender.sendEmail(reservation.getEmail(), emailSubject, emailBody);
+                System.out.println("📧 Reservation cancellation email sent to " + reservation.getEmail());
+
+
                 session.delete(res);
                 tx.commit();
             }
@@ -149,6 +166,23 @@ public class ReservationHandler {
                     ReservationScheduler.scheduleReservationActivation(table.getId(), delayMillis, sessionFactory);
                 }
             }
+
+            // Send email notification
+            String emailSubject = "🍽️ Table Reservation Confirmation - Mom's Kitchen";
+            String emailBody = "Dear " + reservation.getFullName()+ ",\n\n"
+                    + "Your table reservation at Mom's Kitchen has been successfully booked.\n"
+                    + "Reservation Details:\n"
+                    + "📅 Date: " + reservation.getDate()+ "\n"
+                    + "⏰ Time: " + reservation.getTime() + "\n"
+                    + "👥 Guests: " + reservation.getGuests() + "\n"
+                    + "📍 Location: Mom's Kitchen," + reservation.getBranch() + "\n\n"
+                    + "We look forward to serving you!\n\n"
+                    + "Best regards,\n"
+                    + "Mom's Kitchen Team";
+
+            EmailSender.sendEmail(reservation.getEmail(), emailSubject, emailBody);
+
+            System.out.println("📧 Reservation confirmation email sent to " + reservation.getEmail());
 
             reservation.setTables(allocatedTables);
             session.save(reservation);
