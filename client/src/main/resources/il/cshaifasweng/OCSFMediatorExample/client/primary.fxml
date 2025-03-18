@@ -68,7 +68,7 @@
             <Font name="Bauhaus 93" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="contactUsBtn" alignment="CENTER" onAction="#handleContactUsBtn" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: #8ad4a8;" text="Contact Us" textFill="WHITE" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+      <Button fx:id="contactUsBtn" alignment="CENTER" layoutX="198.0" layoutY="29.0" onAction="#handleContactUsBtn" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: #8ad4a8;" text="Contact Us" textFill="WHITE" AnchorPane.rightAnchor="282.0" AnchorPane.topAnchor="29.0">
          <font>
             <Font name="Bauhaus 93" size="16.0" />
          </font>
@@ -80,7 +80,7 @@
       </Button>
 
 
-      <Label fx:id="userRec" layoutX="462.0" layoutY="23.0" text="Label" />
-      <Button fx:id="cancelOrderBtn" layoutX="424.0" layoutY="487.0" mnemonicParsing="false" onAction="#handleCancelOrder" text="Cancel Order" />
+      <Label fx:id="userRec" layoutX="55.0" layoutY="36.0" text="Label" />
+      <Button fx:id="cancelOrderBtn" layoutX="53.0" layoutY="493.0" mnemonicParsing="false" onAction="#handleCancelOrder" text="Cancel Order" />
    </children>
 </AnchorPane>

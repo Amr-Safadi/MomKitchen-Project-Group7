@@ -17,7 +17,7 @@
             <Font name="Bauhaus 93" size="14.0" />
          </font>
       </Button>
-       <Button fx:id="manageTablesBtn" layoutX="400.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleManageTables" style="-fx-background-color: #8ad4a8;" text="Manage Tables" textFill="WHITE">
+       <Button fx:id="manageTablesBtn" layoutX="456.0" layoutY="40.0" mnemonicParsing="false" onAction="#handleManageTables" style="-fx-background-color: #8ad4a8;" text="Manage Tables" textFill="WHITE">
            <font>
                <Font name="Bauhaus 93" size="14.0" />
            </font>
