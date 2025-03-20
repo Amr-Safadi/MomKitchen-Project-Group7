@@ -62,6 +62,9 @@ public class PrimaryController {
     private Button complaintsButton;
 
     @FXML
+    private Button reportsButton;
+
+    @FXML
     private ListView<?> branchListView;
 
     @FXML
@@ -118,6 +121,10 @@ public class PrimaryController {
             showAlert("Access Denied", "You do not have permission to access this page.");
         }
     }
+    @FXML
+    private void handleReports() {
+        Platform.runLater(() -> ScreenManager.switchScreen("Reports"));
+    }
 
 
 
@@ -135,6 +142,7 @@ public class PrimaryController {
 
         User loggedInUser = SimpleClient.getUser();
         complaintsButton.setVisible(false);
+        reportsButton.setVisible(false);
 
 
         if (loggedInUser != null) {
@@ -147,9 +155,15 @@ public class PrimaryController {
                     loggedInUser.getRole() == User.Role.SERVICE_EMPLOYEE) {
                 complaintsButton.setVisible(true);
             }
+            if (loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
+                    loggedInUser.getRole() == User.Role.GENERAL_MANAGER) {
+                reportsButton.setVisible(true);
+            }
         } else {
             userRec.setVisible(false);
         }
+
+
 
 
         if (UserSession.getUser() != null) {
