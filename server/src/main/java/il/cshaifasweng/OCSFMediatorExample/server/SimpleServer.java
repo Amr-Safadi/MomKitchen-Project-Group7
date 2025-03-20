@@ -277,6 +277,31 @@ public class SimpleServer extends AbstractServer {
 					e.printStackTrace();
 				}
 				break;
+			case "#FetchReports":
+				try (Session session = getSessionFactory().openSession()) {
+					List<Orders> deliveryOrders = session.createQuery(
+							"FROM Orders WHERE orderType = 'Delivery'", Orders.class).getResultList();
+					System.out.println("📤 Sending Orders: " + deliveryOrders.size());
+
+					List<Object[]> reservationsPerDay = session.createQuery(
+							"SELECT DATE(date), COUNT(*) FROM Reservation GROUP BY DATE(date)", Object[].class).getResultList();
+					System.out.println("📤 Sending Reservations: " + reservationsPerDay.size());
+
+					List<Object[]> complaintsPerDay = session.createQuery(
+							"SELECT DATE(submittedAt), COUNT(*) FROM ContactRequest GROUP BY DATE(submittedAt)", Object[].class).getResultList();
+					System.out.println("📤 Sending Complaints: " + complaintsPerDay.size());
+
+					client.sendToClient(new Message(deliveryOrders, "#OrdersReport"));
+					client.sendToClient(new Message(reservationsPerDay, "#ReservationsReport"));
+					client.sendToClient(new Message(complaintsPerDay, "#ComplaintsReport"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+
+
+
+
 
 			case "#Update Complaint":
 				ContactRequest newComplaint = (ContactRequest) message.getObject();

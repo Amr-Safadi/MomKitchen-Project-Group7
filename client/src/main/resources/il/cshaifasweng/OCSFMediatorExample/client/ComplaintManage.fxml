@@ -43,7 +43,6 @@
             <HBox layoutX="20" layoutY="500" spacing="15">
                 <Button onAction="#handleResolveComplaint" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" text="Resolve Complaint" />
                 <Button onAction="#showResolvedComplaints" style="-fx-background-color: #008CBA; -fx-text-fill: white; -fx-font-size: 14px;" text="View Resolved Complaints" />
-                <Button onAction="#handleViewComplaintDetails" style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 14px;" text="View Complaint Details" />
                 <Button onAction="#handleBackToMain" style="-fx-background-color: #FF5733; -fx-text-fill: white; -fx-font-size: 14px;" text="Back to Main" />
             </HBox>
 
