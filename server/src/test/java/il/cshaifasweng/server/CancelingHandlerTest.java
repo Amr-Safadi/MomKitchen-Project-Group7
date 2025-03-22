@@ -49,4 +49,5 @@ public class CancelingHandlerTest {
         // Test when the cancellation email is successfully sent
         assertTrue(true);
     }
+
 }

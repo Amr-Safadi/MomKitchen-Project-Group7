@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 public class BranchHandlerTest {
 
+
     @Test
     public void getBranchByName_FoundCase() {
         // Test when branch is found in the database

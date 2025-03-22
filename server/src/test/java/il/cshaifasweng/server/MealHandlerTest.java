@@ -97,4 +97,5 @@ public class MealHandlerTest {
         // Test when deleting a meal fails (e.g., due to constraints)
         assertTrue(true);
     }
+
 }

@@ -49,4 +49,5 @@ public class ComplaintHandlerTest {
         // Test when refund is issued and resolution email is sent
         assertTrue(true);
     }
+
 }
