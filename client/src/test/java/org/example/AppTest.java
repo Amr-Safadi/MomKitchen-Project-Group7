@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
  */
 public class AppTest {
 
-    // Not really testing anything :)
+     //Not really testing anything :)
     @Test
     public void testApp() {
         assertTrue(true);
