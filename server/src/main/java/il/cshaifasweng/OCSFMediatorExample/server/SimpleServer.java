@@ -299,10 +299,6 @@ public class SimpleServer extends AbstractServer {
 				}
 				break;
 
-
-
-
-
 			case "#Update Complaint":
 				ContactRequest newComplaint = (ContactRequest) message.getObject();
 				try (Session session = getSessionFactory().openSession()) {
@@ -330,8 +326,6 @@ public class SimpleServer extends AbstractServer {
 					e.printStackTrace();
 				}
 				break;
-
-
 
 			case "#ResolveComplaint":
 				ContactRequest resolvedComplaint = (ContactRequest) message.getObject();

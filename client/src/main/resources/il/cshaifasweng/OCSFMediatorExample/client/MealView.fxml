@@ -105,6 +105,7 @@
                               </CheckBox>
                            </children>
                         </VBox>
+                        <Button fx:id="btnEditPrefs" mnemonicParsing="false" onAction="#handleEditPreferences" text="Edit Preferences" />
                      </children>
                   </VBox>
                </children>

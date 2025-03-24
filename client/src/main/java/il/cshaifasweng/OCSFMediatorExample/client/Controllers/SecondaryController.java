@@ -75,14 +75,18 @@ public class SecondaryController {
     @FXML
     private Button reservationBtn;
 
+   public static ArrayList<Meals> receivedMeals;
+   public static ArrayList<Meals> generalMeals;
+   public static ArrayList<Meals> specialMeals;
+
     @Subscribe
     public void onMealsInitialized(Message msg) {
         if ("#Initialize Meals".equals(msg.toString())) {
             Platform.runLater(() -> {
                 System.out.println("Initializing meals for branch: " + SecondaryService.getBranch());
-                ArrayList<Meals> receivedMeals = (ArrayList<Meals>) msg.getObject();
-                ArrayList<Meals> generalMeals = new ArrayList<>();
-                ArrayList<Meals> specialMeals = new ArrayList<>();
+                 receivedMeals = (ArrayList<Meals>) msg.getObject();
+                 generalMeals = new ArrayList<>();
+                 specialMeals = new ArrayList<>();
 
                 for (Meals meal : receivedMeals) {
                     if (meal.getisBranchMeal() == false)

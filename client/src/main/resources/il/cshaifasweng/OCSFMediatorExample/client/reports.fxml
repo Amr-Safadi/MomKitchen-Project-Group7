@@ -3,13 +3,15 @@
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true"
-            style="-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover; -fx-padding: 10;"
-            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ReportsController">
+<ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover; -fx-padding: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ReportsController">
 
     <content>
         <AnchorPane fx:id="rootPane" prefHeight="900.0" prefWidth="800.0" style="-fx-background-color: transparent;">
@@ -37,23 +39,17 @@
             <!-- Complaints Histogram -->
             <BarChart fx:id="complaintsChart" layoutX="20" layoutY="450" prefHeight="300.0" prefWidth="750.0">
                 <xAxis>
-                    <CategoryAxis fx:id="xAxis" label="Days" />
+                    <CategoryAxis endMargin="20.0" label="Days" fx:id="xAxis" />
                 </xAxis>
                 <yAxis>
-                    <NumberAxis fx:id="yAxis" label="Complaints" />
+                    <NumberAxis fx:id="yAxis" label="Complaints" upperBound="50.0" />
                 </yAxis>
             </BarChart>
 
             <!-- Buttons -->
             <HBox layoutX="20" layoutY="780" spacing="15">
-                <Button fx:id="exportCsvButton"
-                        onAction="#handleExportCsv"
-                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;"
-                        text="Export to CSV" />
-                <Button fx:id="backButton"
-                        onAction="#handleBackToMain"
-                        style="-fx-background-color: #FF5733; -fx-text-fill: white; -fx-font-size: 14px;"
-                        text="Back to Main" />
+                <Button fx:id="exportCsvButton" onAction="#handleExportCsv" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" text="Export to CSV" />
+                <Button fx:id="backButton" onAction="#handleBackToMain" style="-fx-background-color: #FF5733; -fx-text-fill: white; -fx-font-size: 14px;" text="Back to Main" />
             </HBox>
 
         </AnchorPane>
