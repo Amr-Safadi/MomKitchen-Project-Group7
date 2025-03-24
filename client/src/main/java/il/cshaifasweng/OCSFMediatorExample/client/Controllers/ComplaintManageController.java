@@ -73,7 +73,6 @@ public class ComplaintManageController {
     @FXML
     private TextArea resolutionField;
 
-
     @FXML
     private CheckBox refundCheckbox;
     @FXML
@@ -103,7 +102,7 @@ public class ComplaintManageController {
         }
         EventBus.getDefault().register(this);
         setupTables();
-        fetchComplaints();
+
         rootPane.setStyle("-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover;");
 
         unresolvedTable.setOnMouseClicked(event -> {
@@ -187,6 +186,15 @@ public class ComplaintManageController {
 
 
 
+    @Subscribe
+    public void updateComplaints(Message message)
+    {
+        if (message.toString().equals("#Update Complaints"))
+        {
+            fetchComplaints();
+    }
+        }
+
     private void fetchComplaints() {
         try {
             client.sendToServer(new Message(null, "#FetchComplaints"));
@@ -238,43 +246,27 @@ public class ComplaintManageController {
 
         showAlert("Complaint Details", message);
     }
-
-
-
-
-
-
-
-    // Receive Complaints from Server
-    @Subscribe
-    public void onComplaintsReceived(Message message) {
-        if (message.getText().equals("#ComplaintList")) {
-            List<ContactRequest> complaints = (List<ContactRequest>) message.getObject();
-            Platform.runLater(() -> {
-                unresolvedComplaints.setAll(complaints.stream().filter(c -> !c.isHandled()).toList());
-                resolvedComplaints.setAll(complaints.stream().filter(ContactRequest::isHandled).toList());
-            });
-        }
-    }
-
     @Subscribe
     public void handleComplaintList(Message message) {
         if ("#ComplaintList".equals(message.getText())) {
             List<ContactRequest> complaints = (List<ContactRequest>) message.getObject();
             Platform.runLater(() -> {
-                unresolvedTable.getItems().setAll(complaints);
-                System.out.println("✅ Unresolved complaints loaded successfully!");
+                unresolvedComplaints.setAll(complaints); // ✅ Efficient and safe
+                unresolvedTable.setItems(unresolvedComplaints); // Rebind only if needed
+                unresolvedTable.refresh();
+                System.out.println("✅ Complaints updated: " + complaints.size());
             });
         }
     }
-
     @Subscribe
     public void handleResolvedComplaintList(Message message) {
         if ("#ResolvedComplaintList".equals(message.getText())) {
-            List<ContactRequest> resolvedComplaintsList = (List<ContactRequest>) message.getObject();
+            List<ContactRequest> resolvedList = (List<ContactRequest>) message.getObject();
             Platform.runLater(() -> {
-                resolvedTable.getItems().setAll(resolvedComplaintsList);
-                System.out.println("✅ Resolved complaints loaded successfully!");
+                resolvedComplaints.setAll(resolvedList); // ✅ Safe replacement
+                resolvedTable.setItems(resolvedComplaints);
+                resolvedTable.refresh();
+                System.out.println("✅ Resolved complaints updated: " + resolvedList.size());
             });
         }
     }
@@ -352,17 +344,6 @@ public class ComplaintManageController {
             });
         }
     }
-    @Subscribe
-    public void onResolvedComplaintList(Message message) {
-        if (message.toString().equals("#ResolvedComplaintList")) {
-            List<ContactRequest> resolvedList = (List<ContactRequest>) message.getObject();
-
-            Platform.runLater(() -> {
-                resolvedComplaints.setAll(resolvedList);  // ✅ Ensure resolved complaints load immediately
-            });
-        }
-    }
-
     // Show Resolved Complaints
     @FXML
     private void showResolvedComplaints() {
