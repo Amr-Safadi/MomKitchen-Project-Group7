@@ -65,7 +65,7 @@ public class ContactUsController {
         Platform.runLater(() -> { // Ensure UI updates run on the JavaFX thread
 
                 showAlert("Success", "Your complaint has been submitted!");
-                ScreenManager.switchScreen("Primary");
+            ScreenManager.switchScreen("Primary");
             }
         );}
     }

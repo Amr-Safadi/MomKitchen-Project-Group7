@@ -30,7 +30,7 @@ public class SimpleClient extends AbstractClient {
 
 		switch (message.toString()) {
 			case "#MealAddedSuccessfully", "#UserValidated", "#ValidationFailed", "OrderCanceled",
-                 "#MealAdditionFailed" ,"#MealDeleted", "#MealDeletionFailed":
+                 "#MealAdditionFailed" ,"#MealDeleted", "#MealDeletionFailed", "#Update Complaints":
 				EventBus.getDefault().post(message);
 				break;
             case "#OrderPlacedSuccessfully":
@@ -81,15 +81,15 @@ public class SimpleClient extends AbstractClient {
 				EventBus.getDefault().post(new Message(null, "#ComplaintSubmissionSuccess"));
 				break;
 			case "#ComplaintList":
-				System.out.println("📥 Received complaint list from server.");
+				System.out.println(" Received complaint list from server. - simple client");
 				EventBus.getDefault().post(message);
 				break;
 			case "#ComplaintResolved":
-				System.out.println("✅ Complaint successfully resolved.");
+				System.out.println(" Complaint successfully resolved.");
 				EventBus.getDefault().post(message);
 				break;
 			case "#ResolvedComplaintList":
-				System.out.println("✅ Received resolved complaints from server.");
+				System.out.println(" Received resolved complaints from server. - simple client");
 				EventBus.getDefault().post(message);
 				break;
 			case "#BranchFetched":

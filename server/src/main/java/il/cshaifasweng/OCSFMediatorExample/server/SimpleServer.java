@@ -294,14 +294,11 @@ public class SimpleServer extends AbstractServer {
 					client.sendToClient(new Message(deliveryOrders, "#OrdersReport"));
 					client.sendToClient(new Message(reservationsPerDay, "#ReservationsReport"));
 					client.sendToClient(new Message(complaintsPerDay, "#ComplaintsReport"));
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				break;
-
-
-
-
 
 			case "#Update Complaint":
 				ContactRequest newComplaint = (ContactRequest) message.getObject();
@@ -310,6 +307,7 @@ public class SimpleServer extends AbstractServer {
 					session.save(newComplaint);
 					tx.commit();
 					client.sendToClient(new Message(null, "#ComplaintSubmissionSuccess"));
+					sendToAllClients(new Message( "#Update Complaints"));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -325,13 +323,12 @@ public class SimpleServer extends AbstractServer {
 					client.sendToClient(new Message(unresolvedComplaints, "#ComplaintList"));
 					client.sendToClient(new Message(resolvedComplaints, "#ResolvedComplaintList"));
 
+
 					System.out.println("📤 Sent unresolved and resolved complaints to client.");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				break;
-
-
 
 			case "#ResolveComplaint":
 				ContactRequest resolvedComplaint = (ContactRequest) message.getObject();

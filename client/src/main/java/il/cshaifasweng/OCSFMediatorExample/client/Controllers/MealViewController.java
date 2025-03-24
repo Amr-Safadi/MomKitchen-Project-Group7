@@ -29,8 +29,9 @@ public class MealViewController {
     private boolean movedMeal = false;
 
     @FXML private Button deleteMealBtn;
+
     @FXML
-    private Button cartBtn, addToCartBtn, btnEdit, btnDone, btnBack, toggleMealTypeBtn;
+    private Button cartBtn, addToCartBtn, btnEdit, btnDone, btnBack, toggleMealTypeBtn, btnEditPrefs;;
     @FXML
     private GridPane gridMeal;
     @FXML
@@ -49,6 +50,8 @@ public class MealViewController {
 
         toggleMealTypeBtn.setVisible(false);
         deleteMealBtn.setVisible(false);
+        btnEditPrefs.setVisible(false);
+
 
         User loggedInUser = UserSession.getUser();
         boolean isEditable = false;
@@ -75,33 +78,80 @@ public class MealViewController {
 
     }
 
-    /*
-    @Subscribe
-    public void onUpdateMeal(Message message) {
-        Platform.runLater(() -> {
-            if (message.toString().equals("#Update All Meals")) {
-                System.out.println("lol");
-                Meals updatedMeal = findUpdatedMeal(meal.getId());
 
-                if (updatedMeal != null) {
-                    setMeal(updatedMeal); // Refresh UI with updated meal details
-                    showConfirmationAlert("Meal Updated", "The meal details have been refreshed.");
-                } else {
-                    showErrorAlert("Error", "Failed to find updated meal details.");
+    @FXML
+    void handleEditPreferences(ActionEvent event) {
+        TextInputDialog dialog = new TextInputDialog(meal.getPreferences());
+        dialog.setTitle("Edit Preferences");
+        dialog.setHeaderText("Edit the meal's preferences (comma-separated)");
+        dialog.setContentText("You can enter up to 8 preferences." +
+                "\n  Example: Spicy, Vegan, Gluten-Free");
+
+        dialog.showAndWait().ifPresent(input -> {
+            String[] allPrefs = input.split(",");
+            StringBuilder limitedPrefs = new StringBuilder();
+
+            for (int i = 0; i < allPrefs.length && i < 8; i++) {
+                if (limitedPrefs.length() > 0) {
+                    limitedPrefs.append(", ");
                 }
+                limitedPrefs.append(allPrefs[i].trim());
             }
+
+            String finalPrefs = limitedPrefs.toString();
+            meal.setPreferences(finalPrefs);
+            updatePreferenceCheckboxes(finalPrefs);
         });
     }
 
-    private Meals findUpdatedMeal(int mealId) {
-        for (Meals m : SecondaryService.getMealsList()) {
-            if (m.getId() == mealId) {
-                return m;
-            }
+    private void updatePreferenceCheckboxes(String preferencesString) {
+        String[] preferences = preferencesString == null || preferencesString.trim().isEmpty()
+                ? new String[0]
+                : preferencesString.split(",");
+
+        CheckBox[] checkBoxes = {ingredint1, ingredint2, ingredint3, ingredint4,
+                ingredint5, ingredint6, ingredint7, ingredint8};
+
+        // Reset
+        for (CheckBox cb : checkBoxes) {
+            cb.setVisible(false);
+            cb.setSelected(false);
+            cb.setText("");
         }
-        return null; // If not found, return null
+
+        for (int i = 0; i < preferences.length && i < checkBoxes.length; i++) {
+            checkBoxes[i].setText(preferences[i].trim());
+            checkBoxes[i].setVisible(true);
+            checkBoxes[i].setSelected(true);
+        }
     }
-*/
+
+    @Subscribe
+    public void onMealUpdated(Message message) {
+        if ("#Update All Meals".equals(message.toString())) {
+            // Wait 100ms before trying to get updated meal
+            new Thread(() -> {
+                try {
+                    Thread.sleep(200); // small delay
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Platform.runLater(() -> {
+                    Meals updated = SecondaryController.receivedMeals.stream()
+                            .filter(m -> m.getId() == (meal.getId()))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (updated != null) {
+                        setMeal(updated);
+                        showConfirmationAlert("Meal Updated", "This meal has been updated!");
+                    }
+                });
+            }).start();
+        }
+    }
+
 
     @FXML
     void handleDeleteMeal() {
@@ -166,6 +216,9 @@ public class MealViewController {
         btnDone.setVisible(true);
         toggleMealTypeBtn.setVisible(true);
         deleteMealBtn.setVisible(true);
+        btnEdit.setVisible(false);
+        addToCartBtn.setVisible(false);
+        btnEditPrefs.setVisible(true);
     }
     @FXML
     void handleToggleMealType() {
@@ -308,6 +361,9 @@ public class MealViewController {
         System.out.println("Added " +meal.getName()+ " with the preference" + meal.getPreferences());
         // Add meal to cart
         CartSession.getCart().addMeal(meal);
+
+        showConfirmationAlert("Order", "Order Has been added to your cart.");
+        ScreenManager.switchScreen("Menu List");
     }
 
     private void showErrorAlert(String title, String content) {
