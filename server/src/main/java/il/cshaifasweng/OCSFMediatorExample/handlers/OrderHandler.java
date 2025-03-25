@@ -6,6 +6,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import java.time.format.DateTimeFormatter;
+
 public class OrderHandler {
 
     public static void placeOrder(Orders order , SessionFactory sessionFactory) {
@@ -23,7 +25,8 @@ public class OrderHandler {
             String emailBody = "Dear Customer,\n\n"
                     + "Thank you for placing an order with Mom's Kitchen! Your order has been successfully received.\n"
                     + "Order ID: " + order.getId() + "\n"
-                    + "Total Amount: $" + order.getTotalPrice() + "\n\n"
+                    + "Total Amount: $" + order.getTotalPrice() + "\n"
+                    + "Delivery time : " +order.getDeliveryTime().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n\n"
                     + "Your delicious meal is being prepared and will be on its way soon! \n\n"
                     + "Best regards,\n"
                     + "Mom's Kitchen Team";

@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
+import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
@@ -149,6 +150,12 @@ public class CartController {
 
                 if (chosenTime.isBefore(now.plusMinutes(30))) {
                     showAlert("Invalid Time", "Please choose a time that is at least 30 minutes later from now.");
+                    return;
+                }
+
+                java.time.LocalTime closingTime = SecondaryService.getBranchObj().getCloseHour();
+                if (chosenTime.toLocalTime().isAfter(closingTime)) {
+                    showAlert("Too Late", "We close at " + closingTime.toString() + " . Please choose an earlier delivery time.");
                     return;
                 }
 
