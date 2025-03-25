@@ -100,10 +100,18 @@ public class CartController {
         RadioButton cardOption = new RadioButton("Card");
         cardOption.setToggleGroup(paymentGroup);
 
+        // Time input
+        Label timeLabel = new Label("Preferred Delivery Time (HH:MM):");
+        TextField timeInputtxt = new TextField();
+        timeInputtxt.setPromptText("e.g. 14:30");
+
+
         // Layout for options
         VBox optionsBox = new VBox(10,
                 new Label("Order Type:"), deliveryOption, pickupOption,
-                new Label("Payment Method:"), cashOption, cardOption);
+                new Label("Payment Method:"), cashOption, cardOption,
+                timeLabel, timeInputtxt);
+
         dialog.getDialogPane().setContent(optionsBox);
 
         // Add OK & Cancel buttons
@@ -115,17 +123,51 @@ public class CartController {
             if (button == confirmButton) {
                 String orderType = deliveryOption.isSelected() ? "Delivery" : "Pickup";
                 String paymentMethod = cashOption.isSelected() ? "Cash" : "Card";
-                return new String[]{orderType, paymentMethod};
+                return new String[]{orderType, paymentMethod, timeInputtxt.getText()};
+
             }
             return null;
         });
 
-        // Show the dialog and process the response
         dialog.showAndWait().ifPresent(result -> {
-            // Pass order type and payment method to checkout screen
-            CheckOutController.setOrderPreferences(result[0], result[1]);
-            Platform.runLater(() ->   ScreenManager.switchScreen("check out"));
+            String timeInput = result[2].trim();
+
+            // Validate format using regex
+            if (!timeInput.matches("^([01]\\d|2[0-3]):([0-5]\\d)$")) {
+                showAlert("Invalid Time Format", "Please enter the time in HH:MM format (24-hour).");
+                return;
+            }
+
+            // Validate time is not in the past
+            try {
+                String[] parts = timeInput.split(":");
+                int hour = Integer.parseInt(parts[0]);
+                int minute = Integer.parseInt(parts[1]);
+
+                java.time.LocalDateTime now = java.time.LocalDateTime.now();
+                java.time.LocalDateTime chosenTime = now.withHour(hour).withMinute(minute);
+
+                if (chosenTime.isBefore(now.plusMinutes(30))) {
+                    showAlert("Invalid Time", "Please choose a time that is at least 30 minutes later from now.");
+                    return;
+                }
+
+                CheckOutController.setOrderPreferences(result[0], result[1], timeInput);
+                Platform.runLater(() -> ScreenManager.switchScreen("check out"));
+
+            } catch (Exception e) {
+                showAlert("Invalid Time", "There was an error reading the time. Please try again.");
+            }
         });
+
     }
 
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }

@@ -51,6 +51,7 @@ public class MealViewController {
         toggleMealTypeBtn.setVisible(false);
         deleteMealBtn.setVisible(false);
         btnEditPrefs.setVisible(false);
+        btnEdit.setVisible(false);
 
 
         User loggedInUser = UserSession.getUser();
