@@ -27,11 +27,13 @@ public class CheckOutController {
 
     private static String orderType = "Delivery"; // Default
     private static String paymentMethod = "Cash"; // Default
+    private static String preferredTime = "";
 
     // Setter method to update selections
-    public static void setOrderPreferences(String type, String payment) {
+    public static void setOrderPreferences(String type, String payment, String time) {
         orderType = type;
         paymentMethod = payment;
+        preferredTime = time;
     }
 
     private final SimpleClient client = SimpleClient.getClient();
@@ -74,7 +76,27 @@ public class CheckOutController {
         String phone = phoneTxt.getText();
         String email = mailTxt.getText();
         String creditCard = paymentMethod.equals("Cash") ? "Cash Payment" : cardTxt.getText();
-        LocalDateTime deliveryTime = orderType.equals("Pickup") ? LocalDateTime.now() : LocalDateTime.now().plusHours(2);
+
+        LocalDateTime deliveryTime;
+        if (orderType.equals("Pickup")) {
+            deliveryTime = LocalDateTime.now();
+        } else {
+            try {
+                String[] timeParts = preferredTime.split(":");
+                int hour = Integer.parseInt(timeParts[0].trim());
+                int minute = Integer.parseInt(timeParts[1].trim());
+
+                LocalDateTime now = LocalDateTime.now();
+                deliveryTime = now.withHour(hour).withMinute(minute);
+                if (deliveryTime.isBefore(now)) {
+                    deliveryTime = deliveryTime.plusDays(1); // if time has passed, schedule for next day
+                }
+            } catch (Exception e) {
+                showAlert("Invalid Time", "Please enter delivery time in HH:MM format.");
+                return;
+            }
+        }
+
 
         // Validate input fields
         if (name.isEmpty() || phone.isEmpty() || email.isEmpty() || (paymentMethod.equals("Card") && creditCard.isEmpty())) {
