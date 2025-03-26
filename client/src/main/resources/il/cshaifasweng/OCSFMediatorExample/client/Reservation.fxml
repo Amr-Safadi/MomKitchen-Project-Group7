@@ -1,58 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="reservationPane" prefHeight="600.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ReservationController">
+<AnchorPane fx:id="reservationPane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ReservationController">
     <children>
-        <Label layoutX="200.0" layoutY="20.0" text="Reservation" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
-        <GridPane layoutX="50.0" layoutY="80.0" hgap="10" vgap="10">
+        <GridPane hgap="10" layoutX="43.0" layoutY="99.0" vgap="10">
             <children>
-                <Label text="Branch:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <Label fx:id="branchLabel" text="Branch Name" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label prefHeight="25.0" prefWidth="59.0" text="Branch:" textFill="WHITE" GridPane.columnIndex="0" GridPane.rowIndex="0">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Label>
+                <Label fx:id="branchLabel" text="Branch Name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                <Label text="Date:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <DatePicker fx:id="datePicker" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label prefHeight="24.0" prefWidth="75.0" text="Date:" textFill="WHITE" GridPane.columnIndex="0" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Label>
+                <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                <Label text="Time:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <ComboBox fx:id="timeComboBox" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label prefHeight="27.0" prefWidth="75.0" text="Time:" textFill="WHITE" GridPane.columnIndex="0" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Label>
+                <ComboBox fx:id="timeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                <Label text="Guests:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="guestsField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <Label prefHeight="27.0" prefWidth="79.0" text="Guests:" textFill="WHITE" GridPane.columnIndex="0" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Label>
+                <TextField fx:id="guestsField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                <Label text="Seating:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <HBox spacing="10" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                <Label prefHeight="27.0" prefWidth="78.0" text="Seating:" textFill="WHITE" GridPane.columnIndex="0" GridPane.rowIndex="4">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Label>
+                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
                     <children>
-                        <RadioButton fx:id="indoorRadio" text="Indoor"/>
-                        <RadioButton fx:id="outdoorRadio" text="Outdoor"/>
+                        <RadioButton fx:id="indoorRadio" text="Indoor" />
+                        <RadioButton fx:id="outdoorRadio" text="Outdoor" />
                     </children>
                 </HBox>
 
-                <Label text="Full Name:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                <TextField fx:id="fullNameField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                <Label prefHeight="26.0" prefWidth="82.0" text="Full Name:" textFill="WHITE" GridPane.columnIndex="0" GridPane.rowIndex="5">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Label>
+                <TextField fx:id="fullNameField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-                <Label text="Phone:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                <TextField fx:id="phoneField" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                <Label prefHeight="23.0" prefWidth="83.0" text="Phone:" textFill="WHITE" GridPane.columnIndex="0" GridPane.rowIndex="6">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Label>
+                <TextField fx:id="phoneField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
-                <Label text="Email:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-                <TextField fx:id="emailField" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                <Label prefHeight="17.0" prefWidth="79.0" text="Email:" textFill="WHITE" GridPane.columnIndex="0" GridPane.rowIndex="7">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Label>
+                <TextField fx:id="emailField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
-                <Label text="Credit Card:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
-                <TextField fx:id="creditCardField" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+                <Label prefHeight="26.0" prefWidth="100.0" text="Credit Card:" textFill="WHITE" GridPane.columnIndex="0" GridPane.rowIndex="8">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Label>
+                <TextField fx:id="creditCardField" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             </children>
+         <columnConstraints>
+            <ColumnConstraints maxWidth="97.3333231608073" minWidth="67.33332316080728" prefWidth="97.3333231608073" />
+            <ColumnConstraints maxWidth="170.00001017252603" minWidth="140.6666768391927" prefWidth="140.6666768391927" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
         </GridPane>
 
-        <HBox layoutX="50.0" layoutY="500.0" spacing="20">
+        <HBox layoutX="43.0" layoutY="445.0" spacing="20">
             <children>
-                <Button text="Back" onAction="#handleBack"/>
-                <Button text="Reserve" onAction="#handleReserve"/>
-                <Button text="Cancel Reservation" onAction="#handleCancelReservation"/>
+                <Button onAction="#handleBack" prefHeight="25.0" prefWidth="70.0" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="Back" textFill="WHITE">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Button>
+                <Button onAction="#handleReserve" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="Reserve" textFill="WHITE">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Button>
+                <Button onAction="#handleCancelReservation" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="Cancel Reservation" textFill="WHITE">
+               <font>
+                  <Font name="Bauhaus 93" size="15.0" />
+               </font></Button>
             </children>
         </HBox>
+      <Label layoutX="43.0" layoutY="53.0" prefHeight="37.0" prefWidth="247.0" text="Reserve your table" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="25.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>

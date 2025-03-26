@@ -3,25 +3,65 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.effect.Light.Distant?>
+<?import javafx.scene.effect.Lighting?>
+<?import javafx.scene.effect.Shadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.CartController">
    <children>
-      <VBox alignment="CENTER" layoutX="40.0" layoutY="14.0" prefHeight="516.0" prefWidth="425.0" spacing="10">
+      <VBox alignment="CENTER" layoutX="40.0" layoutY="14.0" prefHeight="579.0" prefWidth="538.0" spacing="10">
          <children>
-            <ListView fx:id="cartView" maxWidth="400.0" prefHeight="400.0" />
-            <Label fx:id="priceLabel" text="Label" />
-            <HBox alignment="CENTER" spacing="10">
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="19.0" prefWidth="487.0" text="My Cart:" textFill="WHITE">
+               <font>
+                  <Font name="Bauhaus 93" size="28.0" />
+               </font>
+            </Label>
+            <ListView fx:id="cartView" maxWidth="407.0" prefHeight="377.0" prefWidth="363.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-control-inner-background: transparent;" stylesheets="@listview-style.css">
+               <effect>
+                  <Lighting specularConstant="0.45" surfaceScale="1.81">
+                     <bumpInput>
+                        <Shadow>
+                           <color>
+                              <Color red="1.0" green="0.9845678806304932" blue="0.9845678806304932" />
+                           </color>
+                        </Shadow>
+                     </bumpInput>
+                     <light>
+                        <Light.Distant>
+                           <color>
+                              <Color red="0.7219704389572144" green="0.9035087823867798" blue="0.6441683173179626" />
+                           </color>
+                        </Light.Distant>
+                     </light>
+                  </Lighting>
+               </effect></ListView>
+            <Label fx:id="priceLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="229.0" text="Label" textFill="WHITE">
+               <font>
+                  <Font name="Bauhaus 93" size="26.0" />
+               </font></Label>
+            <HBox alignment="CENTER" prefHeight="25.0" prefWidth="467.0" spacing="10">
                <children>
-                  <Button fx:id="backBtn" onAction="#backHandler" text="Back" />
-                  <Button fx:id="checkOutBtn" mnemonicParsing="false" onAction="#checkOutHandler" text="CheckOut" />
+                  <Button fx:id="backBtn" onAction="#backHandler" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="Back" textFill="WHITE">
+                     <font>
+                        <Font name="Bauhaus 93" size="15.0" />
+                     </font></Button>
+                  <Button fx:id="checkOutBtn" mnemonicParsing="false" onAction="#checkOutHandler" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="CheckOut" textFill="WHITE">
+                     <font>
+                        <Font name="Bauhaus 93" size="15.0" />
+                     </font></Button>
+                  <Button fx:id="removeBtn" onAction="#removeHandler" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="Remove Selected" textFill="WHITE">
+                     <font>
+                        <Font name="Bauhaus 93" size="15.0" />
+                     </font>
+                  </Button>
                </children>
             </HBox>
          </children>
       </VBox>
-      <Button fx:id="removeBtn" layoutX="459.0" layoutY="287.0" onAction="#removeHandler" text="Remove Selected" />
    </children>
 </AnchorPane>

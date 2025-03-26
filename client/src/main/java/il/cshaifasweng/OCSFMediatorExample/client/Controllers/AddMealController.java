@@ -3,12 +3,14 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -33,9 +35,11 @@ public class AddMealController {
     @FXML private TextField preference8;
     @FXML private Button submitMealBtn;
     @FXML private Button backBtn;
+    @FXML private AnchorPane pane;
 
     @FXML
     public void initialize() {
+        BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
         EventBus.getDefault().register(this);
         // Populate category dropdown using Enum values
         mealCategoryComboBox.setItems(FXCollections.observableArrayList(Meals.Category.values()));

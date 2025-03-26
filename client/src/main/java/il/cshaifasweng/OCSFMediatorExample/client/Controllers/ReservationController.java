@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
@@ -48,6 +49,7 @@ public class ReservationController {
 
     @FXML
     public void initialize() {
+        BackgroundUtil.setPaneBackground(reservationPane, "/Images/NEWBACKGRND.jpg");
         branchLabel.setText(SecondaryService.getBranch());
 
         List<String> timeSlots = computeTimeSlots(SecondaryService.getBranchObj().getOpenHour(), SecondaryService.getBranchObj().getCloseHour());

@@ -145,17 +145,12 @@ public class MenuByCatController {
         BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
 
 
-        // Request meals again in case first request was missed
-        if (!MenuByCatService.getMealsList().isEmpty()) {
-            updateMealsList(); // Load existing meals
-        } else {
             try {
                 client.sendToServer(new Message("fetch" + MenuByCatService.getCurrentCategory()));
                 System.out.println("Retrying meal fetch: " + MenuByCatService.getCurrentCategory());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
 
     }
 

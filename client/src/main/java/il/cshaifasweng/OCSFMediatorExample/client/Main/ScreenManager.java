@@ -34,12 +34,13 @@ public class ScreenManager {
         screens.put("Manage Complaints", "ComplaintManage.fxml");
         screens.put("AddMeal", "AddMeal.fxml");
         screens.put("Reports", "Reports.fxml");
+        screens.put("ConnectionSetup", "ConnectionSetup.fxml");
 
     }
 
     public static void init(Stage stage) throws IOException {
         primaryStage = stage;
-        Parent root = loadFXML(screens.get("Primary"));
+        Parent root = loadFXML(screens.get("ConnectionSetup"));
         scene = new Scene(root, 600, 600);
         setTitle("MomKitchen");
         primaryStage.setScene(scene);
