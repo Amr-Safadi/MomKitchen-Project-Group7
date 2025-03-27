@@ -2,6 +2,8 @@ package il.cshaifasweng.OCSFMediatorExample.handlers;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
+import il.cshaifasweng.OCSFMediatorExample.entities.PriceChangeRequest;
+import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -98,7 +100,77 @@ public class MealHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }public static void handleToggleMealType(int mealId, Integer branchId, SessionFactory sessionFactory) {
+    }
+
+    public static boolean savePriceChangeRequest(Meals meal, double requestedPrice, User requestedBy, SessionFactory sessionFactory) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+
+            // Attach the meal and user from the database (to avoid detached issues)
+            Meals dbMeal = session.get(Meals.class, meal.getId());
+            User dbUser = session.get(User.class, requestedBy.getId());
+
+            if (dbMeal == null || dbUser == null) {
+                System.out.println("❌ Could not find meal or user for price change request.");
+                return false;
+            }
+
+            PriceChangeRequest request = new PriceChangeRequest(dbMeal, requestedPrice, dbUser);
+
+            session.save(request);
+            tx.commit();
+
+            System.out.println("✅ Price change request saved.");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static List<PriceChangeRequest> getUnresolvedRequests(SessionFactory sessionFactory) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery(
+                    "FROM PriceChangeRequest WHERE resolved = false", PriceChangeRequest.class
+            ).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public static boolean approvePriceChangeRequest(PriceChangeRequest request, SessionFactory sessionFactory) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+
+            // Fetch from DB using ID
+            PriceChangeRequest dbRequest = session.get(PriceChangeRequest.class, request.getId());
+            if (dbRequest == null || dbRequest.isResolved()) {
+                System.out.println("❌ Request not found or already resolved.");
+                return false;
+            }
+
+            Meals meal = dbRequest.getMeal();
+            meal.setPrice(dbRequest.getRequestedPrice());
+
+            dbRequest.setApproved(true);
+            dbRequest.setResolved(true);
+            dbRequest.setResolvedAt(java.time.LocalDateTime.now());
+
+            session.update(meal);
+            session.update(dbRequest);
+
+            tx.commit();
+            System.out.println("✅ Price change approved and applied.");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public static void handleToggleMealType(int mealId, Integer branchId, SessionFactory sessionFactory) {
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
 

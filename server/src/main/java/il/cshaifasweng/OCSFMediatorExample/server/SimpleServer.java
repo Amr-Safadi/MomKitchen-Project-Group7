@@ -52,6 +52,86 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
+
+			case "#CheckPendingNotifications":
+				List<PriceChangeRequest> pendingRequests = MealHandler.getUnresolvedRequests(sessionFactory);
+
+				String answer = pendingRequests.isEmpty() ? "#ManagerClear" : "#ManagerHasNotifications";
+
+				try {
+					client.sendToClient(new Message(answer));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
+
+			case "#RejectPriceChange":
+				PriceChangeRequest rejectRequest = (PriceChangeRequest) message.getObject();
+
+				try (Session session = sessionFactory.openSession()) {
+					Transaction tx = session.beginTransaction();
+
+					PriceChangeRequest dbRequest = session.get(PriceChangeRequest.class, rejectRequest.getId());
+
+					if (dbRequest != null && !dbRequest.isResolved()) {
+						dbRequest.setResolved(true);
+						dbRequest.setApproved(false);
+						dbRequest.setResolvedAt(java.time.LocalDateTime.now());
+
+						session.update(dbRequest);
+						tx.commit();
+
+						client.sendToClient(new Message("#PriceChangeRejected"));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+
+
+			case "#ApprovePriceChange":
+				PriceChangeRequest approvalRequest = (PriceChangeRequest) message.getObject();
+				boolean approved = MealHandler.approvePriceChangeRequest(approvalRequest, sessionFactory);
+
+				if (approved) {
+					try {
+						client.sendToClient(new Message("#PriceChangeApproved"));
+						sendToAllClients(new Message("#Update All Meals")); // optional
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
+
+			case "#FetchPriceRequests":
+				try {
+					List<PriceChangeRequest> requests = MealHandler.getUnresolvedRequests(sessionFactory);
+					client.sendToClient(new Message(requests, "#PriceRequestsList"));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
+			case "#RequestPriceChange":
+				Object[] requestData = (Object[]) message.getObject();
+				Meals mealForPriceChange = (Meals) requestData[0];
+				double newPrice = (double) requestData[1];
+				User dietitian = (User) requestData[2];
+
+				boolean requestSaved = MealHandler.savePriceChangeRequest(mealForPriceChange, newPrice, dietitian, sessionFactory);
+
+				try {
+					if (requestSaved) {
+						client.sendToClient(new Message("#PriceChangeRequestSent"));
+					} else {
+						client.sendToClient(new Message("#PriceChangeRequestFailed"));
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
 			case "#DeleteMeal":
 				Meals mealToDelete = (Meals) message.getObject();
 				boolean success = MealHandler.deleteMeal(mealToDelete, sessionFactory);
