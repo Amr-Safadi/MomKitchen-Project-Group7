@@ -20,6 +20,7 @@ public class HibernateUtil {
         configuration.addAnnotatedClass(ContactRequest.class);
         configuration.addAnnotatedClass(Orders.class);
         configuration.addAnnotatedClass(RestaurantTable.class);
+        configuration.addAnnotatedClass(PriceChangeRequest.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties())

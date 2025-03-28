@@ -29,6 +29,19 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
+			case "#PriceChangeApproved","#PriceChangeRejected","#PriceChangeRequestSent","#PriceChangeRequestFailed":
+				EventBus.getDefault().post(message);
+				break;
+
+			case "#PriceRequestsList":
+				EventBus.getDefault().post(message);
+				break;
+
+			case "#ManagerHasNotifications":
+			case "#ManagerClear":
+				EventBus.getDefault().post(message);
+				break;
+
 			case "#MealAddedSuccessfully", "#UserValidated", "#ValidationFailed", "OrderCanceled",
                  "#MealAdditionFailed" ,"#MealDeleted", "#MealDeletionFailed", "#Update Complaints":
 				EventBus.getDefault().post(message);

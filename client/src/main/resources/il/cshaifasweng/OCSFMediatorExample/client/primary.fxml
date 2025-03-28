@@ -78,15 +78,7 @@
             <Font size="14.0" />
          </font>
       </Button>
-      <Button fx:id="reportsButton"
-              contentDisplay="CENTER"
-              layoutX="200.0" layoutY="550.0"
-              mnemonicParsing="false"
-              onAction="#handleReports"
-              prefHeight="27.0" prefWidth="151.0"
-              style="-fx-background-color: #8ad4a8;"
-              text="View Reports" textFill="WHITE"
-              AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="200.0">
+      <Button fx:id="reportsButton" contentDisplay="CENTER" layoutX="200.0" layoutY="550.0" mnemonicParsing="false" onAction="#handleReports" prefHeight="27.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="View Reports" textFill="WHITE" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="200.0">
          <font>
             <Font size="14.0" />
          </font>
@@ -97,5 +89,6 @@
 
       <Label fx:id="userRec" layoutX="55.0" layoutY="36.0" text="Label" />
       <Button fx:id="cancelOrderBtn" layoutX="53.0" layoutY="493.0" mnemonicParsing="false" onAction="#handleCancelOrder" text="Cancel Order" />
+      <Button fx:id="managerNotificationsBtn" layoutX="474.0" layoutY="128.0" mnemonicParsing="false" onAction="#handleManagerNotifications" text="Notifications" />
    </children>
 </AnchorPane>

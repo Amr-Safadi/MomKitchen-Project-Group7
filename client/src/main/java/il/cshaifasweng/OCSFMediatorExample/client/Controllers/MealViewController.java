@@ -254,7 +254,6 @@ public class MealViewController {
 
 
 
-
     @FXML
     public void btnDoneHandler(ActionEvent event) {
         if (meal == null) {
@@ -262,6 +261,7 @@ public class MealViewController {
             return;
         }
 
+        // Basic field updates
         meal.setIngredients(txtPrdctIng.getText());
         meal.setName(txtPrdctName.getText());
 
@@ -271,7 +271,9 @@ public class MealViewController {
             showErrorAlert("Invalid Input", "Please enter a valid positive number for the price.");
             return;
         }
-        meal.setPrice(Double.parseDouble(priceInput));
+
+        double oldPrice = meal.getPrice();
+        double newPrice = Double.parseDouble(priceInput);
 
         // Store selected preferences before saving
         StringBuilder updatedPreferences = new StringBuilder();
@@ -287,11 +289,28 @@ public class MealViewController {
             }
         }
 
-        // Update the meal's preferences
         meal.setPreferences(updatedPreferences.toString());
-        // Send updated meal to server
+
+        User loggedInUser = UserSession.getUser();
+
+        // 💥 Handle price change with manager approval
+        if (oldPrice != newPrice && loggedInUser.getRole() == User.Role.DIETITIAN) {
+            try {
+                Object[] requestData = new Object[]{ meal, newPrice, loggedInUser };
+                SimpleClient.getClient().sendToServer(new Message(requestData, "#RequestPriceChange"));
+               // showConfirmationAlert("Request Sent", "Price change request sent to manager for approval.");
+               // btnBackHandler(event);  // Go back after sending request
+                return;  //  Don't continue with #Update Meal!
+            } catch (IOException e) {
+                showErrorAlert("Error", "Failed to send price change request.");
+                return;
+            }
+        }
+
+        // ✅ Manager or no price change: update directly
+        meal.setPrice(newPrice);
         try {
-            System.out.println("send to the server the meal" + meal.getName() + "with the isbranch = " + meal.getisBranchMeal());
+            System.out.println("send to the server the meal " + meal.getName() + " with isBranch = " + meal.getisBranchMeal());
             client.sendToServer(new Message(meal, "#Update Meal"));
         } catch (IOException e) {
             throw new RuntimeException("Error sending the updated meal to server", e);
@@ -367,18 +386,34 @@ public class MealViewController {
         ScreenManager.switchScreen("Menu List");
     }
 
+    @Subscribe
+    public void onPriceChangeResponse(Message message) {
+        if ("#PriceChangeRequestSent".equals(message.toString())) {
+           showConfirmationAlert("Request Sent", "Your request to change the price was sent.");
+            btnBackHandler(null); // Return to menu list
+        } else if ("#PriceChangeRequestFailed".equals(message.toString())) {
+            showErrorAlert("Error", "Could not send the request. Please try again.");
+        }
+    }
+
     private void showErrorAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
     }
+
     private void showConfirmationAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
     }
+
 }
