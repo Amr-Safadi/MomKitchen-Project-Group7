@@ -66,6 +66,18 @@ public class ManagerNotificationsController {
         }
     }
 
+
+    @Subscribe
+    public void setNotifications (Message message) {
+        if ("#PriceChangeRequestSent".equals(message.toString())) {
+            try {
+                SimpleClient.getClient().sendToServer(new Message(null, "#FetchPriceRequests"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void addActionButtons() {
         actionCol.setCellFactory(col -> new TableCell<>() {
             private final HBox actionBox = new HBox(10);

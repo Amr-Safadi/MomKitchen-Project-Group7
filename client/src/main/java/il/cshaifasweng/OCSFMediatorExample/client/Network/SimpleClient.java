@@ -29,8 +29,7 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
-			case "#PriceChangeApproved":
-			case "#PriceChangeRejected":
+			case "#PriceChangeApproved","#PriceChangeRejected","#PriceChangeRequestSent","#PriceChangeRequestFailed":
 				EventBus.getDefault().post(message);
 				break;
 

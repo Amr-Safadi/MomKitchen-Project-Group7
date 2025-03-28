@@ -135,11 +135,22 @@ public class PrimaryController {
 
 
     @Subscribe
+    public void setNotifications (Message message) {
+        if ("#PriceChangeRequestSent".equals(message.toString())) {
+            try {
+                SimpleClient.getClient().sendToServer(new Message("#CheckPendingNotifications"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Subscribe
     public void onManagerNotificationStatus(Message message) {
         if ("#ManagerHasNotifications".equals(message.toString())) {
             Platform.runLater(() -> {
                 managerNotificationsBtn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
-                managerNotificationsBtn.setText("Notifications ❗");
+                managerNotificationsBtn.setText("Notifications ");
             });
         } else if ("#ManagerClear".equals(message.toString())) {
             Platform.runLater(() -> {

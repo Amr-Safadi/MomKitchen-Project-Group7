@@ -123,7 +123,8 @@ public class SimpleServer extends AbstractServer {
 
 				try {
 					if (requestSaved) {
-						client.sendToClient(new Message("#PriceChangeRequestSent"));
+						//client.sendToClient(new Message("#PriceChangeRequestSent"));
+						sendToAllClients(new Message("#PriceChangeRequestSent"));
 					} else {
 						client.sendToClient(new Message("#PriceChangeRequestFailed"));
 					}

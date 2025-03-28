@@ -298,8 +298,8 @@ public class MealViewController {
             try {
                 Object[] requestData = new Object[]{ meal, newPrice, loggedInUser };
                 SimpleClient.getClient().sendToServer(new Message(requestData, "#RequestPriceChange"));
-                showConfirmationAlert("Request Sent", "Price change request sent to manager for approval.");
-                btnBackHandler(event);  // Go back after sending request
+               // showConfirmationAlert("Request Sent", "Price change request sent to manager for approval.");
+               // btnBackHandler(event);  // Go back after sending request
                 return;  //  Don't continue with #Update Meal!
             } catch (IOException e) {
                 showErrorAlert("Error", "Failed to send price change request.");
@@ -389,26 +389,31 @@ public class MealViewController {
     @Subscribe
     public void onPriceChangeResponse(Message message) {
         if ("#PriceChangeRequestSent".equals(message.toString())) {
-            showConfirmationAlert("Request Sent", "Your request to change the price was sent.");
+           showConfirmationAlert("Request Sent", "Your request to change the price was sent.");
             btnBackHandler(null); // Return to menu list
         } else if ("#PriceChangeRequestFailed".equals(message.toString())) {
             showErrorAlert("Error", "Could not send the request. Please try again.");
         }
     }
 
-
     private void showErrorAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
     }
+
     private void showConfirmationAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
     }
+
 }
