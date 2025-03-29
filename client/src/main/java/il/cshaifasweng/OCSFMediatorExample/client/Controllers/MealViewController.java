@@ -207,6 +207,7 @@ public class MealViewController {
 
     @FXML
     void btnCartHandler(ActionEvent event) {
+
         Platform.runLater(() -> ScreenManager.switchScreen("Cart"));
     }
 
