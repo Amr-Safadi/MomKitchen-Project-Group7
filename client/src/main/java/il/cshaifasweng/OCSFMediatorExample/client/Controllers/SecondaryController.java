@@ -163,7 +163,10 @@ public class SecondaryController {
             return;
         }
 
+
         try {
+            Thread.sleep(100);
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/il/cshaifasweng/OCSFMediatorExample/client/MealView.fxml"));
             Parent root = loader.load();
             MealViewController controller = loader.getController();
@@ -172,7 +175,7 @@ public class SecondaryController {
             Stage currentStage = (Stage) mealsList.getScene().getWindow();
             currentStage.getScene().setRoot(root);
             currentStage.setTitle("Edit Meal");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

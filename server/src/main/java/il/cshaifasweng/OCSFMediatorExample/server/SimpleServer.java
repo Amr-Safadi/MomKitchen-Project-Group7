@@ -11,7 +11,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,25 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
+
+
+			case "#RequestMealImage":
+				String mealName = (String) message.getObject();
+				File imageFile = new File("src/main/resources/Images/" + mealName + ".jpg");
+
+				if (!imageFile.exists()) {
+					System.out.println("❌ Image not found for meal: " + mealName);
+					break;
+				}
+
+				try {
+					byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+					client.sendToClient(new Message(imageBytes, "#MealImageResponse:" + mealName));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
 
 			case "#CheckPendingNotifications":
 				List<PriceChangeRequest> pendingRequests = MealHandler.getUnresolvedRequests(sessionFactory);

@@ -16,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -195,15 +196,6 @@ public class MealViewController {
         });
     }
 
-    private void updateMealBackground() {
-        if (meal == null) return;
-        AnchorPane imagePane = BackgroundUtil.createMealImagePane(meal);
-        if (imagePane != null) {
-            gridMeal.getChildren().addFirst(imagePane);
-            gridMeal.setStyle("-fx-background-color: transparent;");
-            gridMeal.setBackground(BackgroundUtil.createTransparentBackground());
-        }
-    }
 
     @FXML
     void btnCartHandler(ActionEvent event) {
@@ -352,8 +344,45 @@ public class MealViewController {
                 checkBoxes[i].setSelected(true); // By default, all preferences are checked
             }
         }
-        updateMealBackground();
+        try {
+            Message imageRequest = new Message(meal.getName(), "#RequestMealImage");
+            SimpleClient.getClient().sendToServer(imageRequest);
+        } catch (IOException e) {
+            System.out.println("❌ Failed to request image for meal: " + meal.getName());
+            e.printStackTrace();
+        }
+
+      //  updateMealBackground();
     }
+
+    @Subscribe
+    public void onImageMessageReceived(Message message) {
+        if (!"receivedImage".equals(message.toString())) return;
+
+        Object[] data = (Object[]) message.getObject();
+
+        if (data.length != 2 || !(data[0] instanceof String) || !(data[1] instanceof Image)) {
+            System.out.println("❌ Invalid image data received.");
+            return;
+        }
+
+        String receivedMealName = (String) data[0];
+        Image image = (Image) data[1];
+
+        if (!receivedMealName.equals(meal.getName())) return; // Make sure it's the same meal
+
+        AnchorPane imagePane = BackgroundUtil.createMealImagePaneFromImage(image);
+
+        Platform.runLater(() -> {
+            gridMeal.getChildren().addFirst(imagePane);
+            gridMeal.setStyle("-fx-background-color: transparent;");
+            gridMeal.setBackground(BackgroundUtil.createTransparentBackground());
+            System.out.println("✅ Image displayed for " + receivedMealName);
+        });
+
+        System.out.println("✅ Image displayed for " + receivedMealName);
+    }
+
 
     @FXML
     void btnAddToCartHandler(ActionEvent event) {
