@@ -55,6 +55,26 @@ public class SimpleServer extends AbstractServer {
 
 		switch (msgStr) {
 
+			case "#UploadMealImage":
+				Object[] imagePayload = (Object[]) message.getObject();
+				String imageMealName = (String) imagePayload[0];
+				byte[] uploadedImageBytes = (byte[]) imagePayload[1];
+
+				File uploadPath = new File("src/main/resources/Images/" + imageMealName + ".jpg");
+				try {
+					Files.write(uploadPath.toPath(), uploadedImageBytes);
+					client.sendToClient(new Message("#ImageUploadSuccess:" + imageMealName));
+					System.out.println("✅ Image uploaded successfully: " + imageMealName);
+				} catch (IOException e) {
+					e.printStackTrace();
+                    try {
+                        client.sendToClient(new Message("#ImageUploadFailed:" + imageMealName));
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+				break;
+
 
 			case "#RequestMealImage":
 				String mealName = (String) message.getObject();
