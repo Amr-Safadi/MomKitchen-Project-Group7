@@ -144,5 +144,7 @@
 
               </children>
           </HBox>
+
+            <Button fx:id="btnChangeImage" layoutX="257.0" layoutY="518.0" onAction="#handleSelectNewImage" text="Change Image" />
     </children>
 </AnchorPane>

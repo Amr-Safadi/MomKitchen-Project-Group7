@@ -16,11 +16,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class MealViewController {
 
@@ -43,6 +47,9 @@ public class MealViewController {
 
     @FXML
     private CheckBox ingredint1,ingredint2,ingredint3,ingredint4,ingredint5,ingredint6,ingredint7,ingredint8;
+    @FXML private Button btnChangeImage;
+
+    private File selectedImageFile;
 
     @FXML
     void initialize() {
@@ -52,16 +59,22 @@ public class MealViewController {
         deleteMealBtn.setVisible(false);
         btnEditPrefs.setVisible(false);
         btnEdit.setVisible(false);
-
-
+        btnChangeImage.setVisible(false);
         User loggedInUser = UserSession.getUser();
         boolean isEditable = false;
+
         if (loggedInUser != null) {
-            isEditable = loggedInUser.getRole() == User.Role.DIETITIAN ||
-                    loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
-                    loggedInUser.getRole() == User.Role.GENERAL_MANAGER;
+            boolean isDietitian = loggedInUser.getRole() == User.Role.DIETITIAN;
+            boolean isGM = loggedInUser.getRole() == User.Role.GENERAL_MANAGER;
+            boolean isBranchManagerOfCurrent =
+                    loggedInUser.getRole() == User.Role.BRANCH_MANAGER &&
+                            loggedInUser.getBranch().equals(SecondaryService.getBranchObj().getName());
+
+            isEditable = isDietitian || isGM || isBranchManagerOfCurrent;
             btnEdit.setVisible(isEditable);
         }
+
+
 
         Image bgImage = new Image(getClass().getResource("/images/NEWBACKGRND.jpg").toExternalForm());
         BackgroundImage background = new BackgroundImage(
@@ -77,6 +90,22 @@ public class MealViewController {
         UIUtil.styleTextField(txtPrdctPrice);
         UIUtil.styleTextField(txtPrdctIng);
 
+    }
+
+
+    @FXML
+    void handleSelectNewImage(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select New Meal Image");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png")
+        );
+
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            selectedImageFile = file;
+            System.out.println("✅ New image selected for: " + meal.getName());
+        }
     }
 
 
@@ -146,7 +175,8 @@ public class MealViewController {
 
                     if (updated != null) {
                         setMeal(updated);
-                        showConfirmationAlert("Meal Updated", "This meal has been updated!");
+
+                     //   showConfirmationAlert("Meal Updated", "This meal has been updated!");
                     }
                 });
             }).start();
@@ -195,18 +225,10 @@ public class MealViewController {
         });
     }
 
-    private void updateMealBackground() {
-        if (meal == null) return;
-        AnchorPane imagePane = BackgroundUtil.createMealImagePane(meal);
-        if (imagePane != null) {
-            gridMeal.getChildren().addFirst(imagePane);
-            gridMeal.setStyle("-fx-background-color: transparent;");
-            gridMeal.setBackground(BackgroundUtil.createTransparentBackground());
-        }
-    }
 
     @FXML
     void btnCartHandler(ActionEvent event) {
+
         Platform.runLater(() -> ScreenManager.switchScreen("Cart"));
     }
 
@@ -220,6 +242,7 @@ public class MealViewController {
         btnEdit.setVisible(false);
         addToCartBtn.setVisible(false);
         btnEditPrefs.setVisible(true);
+        btnChangeImage.setVisible(true);
     }
     @FXML
     void handleToggleMealType() {
@@ -312,11 +335,24 @@ public class MealViewController {
         try {
             System.out.println("send to the server the meal " + meal.getName() + " with isBranch = " + meal.getisBranchMeal());
             client.sendToServer(new Message(meal, "#Update Meal"));
+            if (selectedImageFile != null) {
+                try {
+                    byte[] imageBytes = Files.readAllBytes(selectedImageFile.toPath());
+                    Object[] imagePayload = new Object[] { meal.getName(), imageBytes };
+                    SimpleClient.getClient().sendToServer(new Message(imagePayload, "#UploadMealImage"));
+                    System.out.println("📤 New image sent to server for: " + meal.getName());
+                    selectedImageFile = null;
+
+                } catch (IOException e) {
+                    System.out.println("❌ Failed to send updated image.");
+                    e.printStackTrace();
+                }
+            }
+
         } catch (IOException e) {
             throw new RuntimeException("Error sending the updated meal to server", e);
         }
 
-        btnBackHandler(event);
     }
 
     public void btnBackHandler(ActionEvent event) {
@@ -351,8 +387,48 @@ public class MealViewController {
                 checkBoxes[i].setSelected(true); // By default, all preferences are checked
             }
         }
-        updateMealBackground();
+        try {
+            Message imageRequest = new Message(meal.getName(), "#RequestMealImage");
+            SimpleClient.getClient().sendToServer(imageRequest);
+        } catch (IOException e) {
+            System.out.println("❌ Failed to request image for meal: " + meal.getName());
+            e.printStackTrace();
+        }
+
     }
+
+    @Subscribe
+    public void onImageMessageReceived(Message message) {
+        if (!"receivedImage".equals(message.toString())) return;
+
+        Object[] data = (Object[]) message.getObject();
+
+        if (data.length != 2 || !(data[0] instanceof String) || !(data[1] instanceof Image)) {
+            System.out.println("❌ Invalid image data received.");
+            return;
+        }
+
+        String receivedMealName = (String) data[0];
+        Image image = (Image) data[1];
+
+        if (!receivedMealName.equals(meal.getName())) return; // Make sure it's the same meal
+
+        AnchorPane imagePane = BackgroundUtil.createMealImagePaneFromImage(image);
+
+        Platform.runLater(() -> {
+            if (!gridMeal.getChildren().isEmpty()) {
+                gridMeal.getChildren().remove(0); // assumes image is always first
+            }
+
+            gridMeal.getChildren().addFirst(imagePane);
+            gridMeal.setStyle("-fx-background-color: transparent;");
+            gridMeal.setBackground(BackgroundUtil.createTransparentBackground());
+            System.out.println("✅ Image displayed for " + receivedMealName);
+        });
+
+        System.out.println("✅ Image displayed for " + receivedMealName);
+    }
+
 
     @FXML
     void btnAddToCartHandler(ActionEvent event) {
@@ -405,6 +481,7 @@ public class MealViewController {
             alert.showAndWait();
         });
     }
+
 
     private void showConfirmationAlert(String title, String content) {
         Platform.runLater(() -> {
