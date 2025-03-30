@@ -60,16 +60,21 @@ public class MealViewController {
         btnEditPrefs.setVisible(false);
         btnEdit.setVisible(false);
         btnChangeImage.setVisible(false);
-
-
         User loggedInUser = UserSession.getUser();
         boolean isEditable = false;
+
         if (loggedInUser != null) {
-            isEditable = loggedInUser.getRole() == User.Role.DIETITIAN ||
-                    loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
-                    loggedInUser.getRole() == User.Role.GENERAL_MANAGER;
+            boolean isDietitian = loggedInUser.getRole() == User.Role.DIETITIAN;
+            boolean isGM = loggedInUser.getRole() == User.Role.GENERAL_MANAGER;
+            boolean isBranchManagerOfCurrent =
+                    loggedInUser.getRole() == User.Role.BRANCH_MANAGER &&
+                            loggedInUser.getBranch().equals(SecondaryService.getBranchObj().getName());
+
+            isEditable = isDietitian || isGM || isBranchManagerOfCurrent;
             btnEdit.setVisible(isEditable);
         }
+
+
 
         Image bgImage = new Image(getClass().getResource("/images/NEWBACKGRND.jpg").toExternalForm());
         BackgroundImage background = new BackgroundImage(
@@ -171,7 +176,7 @@ public class MealViewController {
                     if (updated != null) {
                         setMeal(updated);
 
-                        showConfirmationAlert("Meal Updated", "This meal has been updated!");
+                     //   showConfirmationAlert("Meal Updated", "This meal has been updated!");
                     }
                 });
             }).start();
@@ -348,7 +353,6 @@ public class MealViewController {
             throw new RuntimeException("Error sending the updated meal to server", e);
         }
 
-        btnBackHandler(event);
     }
 
     public void btnBackHandler(ActionEvent event) {
@@ -477,6 +481,7 @@ public class MealViewController {
             alert.showAndWait();
         });
     }
+
 
     private void showConfirmationAlert(String title, String content) {
         Platform.runLater(() -> {

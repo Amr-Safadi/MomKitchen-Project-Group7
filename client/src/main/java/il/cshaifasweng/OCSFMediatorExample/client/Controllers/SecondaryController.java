@@ -107,18 +107,25 @@ public class SecondaryController {
                 SecondaryService.setMealsList(receivedMeals);
             });
             User loggedInUser = UserSession.getUser();
+
             if (loggedInUser != null) {
-                if (
-                        loggedInUser.getRole() == User.Role.DIETITIAN ||
-                                loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
-                                loggedInUser.getRole() == User.Role.GENERAL_MANAGER) {
-                    addMealBtn.setVisible(true);
-                } else {
-                    addMealBtn.setVisible(false);
+                if (UserSession.getUser().getRole() == User.Role.REGULAR_EMPLOYEE
+                        && UserSession.getUser().getBranch().equals(SecondaryService.getBranchObj().getName())) {
+                    manageTablesBtn.setVisible(true);
                 }
+
+                boolean isDietitian = loggedInUser.getRole() == User.Role.DIETITIAN;
+                boolean isGM = loggedInUser.getRole() == User.Role.GENERAL_MANAGER;
+                boolean isBranchManagerOfCurrent =
+                        loggedInUser.getRole() == User.Role.BRANCH_MANAGER &&
+                                loggedInUser.getBranch().equals(SecondaryService.getBranchObj().getName());
+
+                boolean canAdd = isDietitian || isGM || isBranchManagerOfCurrent;
+                addMealBtn.setVisible(canAdd);
             } else {
                 addMealBtn.setVisible(false);
             }
+
         }
     }
 
@@ -223,6 +230,8 @@ public class SecondaryController {
 
     @FXML
     void initialize() {
+        manageTablesBtn.setVisible(false);
+
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -247,21 +256,8 @@ public class SecondaryController {
             case "Tel-Aviv": hoursLabel.setText("Openning hours: " + "10:00 - 22:00"); break;
             case "Netanya": hoursLabel.setText("Openning hours: " + "10:00 - 21:00"); break;
         }
-        if (UserSession.getUser() != null) {
-            switch (UserSession.getUser().getRole()) {
-                case BRANCH_MANAGER:
-                case GENERAL_MANAGER:
-                case DIETITIAN:
-                case SERVICE_EMPLOYEE:
-                    manageTablesBtn.setVisible(true);
-                    break;
-                default:
-                    manageTablesBtn.setVisible(false);
-                    break;
-            }
-        } else {
-            manageTablesBtn.setVisible(false);
-        }
+
+
 
         mealsLabel.setText(SecondaryService.getBranch() + "'s " + mealsLabel.getText());
 

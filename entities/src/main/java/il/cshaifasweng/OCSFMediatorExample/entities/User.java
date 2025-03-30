@@ -19,6 +19,9 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String fullName;
 
+    @Column(nullable = false)
+    private String branch;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -30,6 +33,14 @@ public class User implements Serializable {
         this.password = password;
         this.fullName = fullName;
         this.role = role;
+    }
+
+    public User(String email, String password,String fullName,  Role role , String branch) {
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.role = role;
+        this.branch = branch;
     }
     public User(String email, String password, Role role) {
         this.email = email;
@@ -52,6 +63,8 @@ public class User implements Serializable {
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
 
+    public String getBranch() { return branch; }
+    public void setBranch(String branch) { this.branch = branch; }
     /**
      * Enum defining different user roles in the system.
      * - BRANCH_MANAGER: Manages a specific branch.

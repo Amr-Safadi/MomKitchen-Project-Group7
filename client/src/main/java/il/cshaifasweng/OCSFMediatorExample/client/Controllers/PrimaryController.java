@@ -183,6 +183,7 @@ public class PrimaryController {
         complaintsButton.setVisible(false);
         reportsButton.setVisible(false);
         managerNotificationsBtn.setVisible(false);
+        userRec.setVisible(false);
 
         if (loggedInUser != null) {
             LOGINBtn.setDisable(true);
@@ -212,6 +213,7 @@ public class PrimaryController {
         }
 
         if (UserSession.getUser() != null) {
+            userRec.setVisible(true);
             userRec.setText("Welcome " + UserSession.getUser().getFullName());
         }
 
