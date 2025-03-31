@@ -8,6 +8,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.PriceChangeRequest;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -27,35 +28,38 @@ public class ManagerNotificationsController {
     @FXML private TableColumn<PriceChangeRequest, Double> requestedPriceCol;
     @FXML private TableColumn<PriceChangeRequest, String> requestedByCol;
     @FXML private TableColumn<PriceChangeRequest, Void> actionCol;
+    @FXML private ComboBox<String> branchFilterComboBox;
+    @FXML private Label branchFilterLabel;
 
-    private List<PriceChangeRequest> requestList = new ArrayList<>();
+    private List<PriceChangeRequest> allRequests;
 
     @FXML
     public void initialize() {
         User user = UserSession.getUser();
+
         if (user == null || (user.getRole() != User.Role.BRANCH_MANAGER && user.getRole() != User.Role.GENERAL_MANAGER)) {
             showAlert("Access Denied", "You do not have permission to access this page.");
             ScreenManager.switchScreen("Primary");
             return;
         }
 
+        if (user.getRole() == User.Role.GENERAL_MANAGER) {
+            branchFilterLabel.setVisible(true);
+            branchFilterComboBox.setVisible(true);
+            branchFilterComboBox.setItems(FXCollections.observableArrayList("All", "Haifa", "Tel-Aviv", "Acre", "Netanya"));
+            branchFilterComboBox.getSelectionModel().selectFirst();
+            branchFilterComboBox.setOnAction(e -> filterNotificationsByBranch());
+        } else {
+            branchFilterLabel.setVisible(false);
+            branchFilterComboBox.setVisible(false);
+        }
+
         EventBus.getDefault().register(this);
 
-        mealNameCol.setCellValueFactory(data -> {
-            Meals meal = data.getValue().getMeal();
-            return new javafx.beans.property.SimpleStringProperty(meal.getName());
-        });
-
-        oldPriceCol.setCellValueFactory(data -> {
-            Meals meal = data.getValue().getMeal();
-            return new javafx.beans.property.SimpleDoubleProperty(meal.getPrice()).asObject();
-        });
-
+        mealNameCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getMeal().getName()));
+        oldPriceCol.setCellValueFactory(data -> new javafx.beans.property.SimpleDoubleProperty(data.getValue().getMeal().getPrice()).asObject());
         requestedPriceCol.setCellValueFactory(new PropertyValueFactory<>("requestedPrice"));
-
-        requestedByCol.setCellValueFactory(data -> {
-            return new javafx.beans.property.SimpleStringProperty(data.getValue().getRequestedBy().getFullName());
-        });
+        requestedByCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getRequestedBy().getFullName()));
 
         addActionButtons();
 
@@ -66,9 +70,8 @@ public class ManagerNotificationsController {
         }
     }
 
-
     @Subscribe
-    public void setNotifications (Message message) {
+    public void setNotifications(Message message) {
         if ("#PriceChangeRequestSent".equals(message.toString())) {
             try {
                 SimpleClient.getClient().sendToServer(new Message(null, "#FetchPriceRequests"));
@@ -98,15 +101,10 @@ public class ManagerNotificationsController {
                 actionBox.getChildren().addAll(approveBtn, rejectBtn);
             }
 
-
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(actionBox);
-                }
+                setGraphic(empty ? null : actionBox);
             }
         });
     }
@@ -118,7 +116,6 @@ public class ManagerNotificationsController {
             showAlert("Error", "Failed to send rejection.");
         }
     }
-
 
     private void handleApproval(PriceChangeRequest request) {
         try {
@@ -132,8 +129,8 @@ public class ManagerNotificationsController {
     public void onRequestsReceived(Message message) {
         if ("#PriceRequestsList".equals(message.toString())) {
             Platform.runLater(() -> {
-                requestList = (List<PriceChangeRequest>) message.getObject();
-                requestTable.getItems().setAll(requestList);
+                allRequests = (List<PriceChangeRequest>) message.getObject();
+                filterNotificationsByBranch();
             });
         } else if ("#PriceChangeApproved".equals(message.toString())) {
             Platform.runLater(() -> {
@@ -144,20 +141,16 @@ public class ManagerNotificationsController {
                     throw new RuntimeException(e);
                 }
             });
-        }
-        else if ("#PriceChangeRejected".equals(message.toString())) {
+        } else if ("#PriceChangeRejected".equals(message.toString())) {
             Platform.runLater(() -> {
                 showAlert("Rejected", "Request has been rejected.");
+                try {
+                    SimpleClient.getClient().sendToServer(new Message(null, "#FetchPriceRequests"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             });
-
-            try {
-                SimpleClient.getClient().sendToServer(new Message(null, "#FetchPriceRequests"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
-
-
     }
 
     @FXML
@@ -171,5 +164,26 @@ public class ManagerNotificationsController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void filterNotificationsByBranch() {
+        String selected;
+        if (UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER) {
+            selected = branchFilterComboBox.getSelectionModel().getSelectedItem();
+        } else {
+            selected = UserSession.getUser().getBranch();
+        }
+
+        List<PriceChangeRequest> filtered = selected.equals("All") ? allRequests :
+                allRequests.stream()
+                        .filter(req -> req.getMeal().getBranches().stream()
+                                .anyMatch(branch -> branch.getName().equalsIgnoreCase(selected)))
+                        .toList();
+
+        requestTable.setItems(FXCollections.observableArrayList(filtered));
+    }
+
+    public void onClose() {
+        EventBus.getDefault().unregister(this);
     }
 }

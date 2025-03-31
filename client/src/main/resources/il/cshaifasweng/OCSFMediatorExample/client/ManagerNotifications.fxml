@@ -9,6 +9,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ManagerNotificationsController">
     <children>
+
         <TableView fx:id="requestTable" layoutX="21.0" layoutY="62.0" prefHeight="268.0" prefWidth="537.0">
             <columns>
                 <TableColumn fx:id="mealNameCol" text="Meal Name" />
@@ -19,7 +20,7 @@
             </columns>
         </TableView>
         <Button layoutX="20.0" layoutY="330.0" onAction="#handleBack" text="Back" />
-      <ComboBox fx:id="branchSelector" layoutX="215.0" layoutY="14.0" prefWidth="150.0" />
-      <Label fx:id="branchesLabel" layoutX="104.0" layoutY="18.0" text="Filter by Branch:" />
+      <ComboBox fx:id="branchFilterComboBox" layoutX="140.0" layoutY="22.0" prefWidth="150.0" />
+      <Label fx:id="branchFilterLabel" layoutX="40.0" layoutY="26.0" text="Filter by Branch:" />
     </children>
 </AnchorPane>
