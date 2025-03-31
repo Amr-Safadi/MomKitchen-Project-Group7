@@ -3,11 +3,13 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Orders;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -16,6 +18,8 @@ import java.time.LocalDateTime;
 
 public class CheckOutController {
 
+    @FXML
+    private AnchorPane pane;
     @FXML
     private TextField addressTxt, cardTxt, mailTxt, nameTxt, phoneTxt;
     @FXML
@@ -40,7 +44,8 @@ public class CheckOutController {
 
     @FXML
     void initialize() {
-        priceLabel.setText("Total Price: $" + CartSession.getCart().getTotalPrice());
+        BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
+        priceLabel.setText(priceLabel.getText() + CartSession.getCart().getTotalPrice());
 
         // Update labels
        // orderTypeLabel.setText("Order Type: " + orderType);

@@ -6,49 +6,55 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="contactUsAnchorPane" prefWidth="600.0" prefHeight="600.0"
-            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ContactUsController"
-            style="-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover; -fx-padding: 20;">
-
-    <!-- Title -->
-    <Label layoutX="200.0" layoutY="40.0" text="Contact Us" textFill="#1E3A5F"
-           style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
-
-    <!-- Name Input -->
-    <Label layoutX="50.0" layoutY="100.0" text="Your Name:" style="-fx-font-size: 14px;"/>
-    <TextField fx:id="nameField" layoutX="150.0" layoutY="95.0" prefWidth="350.0"
-               style="-fx-background-radius: 8px; -fx-border-radius: 8px;"/>
-
-    <!-- Email Input -->
-    <Label layoutX="50.0" layoutY="140.0" text="Your Email:" style="-fx-font-size: 14px;"/>
-    <TextField fx:id="emailField" layoutX="150.0" layoutY="135.0" prefWidth="350.0"
-               promptText="Enter your email"
-               style="-fx-background-radius: 8px; -fx-border-radius: 8px;"/>
-
-    <!-- Branch Selection -->
-    <Label layoutX="50.0" layoutY="180.0" text="Select Branch:" style="-fx-font-size: 14px;"/>
-    <ComboBox fx:id="branchComboBox" layoutX="150.0" layoutY="175.0" prefWidth="350.0"
-              style="-fx-background-radius: 8px; -fx-border-radius: 8px;"/>
+<AnchorPane fx:id="contactUsAnchorPane" prefHeight="600.0" prefWidth="600.0" style="-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover; -fx-padding: 20;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ContactUsController">
+    <TextField fx:id="nameField" layoutX="169.0" layoutY="95.0" prefHeight="25.0" prefWidth="331.0" promptText="Enter yout name" style="-fx-background-radius: 8px; -fx-border-radius: 8px;" />
+    <TextField fx:id="emailField" layoutX="169.0" layoutY="135.0" prefHeight="25.0" prefWidth="331.0" promptText="Enter your email" style="-fx-background-radius: 8px; -fx-border-radius: 8px;" />
+    <ComboBox fx:id="branchComboBox" layoutX="169.0" layoutY="177.0" prefHeight="25.0" prefWidth="331.0" style="-fx-background-radius: 8px; -fx-border-radius: 8px;" />
 
     <!-- Complaint Text Area -->
-    <Label layoutX="50.0" layoutY="220.0" text="Your Complaint:" style="-fx-font-size: 14px;"/>
-    <TextArea fx:id="complaintField" layoutX="150.0" layoutY="215.0" prefWidth="350.0" prefHeight="120.0"
-              promptText="Describe your issue..."
-              style="-fx-background-radius: 8px; -fx-border-radius: 8px;"/>
+    <Label layoutX="50.0" layoutY="220.0" style="-fx-font-size: 14px;" />
+    <TextArea fx:id="complaintField" layoutX="169.0" layoutY="223.0" prefHeight="112.0" prefWidth="331.0" promptText="Describe your issue..." style="-fx-background-radius: 8px; -fx-border-radius: 8px;" />
 
     <!-- Buttons Row -->
-    <HBox layoutX="150.0" layoutY="360.0" spacing="20">
-        <Button fx:id="submitBtn" text="Submit" onAction="#handleSubmit"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 12px; -fx-padding: 8px 20px;"/>
+    <HBox layoutX="150.0" layoutY="360.0" spacing="20" />
+   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="134.0" layoutY="29.0" prefHeight="41.0" prefWidth="331.0" text="Contact Us" textFill="WHITE">
+      <font>
+         <Font name="Bauhaus 93" size="25.0" />
+      </font>
+   </Label>
+   <Label layoutX="50.0" layoutY="95.0" prefHeight="25.0" prefWidth="91.0" text="Your Name" textFill="WHITE">
+      <font>
+         <Font name="Bauhaus 93" size="16.0" />
+      </font>
+   </Label>
+   <Label layoutX="50.0" layoutY="139.0" prefHeight="25.0" prefWidth="86.0" text="Your Email" textFill="WHITE">
+      <font>
+         <Font name="Bauhaus 93" size="16.0" />
+      </font>
+   </Label>
+   <Label layoutX="50.0" layoutY="181.0" prefHeight="19.0" prefWidth="110.0" text="Select branch" textFill="WHITE">
+      <font>
+         <Font name="Bauhaus 93" size="16.0" />
+      </font>
+   </Label>
+   <Label layoutX="50.0" layoutY="221.0" prefHeight="25.0" prefWidth="122.0" text="Your Complaint" textFill="WHITE">
+      <font>
+         <Font name="Bauhaus 93" size="16.0" />
+      </font>
+   </Label>
 
-        <Button fx:id="backBtn" text="Back" onAction="#handleBack"
-                style="-fx-background-color: #FF5733; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 12px; -fx-padding: 8px 20px;"/>
-    </HBox>
+     <Button fx:id="backBtn" layoutX="50.0" layoutY="29.0" onAction="#handleBack" prefHeight="20.0" prefWidth="86.0" style="-fx-background-color: #8ad4a8; -fx-text-fill: white; -fx-background-radius: 10;" text="Back">
+      <font>
+         <Font name="Bauhaus 93" size="15.0" />
+      </font>
+   </Button>
+     <Button fx:id="submitBtn" layoutX="169.0" layoutY="360.0" onAction="#handleSubmit" style="-fx-background-color: #8ad4a8; -fx-text-fill: white; -fx-background-radius: 10;" text="Submit" textFill="WHITE">
+      <font>
+         <Font name="Bauhaus 93" size="19.0" />
+      </font>
+   </Button>
 
 </AnchorPane>

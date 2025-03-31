@@ -63,32 +63,38 @@
             <Font name="Bauhaus 93" size="30.0" />
          </font>
       </Label>
-      <Button fx:id="LOGINBtn" alignment="CENTER" contentDisplay="RIGHT" layoutX="55.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleLOGINBtn" onMouseClicked="#handleLOGINBtn" prefHeight="27.0" prefWidth="80.0" style="-fx-background-color: #8ad4a8;" text="LOG IN" textFill="#fffffff2">
+      <Button fx:id="LOGINBtn" alignment="CENTER" contentDisplay="RIGHT" layoutX="64.0" layoutY="16.0" mnemonicParsing="false" onAction="#handleLOGINBtn" onMouseClicked="#handleLOGINBtn" prefHeight="27.0" prefWidth="80.0" style="-fx-background-color: #8ad4a8;" text="LOG IN" textFill="#fffffff2">
          <font>
             <Font name="Bauhaus 93" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="contactUsBtn" alignment="CENTER" layoutX="198.0" layoutY="29.0" onAction="#handleContactUsBtn" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: #8ad4a8;" text="Contact Us" textFill="WHITE" AnchorPane.rightAnchor="282.0" AnchorPane.topAnchor="29.0">
+      <Button fx:id="contactUsBtn" alignment="CENTER" layoutX="391.0" layoutY="15.0" onAction="#handleContactUsBtn" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: #8ad4a8;" text="Contact Us" textFill="WHITE" AnchorPane.rightAnchor="89.0" AnchorPane.topAnchor="15.0">
          <font>
             <Font name="Bauhaus 93" size="16.0" />
          </font>
       </Button>
-      <Button fx:id="complaintsButton" contentDisplay="CENTER" layoutX="20.0" layoutY="550.0" mnemonicParsing="false" onAction="#handleComplaints" prefHeight="27.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="Manage Complaints" textFill="WHITE" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0">
+      <Button fx:id="complaintsButton" contentDisplay="CENTER" layoutX="179.0" layoutY="548.0" mnemonicParsing="false" onAction="#handleComplaints" prefHeight="29.0" prefWidth="173.0" style="-fx-background-color: #8ad4a8;" text="Manage Complaints" textFill="WHITE" AnchorPane.bottomAnchor="22.66666666666663" AnchorPane.leftAnchor="179.0">
          <font>
-            <Font size="14.0" />
+            <Font name="Bauhaus 93" size="15.0" />
          </font>
       </Button>
-      <Button fx:id="reportsButton" contentDisplay="CENTER" layoutX="200.0" layoutY="550.0" mnemonicParsing="false" onAction="#handleReports" prefHeight="27.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="View Reports" textFill="WHITE" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="200.0">
+      <Button fx:id="reportsButton" contentDisplay="CENTER" layoutX="359.0" layoutY="550.0" mnemonicParsing="false" onAction="#handleReports" prefHeight="29.0" prefWidth="151.0" style="-fx-background-color: #8ad4a8;" text="View Reports" textFill="WHITE" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="359.0">
          <font>
-            <Font size="14.0" />
+            <Font name="Bauhaus 93" size="15.0" />
          </font>
       </Button>
 
 
 
 
-      <Label fx:id="userRec" layoutX="55.0" layoutY="36.0" text="Label" />
-      <Button fx:id="cancelOrderBtn" layoutX="53.0" layoutY="493.0" mnemonicParsing="false" onAction="#handleCancelOrder" text="Cancel Order" />
+      <Label fx:id="userRec" layoutX="64.0" layoutY="49.0" text="Label" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="14.0" />
+         </font></Label>
+      <Button fx:id="cancelOrderBtn" layoutX="62.0" layoutY="548.0" mnemonicParsing="false" onAction="#handleCancelOrder" prefHeight="30.0" prefWidth="111.0" style="-fx-background-color: #8ad4a8;" text="Cancel Order" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="15.0" />
+         </font></Button>
       <Button fx:id="managerNotificationsBtn" layoutX="474.0" layoutY="128.0" mnemonicParsing="false" onAction="#handleManagerNotifications" text="Notifications" />
    </children>
 </AnchorPane>

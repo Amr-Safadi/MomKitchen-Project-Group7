@@ -8,33 +8,51 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.AddMealController">
+<AnchorPane fx:id="pane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.AddMealController">
 
     <children>
-        <Label layoutX="50" layoutY="30" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Add a New Meal" />
 
         <!-- Meal Name -->
-        <Label layoutX="50" layoutY="70" text="Meal Name:" />
-        <TextField fx:id="mealNameField" layoutX="180" layoutY="70" prefWidth="300" />
+        <Label layoutX="48.0" layoutY="106.0" prefHeight="25.0" prefWidth="111.0" text="Meal Name:" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="17.0" />
+         </font></Label>
+        <TextField fx:id="mealNameField" layoutX="183.0" layoutY="106.0" prefHeight="25.0" prefWidth="280.0" />
 
         <!-- Price -->
-        <Label layoutX="50" layoutY="110" text="Price ($):" />
-        <TextField fx:id="mealPriceField" layoutX="180" layoutY="110" prefWidth="300" />
+        <Label layoutX="50.0" layoutY="143.0" prefHeight="25.0" prefWidth="102.0" text="Price ($):" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="17.0" />
+         </font></Label>
+        <TextField fx:id="mealPriceField" layoutX="183.0" layoutY="143.0" prefHeight="25.0" prefWidth="280.0" />
 
         <!-- Ingredients -->
-        <Label layoutX="50" layoutY="150" text="Ingredients:" />
-        <TextArea fx:id="mealIngredientsField" layoutX="180" layoutY="150" prefHeight="60" prefWidth="300" />
+        <Label layoutX="48.0" layoutY="185.0" prefHeight="25.0" prefWidth="119.0" text="Ingredients:" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="17.0" />
+         </font></Label>
+        <TextArea fx:id="mealIngredientsField" layoutX="183.0" layoutY="185.0" prefHeight="60" prefWidth="280.0" />
 
         <!-- Meal Category (Dropdown) -->
-        <Label layoutX="50" layoutY="230" text="Category:" />
-        <ComboBox fx:id="mealCategoryComboBox" layoutX="180" layoutY="230" prefWidth="300" />
+        <Label layoutX="48.0" layoutY="262.0" prefHeight="25.0" prefWidth="95.0" text="Category:" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="17.0" />
+         </font></Label>
+        <ComboBox fx:id="mealCategoryComboBox" layoutX="180.0" layoutY="262.0" prefHeight="25.0" prefWidth="153.0" />
 
         <!-- Branch Meal Checkbox -->
-        <CheckBox fx:id="isBranchMealCheckBox" layoutX="50" layoutY="270" text="Branch Meal" />
+        <CheckBox fx:id="isBranchMealCheckBox" layoutX="343.0" layoutY="262.0" prefHeight="25.0" prefWidth="140.0" text="Branch Meal" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="15.0" />
+         </font></CheckBox>
 
         <!-- Preferences (Up to 8) -->
-        <Label layoutX="50" layoutY="310" text="Meal Preferences:" />
+        <Label layoutX="48.0" layoutY="310.0" prefHeight="25.0" prefWidth="140.0" text="Meal Preferences:" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="17.0" />
+         </font></Label>
         <VBox layoutX="180" layoutY="310">
             <TextField fx:id="preference1" prefWidth="280" promptText="Preference 1" />
             <TextField fx:id="preference2" prefWidth="280" promptText="Preference 2" />
@@ -47,9 +65,18 @@
         </VBox>
 
         <!-- Buttons -->
-        <Button fx:id="submitMealBtn" layoutX="180" layoutY="550" onAction="#handleAddMeal" text="Add Meal" />
-        <Button fx:id="backBtn" layoutX="50" layoutY="550" onAction="#handleBack" text="Back" />
-      <Button fx:id="imageBtn" layoutX="294.0" layoutY="550.0" mnemonicParsing="false" onAction="#handleSelectImage" text="Add Image" />
-      <Label fx:id="imageName" layoutX="446.0" layoutY="554.0" text="Chosen Image : " />
+        <Button fx:id="submitMealBtn" layoutX="48.0" layoutY="527.0" onAction="#handleAddMeal" prefHeight="35.0" prefWidth="119.0" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="Add Meal" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="19.0" />
+         </font></Button>
+        <Button fx:id="backBtn" layoutX="32.0" layoutY="22.0" onAction="#handleBack" prefHeight="25.0" prefWidth="67.0" style="-fx-background-color: #8ad4a8; -fx-background-radius: 10;" text="Back" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="16.0" />
+         </font></Button>
+      <Label layoutX="48.0" layoutY="61.0" prefHeight="38.0" prefWidth="242.0" text="Add a new meal" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="26.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>

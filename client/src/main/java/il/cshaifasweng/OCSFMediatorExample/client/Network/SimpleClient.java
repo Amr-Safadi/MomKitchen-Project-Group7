@@ -14,6 +14,8 @@ import java.io.IOException;
 public class SimpleClient extends AbstractClient {
 	
 	private static SimpleClient client = null;
+	public static int PORT = 3000;
+	public static String HOST = "localhost";
 
 	private SimpleClient(String host, int port) {
 		super(host, port);

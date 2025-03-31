@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Orders;
 import javafx.application.Platform;
@@ -10,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -23,6 +25,8 @@ public class ValidateUserController {
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
 
+    @FXML
+    private AnchorPane validatePane;
     @FXML
     private Button validateBtn;
     @FXML
@@ -77,6 +81,7 @@ public class ValidateUserController {
     }
     @FXML
     void initialize() {
+        BackgroundUtil.setPaneBackground(validatePane, "/Images/NEWBACKGRND.jpg");
         EventBus.getDefault().register(this);
         assert emailField != null : "fx:id=\"emailField\" was not injected: check your FXML file 'ValidateUser.fxml'.";
         assert phoneField != null : "fx:id=\"phoneField\" was not injected: check your FXML file 'ValidateUser.fxml'.";

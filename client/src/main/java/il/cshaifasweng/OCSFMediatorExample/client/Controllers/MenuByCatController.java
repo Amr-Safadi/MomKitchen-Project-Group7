@@ -144,6 +144,7 @@ public class MenuByCatController {
 
         BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
 
+
             try {
                 client.sendToServer(new Message("fetch" + MenuByCatService.getCurrentCategory()));
                 System.out.println("Retrying meal fetch: " + MenuByCatService.getCurrentCategory());
