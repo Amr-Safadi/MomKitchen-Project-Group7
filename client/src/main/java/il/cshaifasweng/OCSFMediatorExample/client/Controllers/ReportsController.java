@@ -3,9 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import il.cshaifasweng.OCSFMediatorExample.entities.Orders;
-import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -23,9 +21,9 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReportsController {
-
     private final SimpleClient client = SimpleClient.getClient();
     private final ObservableList<Orders> deliveryOrders = FXCollections.observableArrayList();
     private final ObservableList<Object[]> reservationsData = FXCollections.observableArrayList();
@@ -49,14 +47,15 @@ public class ReportsController {
     @FXML private Label branchFilterLabel;
 
     private String selectedBranch = null;
-
+    private List<Orders> orders;
+    private List<Reservation> allReservations;
+    private List<ContactRequest> complaints;
 
     @FXML
     public void initialize() {
         if (UserSession.getUser() == null ||
                 !(UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER ||
                         UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER)) {
-
             showAlert("Access Denied", "You do not have permission to access this page.");
             Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
             return;
@@ -66,56 +65,90 @@ public class ReportsController {
             branchFilterLabel.setVisible(true);
             branchFilterComboBox.setVisible(true);
             branchFilterComboBox.setItems(FXCollections.observableArrayList("All", "Haifa", "Tel-Aviv", "Acre", "Netanya"));
-            branchFilterComboBox.getSelectionModel().selectFirst(); // Default to All
-          //  branchFilterComboBox.setOnAction(e -> applyBranchFilter());
+            branchFilterComboBox.getSelectionModel().selectFirst();
             selectedBranch = "All";
         } else {
             branchFilterLabel.setVisible(false);
             branchFilterComboBox.setVisible(false);
-            selectedBranch = UserSession.getUser().getBranch(); // BRANCH_MANAGER sees only his branch
+            selectedBranch = UserSession.getUser().getBranch();
         }
         branchFilterComboBox.setOnAction(e -> handleBranchComboBoxChange());
         EventBus.getDefault().register(this);
+
+        ordersTable.setRowFactory(tv -> {
+            TableRow<Orders> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Orders selectedOrder = row.getItem();
+                    showOrderDetails(selectedOrder);
+                }
+            });
+            return row;
+        });
+
+        reservationsTable.setRowFactory(tv -> {
+            TableRow<Object[]> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Object[] entry = row.getItem();
+                    showReservationDetails(entry);
+                }
+            });
+            return row;
+        });
+
+
+
+
         setupTables();
         fetchReports();
     }
 
-    @FXML
-    private void handleBranchComboBoxChange() {
-        if (UserSession.getUser().getRole() != User.Role.GENERAL_MANAGER) return;
+    private void showReservationDetails(Object[] entry) {
+        // entry[0] = date, entry[1] = count
+        String date = entry[0].toString();
+        String count = entry[1].toString();
 
-        String selected = branchFilterComboBox.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-
-        // 🧠 Filter Orders
-        List<Orders> filteredOrders = selected.equals("All") ? orders :
-                orders.stream().filter(o -> o.getBranchName().equalsIgnoreCase(selected)).toList();
-        deliveryOrders.setAll(filteredOrders);
-        ordersTable.getItems().setAll(filteredOrders);
-
-        // 📅 Filter Reservations
-        List<Object[]> filteredReservations = selected.equals("All") ? allReservations :
-                allReservations.stream().filter(r -> r[2].toString().equalsIgnoreCase(selected)).toList();
-        reservationsData.setAll(filteredReservations);
-        reservationsTable.getItems().setAll(filteredReservations);
-
-        // 🚨 Filter Complaints
-        List<Object[]> filteredComplaints = selected.equals("All") ? complaints :
-                complaints.stream().filter(c -> c[2].toString().equalsIgnoreCase(selected)).toList();
-        complaintsData.setAll(filteredComplaints);
-        updateComplaintsChart();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Reservation Details");
+        alert.setHeaderText("Reservations on " + date);
+        alert.setContentText("Total reservations: " + count);
+        alert.showAndWait();
     }
 
 
+    private void showOrderDetails(Orders order) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Order Details");
+        alert.setHeaderText("Details for Order #" + order.getId());
+
+        String content = String.format("""
+        Date: %s
+        Total Price: %.2f
+        Branch: %s
+        Type: %s
+        Email: %s
+        Phone: %s
+        """,
+                order.getOrderPlacedTime(),
+                order.getTotalPrice(),
+                order.getBranchName(),
+                order.getOrderType(),
+                order.getEmail(),
+                order.getPhoneNumber()
+        );
+
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
     private void setupTables() {
-        // ✅ Setup Delivery Orders Table
         orderIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         orderDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOrderPlacedTime().toString()));
         orderTotalPriceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().getTotalPrice())));
 
-        // ✅ Setup Reservations Per Day Table
-        reservationDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[0].toString())); // Date
-        reservationCountColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[1].toString())); // Count
+        reservationDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[0].toString()));
+        reservationCountColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[1].toString()));
     }
 
     private void fetchReports() {
@@ -126,103 +159,102 @@ public class ReportsController {
         }
     }
 
-    List<Orders> orders ;
+    @FXML
+    private void handleBranchComboBoxChange() {
+        if (UserSession.getUser().getRole() != User.Role.GENERAL_MANAGER) return;
+        selectedBranch = branchFilterComboBox.getSelectionModel().getSelectedItem();
+
+        // Filter and update all UI sections
+        List<Orders> filteredOrders = filterOrdersByUserBranch(orders);
+        deliveryOrders.setAll(filteredOrders);
+        ordersTable.setItems(deliveryOrders);
+
+        List<Reservation> filteredReservations = filterReservationsByBranch(allReservations);
+        List<Object[]> groupedReservations = groupReservationsByDate(filteredReservations);
+        reservationsData.setAll(groupedReservations);
+        reservationsTable.setItems(reservationsData);
+
+        List<ContactRequest> filteredComplaints = filterComplaintsByBranch(complaints);
+        List<Object[]> groupedComplaints = groupComplaintsByDate(filteredComplaints);
+        complaintsData.setAll(groupedComplaints);
+        updateComplaintsChart();
+    }
+
+    private List<Orders> filterOrdersByUserBranch(List<Orders> allOrders) {
+        if (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER) {
+            String branch = UserSession.getUser().getBranch();
+            return allOrders.stream().filter(o -> o.getBranchName().equalsIgnoreCase(branch)).toList();
+        } else if (!"All".equalsIgnoreCase(selectedBranch)) {
+            return allOrders.stream().filter(o -> o.getBranchName().equalsIgnoreCase(selectedBranch)).toList();
+        }
+        return allOrders;
+    }
 
     @Subscribe
     public void handleOrdersReport(Message message) {
         if ("#OrdersReport".equals(message.getText())) {
             orders = (List<Orders>) message.getObject();
-            List<Orders> filtered = filterOrdersByUserBranch(orders);
-
-            Platform.runLater(() -> {
-                deliveryOrders.setAll(filtered);
-                ordersTable.getItems().setAll(filtered);
-                System.out.println("✅ Filtered delivery orders loaded successfully!");
-            });
+            Platform.runLater(() -> handleBranchComboBoxChange());
         }
     }
 
-    private List<Orders> filterOrdersByUserBranch(List<Orders> allOrders) {
-        User user = UserSession.getUser();
-        if (user.getRole() == User.Role.GENERAL_MANAGER) {
-            return allOrders; // Show everything
-        } else if (user.getRole() == User.Role.BRANCH_MANAGER) {
-            String userBranch = user.getBranch();
-            return allOrders.stream()
-                    .filter(order -> order.getBranchName().equalsIgnoreCase(userBranch))
-                    .toList();
-        }
-        return List.of(); // No access fallback
-    }
-
-
-    List<Object[]> allReservations;
     @Subscribe
     public void handleReservationsReport(Message message) {
         if ("#ReservationsReport".equals(message.getText())) {
-            allReservations = (List<Object[]>) message.getObject();
-            List<Object[]> filtered = filterReservationsByUserBranch(allReservations);
-            Platform.runLater(() -> {
-                reservationsData.setAll(filtered);
-                reservationsTable.getItems().setAll(filtered);
-                System.out.println("✅ Reservations report loaded successfully!");
-            });
+            allReservations = (List<Reservation>) message.getObject();
+            Platform.runLater(() -> handleBranchComboBoxChange());
         }
     }
 
-    private List<Object[]> filterReservationsByUserBranch(List<Object[]> all) {
-        User user = UserSession.getUser();
-
-        if (user.getRole() == User.Role.GENERAL_MANAGER) {
-            return all; // Show all
-        } else if (user.getRole() == User.Role.BRANCH_MANAGER) {
-            String userBranch = user.getBranch();
-            return all.stream()
-                    .filter(entry -> entry[2].toString().equalsIgnoreCase(userBranch)) // Assuming index 2 = branch
-                    .toList();
-        }
-
-        return List.of(); // No access
-    }
-
-
-    List<Object[]> complaints ;
     @Subscribe
     public void handleComplaintsReport(Message message) {
         if ("#ComplaintsReport".equals(message.getText())) {
-             complaints = (List<Object[]>) message.getObject();
-            List<Object[]> filtered = filterComplaintsByUserBranch(complaints);
-            Platform.runLater(() -> {
-                complaintsData.setAll(filtered);
-                updateComplaintsChart();
-                System.out.println("✅ Complaints histogram updated!");
-            });
+            complaints = (List<ContactRequest>) message.getObject();
+            Platform.runLater(() -> handleBranchComboBoxChange());
         }
     }
 
-    private List<Object[]> filterComplaintsByUserBranch(List<Object[]> allComplaints) {
-        User user = UserSession.getUser();
-
-        if (user.getRole() == User.Role.GENERAL_MANAGER) {
-            return allComplaints; // Show everything
-        } else if (user.getRole() == User.Role.BRANCH_MANAGER) {
-            String userBranch = user.getBranch();
-            return allComplaints.stream()
-                    .filter(entry -> entry[2].toString().equalsIgnoreCase(userBranch)) // Assuming index 2 = branch
-                    .toList();
+    private List<Reservation> filterReservationsByBranch(List<Reservation> all) {
+        if (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER) {
+            String branch = UserSession.getUser().getBranch();
+            return all.stream().filter(r -> r.getBranch().getName().equalsIgnoreCase(branch)).toList();
+        } else if (!"All".equalsIgnoreCase(selectedBranch)) {
+            return all.stream().filter(r -> r.getBranch().getName().equalsIgnoreCase(selectedBranch)).toList();
         }
-
-        return List.of(); // No access fallback
+        return all;
     }
 
+    private List<ContactRequest> filterComplaintsByBranch(List<ContactRequest> all) {
+        if (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER) {
+            String branch = UserSession.getUser().getBranch();
+            return all.stream().filter(c -> c.getBranch().equalsIgnoreCase(branch)).toList();
+        } else if (!"All".equalsIgnoreCase(selectedBranch)) {
+            return all.stream().filter(c -> c.getBranch().equalsIgnoreCase(selectedBranch)).toList();
+        }
+        return all;
+    }
+
+    private List<Object[]> groupReservationsByDate(List<Reservation> list) {
+        return list.stream()
+                .collect(Collectors.groupingBy(r -> r.getDate(), Collectors.counting()))
+                .entrySet().stream()
+                .map(e -> new Object[]{e.getKey().toString(), e.getValue().toString()})
+                .toList();
+    }
+
+    private List<Object[]> groupComplaintsByDate(List<ContactRequest> list) {
+        return list.stream()
+                .collect(Collectors.groupingBy(c -> c.getSubmittedAt().toLocalDate(), Collectors.counting()))
+                .entrySet().stream()
+                .map(e -> new Object[]{e.getKey().toString(), e.getValue().toString()})
+                .toList();
+    }
 
     private void updateComplaintsChart() {
         complaintsChart.getData().clear();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         for (Object[] entry : complaintsData) {
-            String day = entry[0].toString();
-            int count = Integer.parseInt(entry[1].toString());
-            series.getData().add(new XYChart.Data<>(day, count));
+            series.getData().add(new XYChart.Data<>(entry[0].toString(), Integer.parseInt(entry[1].toString())));
         }
         complaintsChart.getData().add(series);
     }
@@ -230,26 +262,18 @@ public class ReportsController {
     @FXML
     private void handleExportCsv() {
         try (FileWriter writer = new FileWriter("report.csv")) {
-            // Export Orders
             writer.append("Order ID, Date, Total Price\n");
             for (Orders order : deliveryOrders) {
                 writer.append(order.getId() + "," + order.getOrderPlacedTime() + "," + order.getTotalPrice() + "\n");
             }
-            writer.append("\n");
-
-            // Export Reservations
-            writer.append("Date, Reservations Count\n");
+            writer.append("\nDate, Reservations Count\n");
             for (Object[] entry : reservationsData) {
-                writer.append(entry[0].toString() + "," + entry[1].toString() + "\n");
+                writer.append(entry[0] + "," + entry[1] + "\n");
             }
-            writer.append("\n");
-
-            // Export Complaints
-            writer.append("Date, Complaints Count\n");
+            writer.append("\nDate, Complaints Count\n");
             for (Object[] entry : complaintsData) {
-                writer.append(entry[0].toString() + "," + entry[1].toString() + "\n");
+                writer.append(entry[0] + "," + entry[1] + "\n");
             }
-
             showAlert("Success", "Report exported successfully.");
         } catch (IOException e) {
             showAlert("Error", "Failed to export CSV.");
