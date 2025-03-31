@@ -6,14 +6,14 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="pane" prefHeight="525.0" prefWidth="591.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.TableMapController">
+<AnchorPane fx:id="pane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.TableMapController">
     <children>
-        <Button fx:id="backBtn" layoutX="32.0" layoutY="25.0" onAction="#handleBack" style="-fx-background-color: #8ad4a8;" text="Back" textFill="WHITE">
+        <Button fx:id="backBtn" layoutX="29.0" layoutY="15.0" onAction="#handleBack" style="-fx-background-color: #73db63;" text="Back" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
-        <GridPane fx:id="tableGrid" hgap="20" layoutX="47.0" layoutY="96.0" prefHeight="406.0" prefWidth="487.0" vgap="20" />
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="160.0" layoutY="25.0" prefHeight="47.0" prefWidth="221.0" text="Tables Map" textFill="WHITE">
+        <GridPane fx:id="tableGrid" hgap="20" layoutX="47.0" layoutY="58.0" prefHeight="538.0" prefWidth="487.0" vgap="20" />
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="180.0" layoutY="5.0" prefHeight="47.0" prefWidth="221.0" text="Tables Map" textFill="#77c068">
          <font>
             <Font name="Bauhaus 93" size="28.0" />
          </font>

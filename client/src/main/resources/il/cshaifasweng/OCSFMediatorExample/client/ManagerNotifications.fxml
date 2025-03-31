@@ -5,17 +5,17 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ManagerNotificationsController">
+<AnchorPane fx:id="pane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ManagerNotificationsController">
     <children>
-        <TableView fx:id="requestTable" layoutX="20.0" layoutY="20.0" prefHeight="300.0" prefWidth="560.0">
+        <TableView fx:id="requestTable" layoutX="86.0" layoutY="36.0" prefHeight="501.0" prefWidth="427.0">
             <columns>
-                <TableColumn fx:id="mealNameCol" text="Meal Name" />
-                <TableColumn fx:id="oldPriceCol" text="Old Price" />
-                <TableColumn fx:id="requestedPriceCol" prefWidth="94.66668701171875" text="Requested Price" />
-                <TableColumn fx:id="requestedByCol" prefWidth="90.0" text="Requested By" />
-                <TableColumn fx:id="actionCol" prefWidth="215.33331298828125" text="Action" />
+                <TableColumn fx:id="mealNameCol" prefWidth="125.33328247070312" text="Meal Name" />
+                <TableColumn fx:id="oldPriceCol" prefWidth="76.6666259765625" text="Old Price" />
+                <TableColumn fx:id="requestedPriceCol" prefWidth="102.66668701171875" text="Requested Price" />
+                <TableColumn fx:id="requestedByCol" prefWidth="122.66668701171875" text="Requested By" />
+                <TableColumn fx:id="actionCol" prefWidth="138.6666259765625" text="Action" />
             </columns>
         </TableView>
-        <Button layoutX="20.0" layoutY="330.0" onAction="#handleBack" text="Back" />
+        <Button layoutX="265.0" layoutY="549.0" onAction="#handleBack" prefHeight="25.0" prefWidth="69.0" text="Back" />
     </children>
 </AnchorPane>

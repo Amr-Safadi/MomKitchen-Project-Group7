@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Orders;
@@ -9,6 +10,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class CancelOrderController {
-
+    @FXML private AnchorPane pane;
     @FXML private ListView<String> ordersListView;
     @FXML private Label orderStatusLabel;
     @FXML private Label refundLabel;
@@ -30,6 +32,7 @@ public class CancelOrderController {
 
     @FXML
     public void initialize() {
+        BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
         EventBus.getDefault().register(this);
         ordersListView.getItems().clear();
 
@@ -93,6 +96,7 @@ public class CancelOrderController {
 
         Duration duration = Duration.between(LocalDateTime.now(), selectedOrder.getDeliveryTime());
         long hoursLeft = duration.toHours();
+        long minutesLeft = duration.toMinutes();
 
         if (hoursLeft >= 3) {
             refundLabel.setText("Cancellation is free.");
@@ -100,8 +104,11 @@ public class CancelOrderController {
         } else if (hoursLeft >= 1) {
             refundLabel.setText("50% of the order price will be charged.");
             cancelOrderBtn.setDisable(false);
-        } else {
+        } else if (minutesLeft > 0) {
             refundLabel.setText("No refund available.");
+            cancelOrderBtn.setDisable(false);
+        } else {
+            refundLabel.setText("Your order can't be cancelled");
             cancelOrderBtn.setDisable(true);
         }
     }

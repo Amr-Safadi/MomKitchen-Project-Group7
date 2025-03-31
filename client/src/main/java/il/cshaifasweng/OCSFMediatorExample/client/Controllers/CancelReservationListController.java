@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import javafx.application.Platform;
@@ -9,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -16,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class CancelReservationListController {
-
+    @FXML private AnchorPane pane;
     @FXML
     private ListView<String> reservationList;
 
@@ -28,6 +30,8 @@ public class CancelReservationListController {
 
     @FXML
     public void initialize() {
+        BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
+
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
         populateReservationList();
@@ -68,10 +72,7 @@ public class CancelReservationListController {
                 if ("CancellationSuccessWithFee".equals(responseDetail)) {
                     alertContent += " Note: Your card was billed 10 shekels for canceling within 1 hour of the reservation time.";
                 }
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Reservation Cancelled");
-                alert.setContentText(alertContent);
-                alert.showAndWait();
+               showAlert("Cancellation","Reservation canceled successfully.");
 
                 EventBus.getDefault().unregister(this);
 
@@ -88,6 +89,7 @@ public class CancelReservationListController {
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
+        alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
     }

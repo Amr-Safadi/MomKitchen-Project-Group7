@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.PriceChangeRequest;
@@ -11,6 +12,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManagerNotificationsController {
-
+    @FXML private AnchorPane pane;
     @FXML private TableView<PriceChangeRequest> requestTable;
     @FXML private TableColumn<PriceChangeRequest, String> mealNameCol;
     @FXML private TableColumn<PriceChangeRequest, Double> oldPriceCol;
@@ -32,6 +34,7 @@ public class ManagerNotificationsController {
 
     @FXML
     public void initialize() {
+        BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
         User user = UserSession.getUser();
         if (user == null || (user.getRole() != User.Role.BRANCH_MANAGER && user.getRole() != User.Role.GENERAL_MANAGER)) {
             showAlert("Access Denied", "You do not have permission to access this page.");

@@ -76,7 +76,8 @@ public class SimpleClient extends AbstractClient {
 				System.out.println(" simple client to  category fetched - handle message");
 				EventBus.getDefault().post(message);
 				break;
-
+			case "#ReservationSuccess":
+				EventBus.getDefault().post(message);
 			case "#Update All Meals":
 				System.out.println(" simple client to update meal - handle message");
 				EventBus.getDefault().post(message);
