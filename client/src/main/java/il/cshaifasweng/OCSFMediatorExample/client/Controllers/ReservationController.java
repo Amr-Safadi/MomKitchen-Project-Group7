@@ -110,7 +110,7 @@ public class ReservationController {
     }
 
     @Subscribe
-    public void onReservationResponse(il.cshaifasweng.OCSFMediatorExample.entities.Message message) {
+    public void onReservationResponse(Message message) {
         String msgText = message.toString();
         Platform.runLater(() -> {
             if ("#ReservationSuccess".equals(msgText)) {

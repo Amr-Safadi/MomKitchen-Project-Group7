@@ -3,10 +3,12 @@ package il.cshaifasweng.OCSFMediatorExample.client.Network;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import javafx.scene.image.Image;
 import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class SimpleClient extends AbstractClient {
@@ -31,6 +33,31 @@ public class SimpleClient extends AbstractClient {
 		Message message = (Message) msg;
 
 		switch (message.toString()) {
+			case String msgStr when msgStr.startsWith("#MealImageResponse:"):
+				String mealName = msgStr.split(":")[1];  // Extract the meal name
+				byte[] imageData = (byte[]) message.getObject();
+
+				// Create the image
+				Image receivedImage = new Image(new ByteArrayInputStream(imageData));
+
+				// 🔔 Let the UI know (publish to EventBus)
+				EventBus.getDefault().post(new Message(new Object[]{mealName, receivedImage}, "receivedImage"));
+				break;
+
+
+			case "#PriceChangeApproved","#PriceChangeRejected","#PriceChangeRequestSent","#PriceChangeRequestFailed":
+				EventBus.getDefault().post(message);
+				break;
+
+			case "#PriceRequestsList":
+				EventBus.getDefault().post(message);
+				break;
+
+			case "#ManagerHasNotifications":
+			case "#ManagerClear":
+				EventBus.getDefault().post(message);
+				break;
+
 			case "#MealAddedSuccessfully", "#UserValidated", "#ValidationFailed", "OrderCanceled",
                  "#MealAdditionFailed" ,"#MealDeleted", "#MealDeletionFailed", "#Update Complaints":
 				EventBus.getDefault().post(message);

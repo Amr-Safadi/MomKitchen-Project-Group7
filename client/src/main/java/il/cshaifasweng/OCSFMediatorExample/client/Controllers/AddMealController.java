@@ -8,13 +8,16 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +38,30 @@ public class AddMealController {
     @FXML private TextField preference8;
     @FXML private Button submitMealBtn;
     @FXML private Button backBtn;
+    @FXML
+    private Button imageBtn;
+
+    @FXML
+    private Label imageName;
+
+    private File selectedImageFile;
+    @FXML
+    void handleSelectImage(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Meal Image");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png")
+        );
+
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            selectedImageFile = file;
+            imageName.setText("Chosen Image: " + file.getName());
+            System.out.println("✅ Image selected: " + file.getAbsolutePath());
+        }
+    }
+
+
     @FXML private AnchorPane pane;
 
     @FXML
@@ -88,6 +115,19 @@ public class AddMealController {
         // Send the meal to the server
         try {
             SimpleClient.getClient().sendToServer(new Message(newMeal, "#AddMeal"));
+            if (selectedImageFile != null) {
+                try {
+                    byte[] imageBytes = Files.readAllBytes(selectedImageFile.toPath());
+                    Object[] imagePayload = new Object[] { newMeal.getName(), imageBytes };
+                    SimpleClient.getClient().sendToServer(new Message(imagePayload, "#UploadMealImage"));
+                    System.out.println("📤 Image sent to server for: " + newMeal.getName());
+                } catch (IOException e) {
+                    System.out.println("❌ Failed to send image.");
+                    e.printStackTrace();
+                }
+            }
+
+
         } catch (IOException e) {
             showAlert("Error", "Failed to send meal to the server.");
         }

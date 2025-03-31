@@ -3,7 +3,6 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
-import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -132,6 +131,8 @@ public class CartController {
             return null;
         });
 
+        if(CartSession.getCart().getCartSize()>0)
+        {
         dialog.showAndWait().ifPresent(result -> {
             String timeInput = result[2].trim();
 
@@ -170,6 +171,12 @@ public class CartController {
         });
 
     }
+        else {
+            showAlert("Cart is empty", "Please choose an order .");
+        }
+    }
+
+
 
 
     private void showAlert(String title, String content) {

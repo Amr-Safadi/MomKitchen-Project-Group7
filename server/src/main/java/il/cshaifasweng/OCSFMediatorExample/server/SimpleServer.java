@@ -11,7 +11,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,126 @@ public class SimpleServer extends AbstractServer {
 		String msgStr = message.toString();
 
 		switch (msgStr) {
+
+			case "#UploadMealImage":
+				Object[] imagePayload = (Object[]) message.getObject();
+				String imageMealName = (String) imagePayload[0];
+				byte[] uploadedImageBytes = (byte[]) imagePayload[1];
+
+				File uploadPath = new File("src/main/resources/Images/" + imageMealName + ".jpg");
+				try {
+					Files.write(uploadPath.toPath(), uploadedImageBytes);
+					client.sendToClient(new Message("#ImageUploadSuccess:" + imageMealName));
+					System.out.println("✅ Image uploaded successfully: " + imageMealName);
+				} catch (IOException e) {
+					e.printStackTrace();
+                    try {
+                        client.sendToClient(new Message("#ImageUploadFailed:" + imageMealName));
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+				break;
+
+
+			case "#RequestMealImage":
+				String mealName = (String) message.getObject();
+				File imageFile = new File("src/main/resources/Images/" + mealName + ".jpg");
+
+				if (!imageFile.exists()) {
+					System.out.println("❌ Image not found for meal: " + mealName);
+					break;
+				}
+
+				try {
+					byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+					client.sendToClient(new Message(imageBytes, "#MealImageResponse:" + mealName));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
+
+			case "#CheckPendingNotifications":
+				List<PriceChangeRequest> pendingRequests = MealHandler.getUnresolvedRequests(sessionFactory);
+
+				String answer = pendingRequests.isEmpty() ? "#ManagerClear" : "#ManagerHasNotifications";
+
+				try {
+					client.sendToClient(new Message(answer));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
+
+			case "#RejectPriceChange":
+				PriceChangeRequest rejectRequest = (PriceChangeRequest) message.getObject();
+
+				try (Session session = sessionFactory.openSession()) {
+					Transaction tx = session.beginTransaction();
+
+					PriceChangeRequest dbRequest = session.get(PriceChangeRequest.class, rejectRequest.getId());
+
+					if (dbRequest != null && !dbRequest.isResolved()) {
+						dbRequest.setResolved(true);
+						dbRequest.setApproved(false);
+						dbRequest.setResolvedAt(java.time.LocalDateTime.now());
+
+						session.update(dbRequest);
+						tx.commit();
+
+						client.sendToClient(new Message("#PriceChangeRejected"));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+
+
+			case "#ApprovePriceChange":
+				PriceChangeRequest approvalRequest = (PriceChangeRequest) message.getObject();
+				boolean approved = MealHandler.approvePriceChangeRequest(approvalRequest, sessionFactory);
+
+				if (approved) {
+					try {
+						client.sendToClient(new Message("#PriceChangeApproved"));
+						sendToAllClients(new Message("#Update All Meals")); // optional
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
+
+			case "#FetchPriceRequests":
+				try {
+					List<PriceChangeRequest> requests = MealHandler.getUnresolvedRequests(sessionFactory);
+					client.sendToClient(new Message(requests, "#PriceRequestsList"));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
+			case "#RequestPriceChange":
+				Object[] requestData = (Object[]) message.getObject();
+				Meals mealForPriceChange = (Meals) requestData[0];
+				double newPrice = (double) requestData[1];
+				User dietitian = (User) requestData[2];
+
+				boolean requestSaved = MealHandler.savePriceChangeRequest(mealForPriceChange, newPrice, dietitian, sessionFactory);
+
+				try {
+					if (requestSaved) {
+						//client.sendToClient(new Message("#PriceChangeRequestSent"));
+						sendToAllClients(new Message("#PriceChangeRequestSent"));
+					} else {
+						client.sendToClient(new Message("#PriceChangeRequestFailed"));
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+
 			case "#DeleteMeal":
 				Meals mealToDelete = (Meals) message.getObject();
 				boolean success = MealHandler.deleteMeal(mealToDelete, sessionFactory);

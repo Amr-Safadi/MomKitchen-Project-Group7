@@ -34,6 +34,7 @@ public class ScreenManager {
         screens.put("Manage Complaints", "ComplaintManage.fxml");
         screens.put("AddMeal", "AddMeal.fxml");
         screens.put("Reports", "Reports.fxml");
+        screens.put("Notifications", "ManagerNotifications.fxml");
         screens.put("ConnectionSetup", "ConnectionSetup.fxml");
 
     }

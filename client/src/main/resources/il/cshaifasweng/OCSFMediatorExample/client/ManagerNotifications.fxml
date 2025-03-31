@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ManagerNotificationsController">
+    <children>
+        <TableView fx:id="requestTable" layoutX="20.0" layoutY="20.0" prefHeight="300.0" prefWidth="560.0">
+            <columns>
+                <TableColumn fx:id="mealNameCol" text="Meal Name" />
+                <TableColumn fx:id="oldPriceCol" text="Old Price" />
+                <TableColumn fx:id="requestedPriceCol" prefWidth="94.66668701171875" text="Requested Price" />
+                <TableColumn fx:id="requestedByCol" prefWidth="90.0" text="Requested By" />
+                <TableColumn fx:id="actionCol" prefWidth="215.33331298828125" text="Action" />
+            </columns>
+        </TableView>
+        <Button layoutX="20.0" layoutY="330.0" onAction="#handleBack" text="Back" />
+    </children>
+</AnchorPane>
