@@ -131,13 +131,17 @@ public class MealHandler {
     public static List<PriceChangeRequest> getUnresolvedRequests(SessionFactory sessionFactory) {
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery(
-                    "FROM PriceChangeRequest WHERE resolved = false", PriceChangeRequest.class
+                    "SELECT DISTINCT r FROM PriceChangeRequest r " +
+                            "JOIN FETCH r.meal m " +
+                            "LEFT JOIN FETCH m.branches " +
+                            "WHERE r.resolved = false", PriceChangeRequest.class
             ).getResultList();
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
+
 
     public static boolean approvePriceChangeRequest(PriceChangeRequest request, SessionFactory sessionFactory) {
         try (Session session = sessionFactory.openSession()) {

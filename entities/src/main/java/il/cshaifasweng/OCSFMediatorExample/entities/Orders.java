@@ -15,6 +15,7 @@ public class Orders implements Serializable {
     @ManyToMany
     private List<Meals> meals;
 
+    private String branchName;
     private String name;
     private String address;
     private String phoneNumber;
@@ -33,7 +34,7 @@ public class Orders implements Serializable {
 
     public Orders(List<Meals> meals, String name, String address, String phoneNumber,
                   String email, String creditCard, double totalPrice,
-                  LocalDateTime deliveryTime, String orderType, String paymentMethod) {
+                  LocalDateTime deliveryTime, String orderType, String paymentMethod , String branchName) {
         this.meals = meals;
         this.name = name;
         this.address = address;
@@ -46,6 +47,7 @@ public class Orders implements Serializable {
         this.deliveryTime = deliveryTime;
         this.orderType = orderType;
         this.paymentMethod = paymentMethod;
+        this.branchName = branchName;
     }
 
     public int getId() { return id; }
@@ -61,6 +63,8 @@ public class Orders implements Serializable {
     public LocalDateTime getDeliveryTime() { return deliveryTime; }
     public String getOrderType() { return orderType; }
     public String getPaymentMethod() { return paymentMethod; }
+    public String getBranchName() { return branchName; }
+    public void setBranchName(String branchName) { this.branchName = branchName; }
 
     public void setStatus(String status) { this.status = status; }
 

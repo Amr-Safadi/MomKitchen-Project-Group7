@@ -405,17 +405,20 @@ public class SimpleServer extends AbstractServer {
 							"FROM Orders WHERE orderType = 'Delivery'", Orders.class).getResultList();
 					System.out.println("📤 Sending Orders: " + deliveryOrders.size());
 
-					List<Object[]> reservationsPerDay = session.createQuery(
-							"SELECT DATE(date), COUNT(*) FROM Reservation GROUP BY DATE(date)", Object[].class).getResultList();
-					System.out.println("📤 Sending Reservations: " + reservationsPerDay.size());
+					List<Reservation> allReservations = session.createQuery(
+							"FROM Reservation", Reservation.class).getResultList();
 
-					List<Object[]> complaintsPerDay = session.createQuery(
-							"SELECT DATE(submittedAt), COUNT(*) FROM ContactRequest GROUP BY DATE(submittedAt)", Object[].class).getResultList();
-					System.out.println("📤 Sending Complaints: " + complaintsPerDay.size());
+					System.out.println("📤 Sending Reservations: " + allReservations.size());
+
+					List<ContactRequest> allComplaints = session.createQuery(
+							"FROM ContactRequest", ContactRequest.class).getResultList();
+					System.out.println("📤 Sending Complaints: " + allComplaints.size());
+
+
 
 					client.sendToClient(new Message(deliveryOrders, "#OrdersReport"));
-					client.sendToClient(new Message(reservationsPerDay, "#ReservationsReport"));
-					client.sendToClient(new Message(complaintsPerDay, "#ComplaintsReport"));
+					client.sendToClient(new Message(allReservations, "#ReservationsReport"));
+					client.sendToClient(new Message(allComplaints, "#ComplaintsReport"));
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -482,14 +485,6 @@ public class SimpleServer extends AbstractServer {
 					e.printStackTrace();
 				}
 				break;
-
-
-
-
-
-
-
-
 
 			default:
 				System.out.println("Unknown message received: " + msgStr);

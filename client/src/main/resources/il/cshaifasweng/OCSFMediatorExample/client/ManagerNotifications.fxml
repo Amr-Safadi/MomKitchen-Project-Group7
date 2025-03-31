@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ManagerNotificationsController">
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ManagerNotificationsController">
     <children>
-        <TableView fx:id="requestTable" layoutX="20.0" layoutY="20.0" prefHeight="300.0" prefWidth="560.0">
+
+        <TableView fx:id="requestTable" layoutX="21.0" layoutY="62.0" prefHeight="268.0" prefWidth="537.0">
             <columns>
                 <TableColumn fx:id="mealNameCol" text="Meal Name" />
                 <TableColumn fx:id="oldPriceCol" text="Old Price" />
@@ -17,5 +20,7 @@
             </columns>
         </TableView>
         <Button layoutX="20.0" layoutY="330.0" onAction="#handleBack" text="Back" />
+      <ComboBox fx:id="branchFilterComboBox" layoutX="140.0" layoutY="22.0" prefWidth="150.0" />
+      <Label fx:id="branchFilterLabel" layoutX="40.0" layoutY="26.0" text="Filter by Branch:" />
     </children>
 </AnchorPane>
