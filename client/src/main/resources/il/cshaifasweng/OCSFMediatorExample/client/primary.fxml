@@ -95,8 +95,6 @@
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
-      <Label fx:id="userRec" layoutX="55.0" layoutY="36.0" text="Label" />
-      <Button fx:id="cancelOrderBtn" layoutX="53.0" layoutY="493.0" mnemonicParsing="false" onAction="#handleCancelOrder" text="Cancel Order" />
       <Button fx:id="managerNotificationsBtn" layoutX="474.0" layoutY="128.0" mnemonicParsing="false" onAction="#handleManagerNotifications" text="Notifications" />
    </children>
 </AnchorPane>
