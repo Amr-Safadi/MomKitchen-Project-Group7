@@ -4,6 +4,7 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -13,12 +14,17 @@
 
 <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover; -fx-padding: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ReportsController">
 
+
     <content>
         <AnchorPane fx:id="rootPane" prefHeight="900.0" prefWidth="800.0" style="-fx-background-color: transparent;">
 
             <!-- Title -->
             <Label layoutX="20" layoutY="20" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Monthly Reports" />
 
+            <Label fx:id="branchFilterLabel" layoutX="400.0" layoutY="20.0" text="Filter by Branch:" />
+            <ComboBox fx:id="branchFilterComboBox" layoutX="507.0" layoutY="16.0" prefWidth="150" />
+
+            
             <!-- Delivery Orders Table -->
             <TableView fx:id="ordersTable" layoutX="20" layoutY="70" prefHeight="150.0" prefWidth="750.0">
                 <columns>

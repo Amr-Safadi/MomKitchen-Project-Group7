@@ -45,6 +45,11 @@ public class ReportsController {
     @FXML private NumberAxis yAxis;
     @FXML private Button exportCsvButton;
     @FXML private Button backButton;
+    @FXML private ComboBox<String> branchFilterComboBox;
+    @FXML private Label branchFilterLabel;
+
+    private String selectedBranch = null;
+
 
     @FXML
     public void initialize() {
@@ -56,10 +61,51 @@ public class ReportsController {
             Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
             return;
         }
+
+        if (UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER) {
+            branchFilterLabel.setVisible(true);
+            branchFilterComboBox.setVisible(true);
+            branchFilterComboBox.setItems(FXCollections.observableArrayList("All", "Haifa", "Tel-Aviv", "Acre", "Netanya"));
+            branchFilterComboBox.getSelectionModel().selectFirst(); // Default to All
+          //  branchFilterComboBox.setOnAction(e -> applyBranchFilter());
+            selectedBranch = "All";
+        } else {
+            branchFilterLabel.setVisible(false);
+            branchFilterComboBox.setVisible(false);
+            selectedBranch = UserSession.getUser().getBranch(); // BRANCH_MANAGER sees only his branch
+        }
+        branchFilterComboBox.setOnAction(e -> handleBranchComboBoxChange());
         EventBus.getDefault().register(this);
         setupTables();
         fetchReports();
     }
+
+    @FXML
+    private void handleBranchComboBoxChange() {
+        if (UserSession.getUser().getRole() != User.Role.GENERAL_MANAGER) return;
+
+        String selected = branchFilterComboBox.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        // 🧠 Filter Orders
+        List<Orders> filteredOrders = selected.equals("All") ? orders :
+                orders.stream().filter(o -> o.getBranchName().equalsIgnoreCase(selected)).toList();
+        deliveryOrders.setAll(filteredOrders);
+        ordersTable.getItems().setAll(filteredOrders);
+
+        // 📅 Filter Reservations
+        List<Object[]> filteredReservations = selected.equals("All") ? allReservations :
+                allReservations.stream().filter(r -> r[2].toString().equalsIgnoreCase(selected)).toList();
+        reservationsData.setAll(filteredReservations);
+        reservationsTable.getItems().setAll(filteredReservations);
+
+        // 🚨 Filter Complaints
+        List<Object[]> filteredComplaints = selected.equals("All") ? complaints :
+                complaints.stream().filter(c -> c[2].toString().equalsIgnoreCase(selected)).toList();
+        complaintsData.setAll(filteredComplaints);
+        updateComplaintsChart();
+    }
+
 
     private void setupTables() {
         // ✅ Setup Delivery Orders Table
@@ -80,41 +126,95 @@ public class ReportsController {
         }
     }
 
+    List<Orders> orders ;
+
     @Subscribe
     public void handleOrdersReport(Message message) {
         if ("#OrdersReport".equals(message.getText())) {
-            List<Orders> orders = (List<Orders>) message.getObject();
+            orders = (List<Orders>) message.getObject();
+            List<Orders> filtered = filterOrdersByUserBranch(orders);
+
             Platform.runLater(() -> {
-                deliveryOrders.setAll(orders);
-                ordersTable.getItems().setAll(orders);
-                System.out.println("✅ Delivery orders loaded successfully!");
+                deliveryOrders.setAll(filtered);
+                ordersTable.getItems().setAll(filtered);
+                System.out.println("✅ Filtered delivery orders loaded successfully!");
             });
         }
     }
 
+    private List<Orders> filterOrdersByUserBranch(List<Orders> allOrders) {
+        User user = UserSession.getUser();
+        if (user.getRole() == User.Role.GENERAL_MANAGER) {
+            return allOrders; // Show everything
+        } else if (user.getRole() == User.Role.BRANCH_MANAGER) {
+            String userBranch = user.getBranch();
+            return allOrders.stream()
+                    .filter(order -> order.getBranchName().equalsIgnoreCase(userBranch))
+                    .toList();
+        }
+        return List.of(); // No access fallback
+    }
+
+
+    List<Object[]> allReservations;
     @Subscribe
     public void handleReservationsReport(Message message) {
         if ("#ReservationsReport".equals(message.getText())) {
-            List<Object[]> reservations = (List<Object[]>) message.getObject();
+            allReservations = (List<Object[]>) message.getObject();
+            List<Object[]> filtered = filterReservationsByUserBranch(allReservations);
             Platform.runLater(() -> {
-                reservationsData.setAll(reservations);
-                reservationsTable.getItems().setAll(reservations);
+                reservationsData.setAll(filtered);
+                reservationsTable.getItems().setAll(filtered);
                 System.out.println("✅ Reservations report loaded successfully!");
             });
         }
     }
 
+    private List<Object[]> filterReservationsByUserBranch(List<Object[]> all) {
+        User user = UserSession.getUser();
+
+        if (user.getRole() == User.Role.GENERAL_MANAGER) {
+            return all; // Show all
+        } else if (user.getRole() == User.Role.BRANCH_MANAGER) {
+            String userBranch = user.getBranch();
+            return all.stream()
+                    .filter(entry -> entry[2].toString().equalsIgnoreCase(userBranch)) // Assuming index 2 = branch
+                    .toList();
+        }
+
+        return List.of(); // No access
+    }
+
+
+    List<Object[]> complaints ;
     @Subscribe
     public void handleComplaintsReport(Message message) {
         if ("#ComplaintsReport".equals(message.getText())) {
-            List<Object[]> complaints = (List<Object[]>) message.getObject();
+             complaints = (List<Object[]>) message.getObject();
+            List<Object[]> filtered = filterComplaintsByUserBranch(complaints);
             Platform.runLater(() -> {
-                complaintsData.setAll(complaints);
+                complaintsData.setAll(filtered);
                 updateComplaintsChart();
                 System.out.println("✅ Complaints histogram updated!");
             });
         }
     }
+
+    private List<Object[]> filterComplaintsByUserBranch(List<Object[]> allComplaints) {
+        User user = UserSession.getUser();
+
+        if (user.getRole() == User.Role.GENERAL_MANAGER) {
+            return allComplaints; // Show everything
+        } else if (user.getRole() == User.Role.BRANCH_MANAGER) {
+            String userBranch = user.getBranch();
+            return allComplaints.stream()
+                    .filter(entry -> entry[2].toString().equalsIgnoreCase(userBranch)) // Assuming index 2 = branch
+                    .toList();
+        }
+
+        return List.of(); // No access fallback
+    }
+
 
     private void updateComplaintsChart() {
         complaintsChart.getData().clear();

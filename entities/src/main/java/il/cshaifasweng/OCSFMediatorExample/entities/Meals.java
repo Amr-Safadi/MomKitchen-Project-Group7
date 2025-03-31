@@ -60,6 +60,7 @@ public class Meals implements Serializable {
     public void setCategory(Category category) { this.category = category; }
     public boolean getisBranchMeal() { return isBranchMeal; }
     public void setBranchMeal(boolean isBranchMeal) { this.isBranchMeal = isBranchMeal; }
+
     public List<Branch> getBranches() {
         if (branches == null) {
             branches = new ArrayList<>();

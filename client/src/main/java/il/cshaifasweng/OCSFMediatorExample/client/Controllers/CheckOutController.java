@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.CartSession;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
@@ -115,7 +116,7 @@ public class CheckOutController {
                 name, address, phone, email, creditCard,
                 CartSession.getCart().getTotalPrice(),
                 deliveryTime,
-                orderType, paymentMethod // Pass new fields
+                orderType, paymentMethod , SecondaryService.getBranchObj().getName()// Pass new fields
         );
 
         // Send order to server
