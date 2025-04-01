@@ -54,7 +54,6 @@ public class SimpleClient extends AbstractClient {
 				break;
 
 			case "#ManagerHasNotifications":
-			case "#ManagerClear":
 				EventBus.getDefault().post(message);
 				break;
 
@@ -151,7 +150,7 @@ public class SimpleClient extends AbstractClient {
 
 
 			default:
-				System.out.println("Unknown message received: " + message.toString());
+				System.out.println("Simple Client - Unknown message received: " + message.toString());
 				break;
 		}
 	}
