@@ -84,7 +84,6 @@ public class LoginController {
                 case "#AlreadyLoggedIn":
                     showAlert("Login Failed", "This account is already logged in from another device.");
                 default:
-                    System.out.println("Unknown response received: " + message.toString());
                     break;
             }
         });

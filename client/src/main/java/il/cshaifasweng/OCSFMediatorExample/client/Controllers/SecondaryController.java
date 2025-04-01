@@ -109,10 +109,7 @@ public class SecondaryController {
             User loggedInUser = UserSession.getUser();
 
             if (loggedInUser != null) {
-                if (UserSession.getUser().getRole() == User.Role.REGULAR_EMPLOYEE
-                        && UserSession.getUser().getBranch().equals(SecondaryService.getBranchObj().getName())) {
-                    manageTablesBtn.setVisible(true);
-                }
+
 
                 boolean isDietitian = loggedInUser.getRole() == User.Role.DIETITIAN;
                 boolean isGM = loggedInUser.getRole() == User.Role.GENERAL_MANAGER;
@@ -122,8 +119,14 @@ public class SecondaryController {
 
                 boolean canAdd = isDietitian || isGM || isBranchManagerOfCurrent;
                 addMealBtn.setVisible(canAdd);
+
+                if ((UserSession.getUser().getRole() == User.Role.REGULAR_EMPLOYEE
+                        && UserSession.getUser().getBranch().equals(SecondaryService.getBranchObj().getName())) || isGM || isBranchManagerOfCurrent) {
+                    manageTablesBtn.setVisible(true);
+                }
             } else {
                 addMealBtn.setVisible(false);
+                manageTablesBtn.setVisible(false);
             }
 
         }

@@ -55,6 +55,16 @@ public class SimpleServer extends AbstractServer {
 
 		switch (msgStr) {
 
+			case "#LogoutRequest":
+
+				String email1 = onlineUsers.remove(client);
+				if (email1 != null) {
+					System.out.println("✅ User logged out: " + email1);
+				} else {
+					System.out.println("⚠️ Logout request received but user wasn't found in onlineUsers.");
+				}
+				break;
+
 			case "#UploadMealImage":
 				Object[] imagePayload = (Object[]) message.getObject();
 				String imageMealName = (String) imagePayload[0];
@@ -97,12 +107,12 @@ public class SimpleServer extends AbstractServer {
 			case "#CheckPendingNotifications":
 				List<PriceChangeRequest> pendingRequests = MealHandler.getUnresolvedRequests(sessionFactory);
 
-				String answer = pendingRequests.isEmpty() ? "#ManagerClear" : "#ManagerHasNotifications";
-
-				try {
-					client.sendToClient(new Message(answer));
-				} catch (IOException e) {
-					e.printStackTrace();
+				if (!pendingRequests.isEmpty()) {
+					try {
+						client.sendToClient(new Message("#ManagerHasNotifications"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 				break;
 
