@@ -78,5 +78,7 @@
             <Font name="Bauhaus 93" size="26.0" />
          </font>
       </Label>
+      <Button fx:id="imageBtn" layoutX="274.0" layoutY="545.0" mnemonicParsing="false" onAction="#handleSelectImage" text="Add Image" />
+      <Label fx:id="imageName" layoutX="359.0" layoutY="549.0" prefHeight="17.0" prefWidth="201.0" text=" " />
     </children>
 </AnchorPane>
