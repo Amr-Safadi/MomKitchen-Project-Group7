@@ -189,12 +189,20 @@ public class ReportsController {
         }
         return allOrders;
     }
-
     @Subscribe
     public void handleOrdersReport(Message message) {
         if ("#OrdersReport".equals(message.getText())) {
             orders = (List<Orders>) message.getObject();
-            Platform.runLater(() -> handleBranchComboBoxChange());
+
+            if (UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER) {
+                // For General Manager, use ComboBox to filter based on selected branch
+                Platform.runLater(() -> handleBranchComboBoxChange());
+            } else if (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER) {
+                // For Branch Manager, filter orders based on their branch directly
+                List<Orders> filteredOrders = filterOrdersByUserBranch(orders);
+                deliveryOrders.setAll(filteredOrders);
+                ordersTable.setItems(deliveryOrders);
+            }
         }
     }
 
@@ -202,7 +210,17 @@ public class ReportsController {
     public void handleReservationsReport(Message message) {
         if ("#ReservationsReport".equals(message.getText())) {
             allReservations = (List<Reservation>) message.getObject();
-            Platform.runLater(() -> handleBranchComboBoxChange());
+
+            if (UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER) {
+                // For General Manager, use ComboBox to filter based on selected branch
+                Platform.runLater(() -> handleBranchComboBoxChange());
+            } else if (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER) {
+                // For Branch Manager, filter reservations based on their branch directly
+                List<Reservation> filteredReservations = filterReservationsByBranch(allReservations);
+                List<Object[]> groupedReservations = groupReservationsByDate(filteredReservations);
+                reservationsData.setAll(groupedReservations);
+                reservationsTable.setItems(reservationsData);
+            }
         }
     }
 
@@ -210,7 +228,18 @@ public class ReportsController {
     public void handleComplaintsReport(Message message) {
         if ("#ComplaintsReport".equals(message.getText())) {
             complaints = (List<ContactRequest>) message.getObject();
-            Platform.runLater(() -> handleBranchComboBoxChange());
+
+            if (UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER) {
+                // For General Manager, use ComboBox to filter based on selected branch
+                Platform.runLater(() -> handleBranchComboBoxChange());
+            } else if (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER) {
+                // For Branch Manager, filter complaints based on their branch directly
+                List<ContactRequest> filteredComplaints = filterComplaintsByBranch(complaints);
+                List<Object[]> groupedComplaints = groupComplaintsByDate(filteredComplaints);
+                complaintsData.setAll(groupedComplaints);
+                Platform.runLater(() -> updateComplaintsChart());
+
+            }
         }
     }
 
@@ -258,29 +287,6 @@ public class ReportsController {
         }
         complaintsChart.getData().add(series);
     }
-
-    @FXML
-    private void handleExportCsv() {
-        try (FileWriter writer = new FileWriter("report.csv")) {
-            writer.append("Order ID, Date, Total Price\n");
-            for (Orders order : deliveryOrders) {
-                writer.append(order.getId() + "," + order.getOrderPlacedTime() + "," + order.getTotalPrice() + "\n");
-            }
-            writer.append("\nDate, Reservations Count\n");
-            for (Object[] entry : reservationsData) {
-                writer.append(entry[0] + "," + entry[1] + "\n");
-            }
-            writer.append("\nDate, Complaints Count\n");
-            for (Object[] entry : complaintsData) {
-                writer.append(entry[0] + "," + entry[1] + "\n");
-            }
-            showAlert("Success", "Report exported successfully.");
-        } catch (IOException e) {
-            showAlert("Error", "Failed to export CSV.");
-            e.printStackTrace();
-        }
-    }
-
     @FXML
     private void handleBackToMain() {
         Platform.runLater(() -> ScreenManager.switchScreen("Primary"));

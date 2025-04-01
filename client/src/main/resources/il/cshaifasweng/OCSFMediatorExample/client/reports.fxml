@@ -54,7 +54,6 @@
 
             <!-- Buttons -->
             <HBox layoutX="20" layoutY="780" spacing="15">
-                <Button fx:id="exportCsvButton" onAction="#handleExportCsv" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" text="Export to CSV" />
                 <Button fx:id="backButton" onAction="#handleBackToMain" style="-fx-background-color: #FF5733; -fx-text-fill: white; -fx-font-size: 14px;" text="Back to Main" />
             </HBox>
 
