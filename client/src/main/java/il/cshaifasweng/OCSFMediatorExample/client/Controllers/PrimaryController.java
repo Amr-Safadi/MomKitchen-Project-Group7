@@ -76,6 +76,8 @@ public class PrimaryController {
 
     @FXML
     private Label branchesLabel;
+    @FXML
+    private Button logOutBtn;
 
     @FXML
     private void handleCancelOrder() {
@@ -115,6 +117,26 @@ public class PrimaryController {
     @FXML
     private void handleLOGINBtn() {
         Platform.runLater(() ->   ScreenManager.switchScreen("Login"));
+    }
+    @FXML
+    private void handLogOutBtn() {
+        try {
+            // 📨 Notify server before logging out
+            SimpleClient.getClient().sendToServer(new Message(null, "#LogoutRequest"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        UserSession.logout();  // Clears locally
+
+        // Reset UI
+        complaintsButton.setVisible(false);
+        reportsButton.setVisible(false);
+        managerNotificationsBtn.setVisible(false);
+        userRec.setVisible(false);
+        LOGINBtn.setVisible(true);
+        LOGINBtn.setDisable(false);
+        logOutBtn.setVisible(false);
     }
 
     @FXML
@@ -169,7 +191,9 @@ public class PrimaryController {
 
     @FXML
     void initialize() {
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
         assert HaifaBtn != null : "fx:id=\"HaifaBtn\" was not injected: check your FXML file 'primary.fxml'.";
         assert AcreBtn != null : "fx:id=\"AcreBtn\" was not injected: check your FXML file 'primary.fxml'.";
         assert TelavivBtn != null : "fx:id=\"TelavivBtn\" was not injected: check your FXML file 'primary.fxml'.";
@@ -184,10 +208,12 @@ public class PrimaryController {
         reportsButton.setVisible(false);
         managerNotificationsBtn.setVisible(false);
         userRec.setVisible(false);
+        logOutBtn.setVisible(false);
 
         if (loggedInUser != null) {
             LOGINBtn.setDisable(true);
             LOGINBtn.setVisible(false);
+            logOutBtn.setVisible(true);
 
 
             if (loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||

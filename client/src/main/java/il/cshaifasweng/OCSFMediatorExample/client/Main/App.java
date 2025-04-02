@@ -14,6 +14,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         client = SimpleClient.getClient();
         client.openConnection();
+        System.out.println("client connected");
         ScreenManager.init(stage);
     }
 

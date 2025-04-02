@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +84,9 @@ public class ReservationController {
             return;
         }
 
+       if (!isReservationInputValid())
+           return;
+
         Reservation reservation = new Reservation();
         Branch persistentBranch = SecondaryService.getBranchObj();
         if (persistentBranch == null) {
@@ -132,8 +136,78 @@ public class ReservationController {
         Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
+    private boolean isReservationInputValid() {
+        String name = fullNameField.getText();
+        String phone = phoneField.getText();
+        String guestsText = guestsField.getText();
+        LocalDate date = datePicker.getValue();
+        String timeText = timeComboBox.getValue();
+        Branch selectedBranch = SecondaryService.getBranchObj();
+
+        if (name == null || name.trim().isEmpty()) {
+            showAlert("Validation Error", "Please enter your name.");
+            return false;
+        }
+
+        if (phone == null || !phone.matches("\\d{7,15}")) {
+            showAlert("Validation Error", "Please enter a valid phone number (7–15 digits).");
+            return false;
+        }
+
+        if (guestsText == null || guestsText.trim().isEmpty()) {
+            showAlert("Validation Error", "Please enter number of guests.");
+            return false;
+        }
+
+        int people;
+        try {
+            people = Integer.parseInt(guestsText);
+            if (people <= 0) {
+                showAlert("Validation Error", "Number of people must be greater than zero.");
+                return false;
+            }
+            if (people > 26)
+            {
+                showAlert("Validation Error" , "Maximum of 25 people at a time");
+            }
+        } catch (NumberFormatException e) {
+            showAlert("Validation Error", "Please enter a valid number of guests.");
+            return false;
+        }
+
+        if (date == null) {
+            showAlert("Validation Error", "Please select a date.");
+            return false;
+        }
+
+        if (date.isBefore(LocalDate.now())) {
+            showAlert("Validation Error", "The reservation date cannot be in the past.");
+            return false;
+        }
+
+        if (timeText == null || timeText.trim().isEmpty()) {
+            showAlert("Validation Error", "Please select a time.");
+            return false;
+        }
+
+        try {
+            LocalTime.parse(timeText);
+        } catch (Exception e) {
+            showAlert("Validation Error", "Invalid time format.");
+            return false;
+        }
+
+        if (selectedBranch == null) {
+            showAlert("Validation Error", "Branch information is missing.");
+            return false;
+        }
+
+        return true;
+    }
+
+
     private void showAlert(String title, String message) {
-        Alert alert = new Alert(AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);

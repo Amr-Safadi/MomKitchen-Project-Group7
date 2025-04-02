@@ -87,7 +87,7 @@
 
 
 
-      <Label fx:id="userRec" layoutX="64.0" layoutY="49.0" text="Label" textFill="WHITE">
+      <Label fx:id="userRec" layoutX="181.0" layoutY="21.0" text="Label" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="14.0" />
          </font></Label>
@@ -95,9 +95,7 @@
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
-      <Button fx:id="managerNotificationsBtn" layoutX="210.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleManagerNotifications" prefHeight="24.0" prefWidth="112.0" style="-fx-background-color: #8ad4a8;" text="Notifications" textFill="WHITE">
-         <font>
-            <Font name="Bauhaus 93" size="16.0" />
-         </font></Button>
+      <Button fx:id="managerNotificationsBtn" layoutX="474.0" layoutY="128.0" mnemonicParsing="false" onAction="#handleManagerNotifications" text="Notifications" />
+      <Button fx:id="logOutBtn" layoutX="69.0" layoutY="18.0" mnemonicParsing="false" onAction="#handLogOutBtn" prefHeight="25.0" prefWidth="68.0" text="Log Out" />
    </children>
 </AnchorPane>
