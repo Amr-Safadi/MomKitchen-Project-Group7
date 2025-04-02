@@ -187,6 +187,13 @@ public class ReservationController {
             return false;
         }
 
+        if (date.equals(LocalDate.now())) {
+            if (LocalTime.parse(timeText).isBefore(LocalTime.now())) {
+                showAlert("Validation Error", "The reservation date cannot be in the past.");
+                return false;
+            }
+        }
+
         if (timeText == null || timeText.trim().isEmpty()) {
             showAlert("Validation Error", "Please select a time.");
             return false;

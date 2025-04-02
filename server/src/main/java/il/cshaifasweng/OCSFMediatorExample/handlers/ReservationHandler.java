@@ -40,6 +40,13 @@ public class ReservationHandler {
                         feeApplied = true;
                     }
                 }
+                String feestr="" ;
+                if (feeApplied ==true)
+                {
+                    feestr =  "Fee = 10$ \n\n";
+                }
+                else
+                    feestr = "There is no fee \n\n" ;
                 // Send email notification
                 String emailSubject = "❌ Table Reservation Canceled - Mom's Kitchen";
                 String emailBody = "Dear " + reservation.getFullName()+ ",\n\n"
@@ -47,7 +54,8 @@ public class ReservationHandler {
                         + "Reservation Details:\n"
                         + "📅 Date: " + reservation.getDate() + "\n"
                         + "⏰ Time: " + reservation.getTime() + "\n"
-                        + "👥 Guests: " + reservation.getGuests() + "\n\n"
+                        + "👥 Guests: " + reservation.getGuests() + "\n"
+                        + feestr
                         + "We hope to serve you in the future. Let us know if you’d like to book again!\n\n"
                         + "Best regards,\n"
                         + "Mom's Kitchen Team";
@@ -114,6 +122,7 @@ public class ReservationHandler {
             combined.addAll(matchingTables);
             combined.addAll(otherTables);
             allocated = findTableCombination(combined, reservation.getGuests());
+
         }
         return allocated;
     }
@@ -146,6 +155,7 @@ public class ReservationHandler {
         return bestCombination;
     }
 
+/*
     public static List<RestaurantTable> saveReservation(Reservation reservation, SessionFactory sessionFactory) {
         List<RestaurantTable> allocatedTables = allocateTablesForReservation(reservation, sessionFactory);
         if (allocatedTables == null || allocatedTables.isEmpty()) {
@@ -175,7 +185,7 @@ public class ReservationHandler {
                     + "📅 Date: " + reservation.getDate()+ "\n"
                     + "⏰ Time: " + reservation.getTime() + "\n"
                     + "👥 Guests: " + reservation.getGuests() + "\n"
-                    + "📍 Location: Mom's Kitchen," + reservation.getBranch() + "\n\n"
+                    + "📍 Location: Mom's Kitchen," + reservation.getBranch().getName() + "\n\n"
                     + "We look forward to serving you!\n\n"
                     + "Best regards,\n"
                     + "Mom's Kitchen Team";
@@ -193,6 +203,59 @@ public class ReservationHandler {
             return null;
         }
     }
+*/
+
+    public static List<RestaurantTable> saveReservation(Reservation reservation, SessionFactory sessionFactory) {
+        List<RestaurantTable> allocatedTables = allocateTablesForReservation(reservation, sessionFactory);
+        if (allocatedTables == null || allocatedTables.isEmpty()) {
+            return null;
+        }
+        System.out.println("here");
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+
+            LocalDateTime reqDateTime = LocalDateTime.of(reservation.getDate(), reservation.getTime());
+            LocalDateTime now = LocalDateTime.now();
+            long delayMillis = Duration.between(now, reqDateTime).toMillis();
+
+            for (RestaurantTable table : allocatedTables) {
+                if (!reqDateTime.isAfter(now)) {
+                    // Reserve the table right away if the reservation time is now or in the past
+                    table.setReserved(true);
+                    session.update(table);
+                } else {
+                    // Schedule the table reservation to be activated at the requested time
+                    ReservationScheduler.scheduleReservationActivation(table.getId(), delayMillis, sessionFactory);
+                }
+            }
+
+            // Send email notification
+            String emailSubject = "🍽️ Table Reservation Confirmation - Mom's Kitchen";
+            String emailBody = "Dear " + reservation.getFullName() + ",\n\n"
+                    + "Your table reservation at Mom's Kitchen has been successfully booked.\n"
+                    + "Reservation Details:\n"
+                    + "📅 Date: " + reservation.getDate() + "\n"
+                    + "⏰ Time: " + reservation.getTime() + "\n"
+                    + "👥 Guests: " + reservation.getGuests() + "\n"
+                    + "📍 Location: Mom's Kitchen," + reservation.getBranch().getName() + "\n\n"
+                    + "We look forward to serving you!\n\n"
+                    + "Best regards,\n"
+                    + "Mom's Kitchen Team";
+
+            EmailSender.sendEmail(reservation.getEmail(), emailSubject, emailBody);
+
+            System.out.println("📧 Reservation confirmation email sent to " + reservation.getEmail());
+
+            reservation.setTables(allocatedTables);
+            session.save(reservation);
+            tx.commit();
+            return allocatedTables;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     public static String computeAlternativeTimes(Reservation reservation, SessionFactory sessionFactory) {
         Branch branch = reservation.getBranch();

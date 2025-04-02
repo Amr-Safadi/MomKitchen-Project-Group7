@@ -14,10 +14,14 @@ import org.hibernate.Transaction;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil.getSessionFactory;
 
@@ -26,6 +30,7 @@ public class SimpleServer extends AbstractServer {
 	private static final ConcurrentHashMap<ConnectionToClient, String> onlineUsers = new ConcurrentHashMap<>();
 	private static SessionFactory sessionFactory = getSessionFactory();
     private static Session session;
+	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	private ArrayList<Meals> mealsArrayList;
 	private ArrayList<Meals> mealsByCategories;
@@ -356,14 +361,38 @@ public class SimpleServer extends AbstractServer {
 			case "#ReservationRequest":
 				Reservation reservationRequest = (Reservation) message.getObject();
 				List<RestaurantTable> allocatedTables = ReservationHandler.saveReservation(reservationRequest, sessionFactory);
+
 				if (allocatedTables != null && !allocatedTables.isEmpty()) {
-					for (RestaurantTable table : allocatedTables) {
-						sendToAllClients(new Message(table, "#TableReservedSuccess"));
-					}
+					// Calculate the delay for scheduling the reservation confirmation
+					LocalDateTime reservationTime = LocalDateTime.of(reservationRequest.getDate(), reservationRequest.getTime());
+					LocalDateTime now = LocalDateTime.now();
+					long delayMillis = Duration.between(now, reservationTime).toMillis();  // Calculate delay in milliseconds
+
 					try {
 						client.sendToClient(new Message(reservationRequest, "#ReservationSuccess"));
 					} catch (Exception e) {
 						e.printStackTrace();
+					}
+
+					if (delayMillis > 0) {
+						// Schedule the task to send confirmation at the requested reservation time
+						scheduler.schedule(() -> {
+							for (RestaurantTable table : allocatedTables) {
+								sendToAllClients(new Message(table, "#TableReservedSuccess"));
+							}
+						}, delayMillis, TimeUnit.MILLISECONDS);
+						System.out.println("Scheduled reservation confirmation for table(s) at " + reservationTime);
+
+					} else {
+						// If reservation time is in the past, send confirmation immediately
+						for (RestaurantTable table : allocatedTables) {
+							sendToAllClients(new Message(table, "#TableReservedSuccess"));
+						}
+						try {
+							client.sendToClient(new Message(reservationRequest, "#ReservationSuccess"));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				} else {
 					try {
@@ -527,8 +556,6 @@ public class SimpleServer extends AbstractServer {
 			e.printStackTrace();
 		}
 	}
-
-
 
 
 	@Override
