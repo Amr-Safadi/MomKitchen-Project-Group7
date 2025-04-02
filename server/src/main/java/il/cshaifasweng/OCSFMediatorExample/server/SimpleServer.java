@@ -179,7 +179,7 @@ public class SimpleServer extends AbstractServer {
 
 				try {
 					if (requestSaved) {
-						//client.sendToClient(new Message("#PriceChangeRequestSent"));
+
 						sendToAllClients(new Message("#PriceChangeRequestSent"));
 					} else {
 						client.sendToClient(new Message("#PriceChangeRequestFailed"));
@@ -334,6 +334,7 @@ public class SimpleServer extends AbstractServer {
 				MealHandler.updateMeal(updatedMeal, sessionFactory);
 				try {
 					sendToAllClients(new Message("#Update All Meals"));
+					client.sendToClient(new Message("Meal Updated Successfully"));
 					System.out.println("Meal updated and sent to clients.");
 				} catch (Exception e) {
 					System.out.println("Error updating the meal");
