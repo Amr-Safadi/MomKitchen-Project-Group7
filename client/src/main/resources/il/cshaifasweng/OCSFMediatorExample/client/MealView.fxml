@@ -125,39 +125,41 @@
             <Font name="Bauhaus 93" size="14.0" />
          </font>
       </Button>
-          <HBox alignment="CENTER_LEFT" layoutX="-56.0" layoutY="436.0" prefHeight="113.0" prefWidth="660.0" spacing="15">
+          <HBox alignment="CENTER_LEFT" layoutX="448.0" layoutY="459.0" prefHeight="43.0" prefWidth="115.0" spacing="15">
               <children>
                   <Button fx:id="btnDone" onAction="#btnDoneHandler" prefHeight="30.0" prefWidth="99.0" style="-fx-background-color: #69b588; -fx-text-fill: white; -fx-background-radius: 10;" text="Save" textFill="WHITE" visible="false">
                <font>
                   <Font name="Bauhaus 93" size="15.0" />
                </font>
             </Button>
-            <Button fx:id="addToCartBtn" alignment="CENTER" mnemonicParsing="false" onAction="#btnAddToCartHandler" prefHeight="30.0" prefWidth="471.0" style="-fx-background-color: #69b588; -fx-background-radius: 10;" text="Add to cart" textFill="WHITE">
-               <font>
-                  <Font name="Bauhaus 93" size="15.0" />
-               </font>
-            </Button>
-                  <Button fx:id="btnEdit" onAction="#btnEditHandler" prefHeight="30.0" prefWidth="470.0" style="-fx-background-color: #69b588; -fx-text-fill: white; -fx-background-radius: 10;" text="Edit Meal" textFill="WHITE">
-               <font>
-                  <Font name="Bauhaus 93" size="14.0" />
-               </font>
-            </Button>
-            <Button fx:id="toggleMealTypeBtn" mnemonicParsing="false" onAction="#handleToggleMealType" prefHeight="29.0" prefWidth="495.0" style="-fx-background-color: #69b588; -fx-background-radius: 10;" text="Change Meal Type" textFill="WHITE">
-               <font>
-                  <Font name="Bauhaus 93" size="13.0" />
-               </font></Button>
-                  <Button fx:id="deleteMealBtn" onAction="#handleDeleteMeal" prefHeight="29.0" prefWidth="453.0" style="-fx-background-color: #69b588; -fx-background-radius: 10;" text="Delete Meal" textFill="WHITE">
-               <font>
-                  <Font name="Bauhaus 93" size="12.0" />
-               </font></Button>
-      
-                  <Button fx:id="btnChangeImage" onAction="#handleSelectNewImage" prefHeight="29.0" prefWidth="493.0" style="-fx-background-color: #69b588; -fx-background-radius: 10;" text="Change Image" textFill="WHITE">
-               <font>
-                  <Font name="Bauhaus 93" size="15.0" />
-               </font>
-            </Button>
 
-              </children>
+                    </children>
           </HBox>
+      <Button fx:id="addToCartBtn" alignment="CENTER" layoutX="35.0" layoutY="428.0" mnemonicParsing="false" onAction="#btnAddToCartHandler" prefHeight="30.0" prefWidth="116.0" style="-fx-background-color: #69b588; -fx-background-radius: 10;" text="Add to cart" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="15.0" />
+         </font>
+      </Button>
+            <Button fx:id="btnEdit" layoutX="167.0" layoutY="428.0" onAction="#btnEditHandler" prefHeight="30.0" prefWidth="102.0" style="-fx-background-color: #69b588; -fx-text-fill: white; -fx-background-radius: 10;" text="Edit Meal" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="toggleMealTypeBtn" layoutX="298.0" layoutY="466.0" mnemonicParsing="false" onAction="#handleToggleMealType" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #69b588; -fx-background-radius: 10;" text="Change Meal Type" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="13.0" />
+         </font>
+      </Button>
+            <Button fx:id="deleteMealBtn" layoutX="35.0" layoutY="466.0" onAction="#handleDeleteMeal" prefHeight="29.0" prefWidth="115.0" style="-fx-background-color: #69b588; -fx-background-radius: 10;" text="Delete Meal" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="12.0" />
+         </font>
+      </Button>
+
+                        <Button fx:id="btnChangeImage" layoutX="156.0" layoutY="466.0" onAction="#handleSelectNewImage" prefHeight="29.0" prefWidth="132.0" style="-fx-background-color: #69b588; -fx-background-radius: 10;" text="Change Image" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="15.0" />
+         </font>
+      </Button>
     </children>
 </AnchorPane>

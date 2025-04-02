@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ManagerNotificationsController">
+<AnchorPane fx:id="pane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ManagerNotificationsController">
     <children>
 
-        <TableView fx:id="requestTable" layoutX="21.0" layoutY="62.0" prefHeight="268.0" prefWidth="537.0">
+        <TableView fx:id="requestTable" layoutX="30.0" layoutY="135.0" prefHeight="355.0" prefWidth="540.0" style="-fx-background-color: #f9f9f9; -fx-border-color: #8ad4a8; -fx-border-width: 2px;">
             <columns>
                 <TableColumn fx:id="mealNameCol" text="Meal Name" />
                 <TableColumn fx:id="oldPriceCol" text="Old Price" />
-                <TableColumn fx:id="requestedPriceCol" prefWidth="94.66668701171875" text="Requested Price" />
-                <TableColumn fx:id="requestedByCol" prefWidth="90.0" text="Requested By" />
-                <TableColumn fx:id="actionCol" prefWidth="215.33331298828125" text="Action" />
+                <TableColumn fx:id="requestedPriceCol" prefWidth="118.66668701171875" text="Requested Price" />
+                <TableColumn fx:id="requestedByCol" prefWidth="99.3333740234375" text="Requested By" />
+                <TableColumn fx:id="actionCol" prefWidth="148.66668701171875" text="Action" />
             </columns>
+         <stylesheets>
+            <URL value="@table-style.css" />
+            <URL value="@table-style.css" />
+         </stylesheets>
         </TableView>
-        <Button layoutX="20.0" layoutY="330.0" onAction="#handleBack" text="Back" />
-      <ComboBox fx:id="branchFilterComboBox" layoutX="140.0" layoutY="22.0" prefWidth="150.0" />
-      <Label fx:id="branchFilterLabel" layoutX="40.0" layoutY="26.0" text="Filter by Branch:" />
+        <Button layoutX="30.0" layoutY="30.0" onAction="#handleBack" style="-fx-background-color: #8ad4a8;" stylesheets="@table-style.css" text="Back" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="15.0" />
+         </font></Button>
+      <ComboBox fx:id="branchFilterComboBox" layoutX="150.0" layoutY="83.0" prefWidth="150.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15;" />
+      <Label fx:id="branchFilterLabel" layoutX="30.0" layoutY="87.0" text="Filter by Branch:" textFill="WHITE">
+         <font>
+            <Font name="Bauhaus 93" size="15.0" />
+         </font></Label>
     </children>
 </AnchorPane>

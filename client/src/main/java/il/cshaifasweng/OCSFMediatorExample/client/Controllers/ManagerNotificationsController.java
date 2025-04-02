@@ -91,6 +91,8 @@ public class ManagerNotificationsController {
             private final Button rejectBtn = new Button("Reject");
 
             {
+                approveBtn.setStyle("-fx-background-color: #8ad4a8; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;");
+                rejectBtn.setStyle("-fx-background-color: #e27d60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;");
                 approveBtn.setOnAction(e -> {
                     PriceChangeRequest request = getTableView().getItems().get(getIndex());
                     handleApproval(request);
