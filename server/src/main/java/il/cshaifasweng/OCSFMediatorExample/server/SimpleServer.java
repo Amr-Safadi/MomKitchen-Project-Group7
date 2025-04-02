@@ -366,7 +366,7 @@ public class SimpleServer extends AbstractServer {
 					// Calculate the delay for scheduling the reservation confirmation
 					LocalDateTime reservationTime = LocalDateTime.of(reservationRequest.getDate(), reservationRequest.getTime());
 					LocalDateTime now = LocalDateTime.now();
-					long delayMillis = Duration.between(now, reservationTime).toMillis();  // Calculate delay in milliseconds
+					long delayMillis = Duration.between(now, reservationTime).toMillis()  ;  // Calculate delay in milliseconds
 
 					try {
 						client.sendToClient(new Message(reservationRequest, "#ReservationSuccess"));
@@ -379,6 +379,7 @@ public class SimpleServer extends AbstractServer {
 						scheduler.schedule(() -> {
 							for (RestaurantTable table : allocatedTables) {
 								sendToAllClients(new Message(table, "#TableReservedSuccess"));
+								TableHandler.scheduleAutoRelease(table.getId(), sessionFactory);
 							}
 						}, delayMillis, TimeUnit.MILLISECONDS);
 						System.out.println("Scheduled reservation confirmation for table(s) at " + reservationTime);
@@ -387,11 +388,7 @@ public class SimpleServer extends AbstractServer {
 						// If reservation time is in the past, send confirmation immediately
 						for (RestaurantTable table : allocatedTables) {
 							sendToAllClients(new Message(table, "#TableReservedSuccess"));
-						}
-						try {
-							client.sendToClient(new Message(reservationRequest, "#ReservationSuccess"));
-						} catch (Exception e) {
-							e.printStackTrace();
+							TableHandler.scheduleAutoRelease(table.getId(), sessionFactory);
 						}
 					}
 				} else {

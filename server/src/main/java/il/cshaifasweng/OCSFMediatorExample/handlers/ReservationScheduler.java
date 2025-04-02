@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.handlers;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
 import il.cshaifasweng.OCSFMediatorExample.server.SimpleServer;
 import org.hibernate.Session;
@@ -24,7 +25,7 @@ public class ReservationScheduler {
                     tx.commit();
                     System.out.println("Activated reservation for table " + table.getTableNumber());
                     SimpleServer.getInstance().sendToAllClients(
-                            new il.cshaifasweng.OCSFMediatorExample.entities.Message(table, "#TableReservedSuccess")
+                            new Message(table, "#TableReservedSuccess")
                     );
                     TableHandler.scheduleAutoRelease(tableId, sessionFactory);
                 }

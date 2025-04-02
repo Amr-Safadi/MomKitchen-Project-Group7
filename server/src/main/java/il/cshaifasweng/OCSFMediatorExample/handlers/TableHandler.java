@@ -40,7 +40,7 @@ public class TableHandler {
         }
     }
 
-    static void scheduleAutoRelease(int tableId, SessionFactory sessionFactory) {
+    public static void scheduleAutoRelease(int tableId, SessionFactory sessionFactory) {
         scheduler.schedule(() -> {
             try (Session session = sessionFactory.openSession()) {
                 Transaction transaction = session.beginTransaction();
@@ -57,7 +57,7 @@ public class TableHandler {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 90, TimeUnit.MINUTES);
+        }, 1/*90*/, TimeUnit.MINUTES);
     }
 
     public static void cancelTableReservation(RestaurantTable tableToCancel, SessionFactory sessionFactory) {

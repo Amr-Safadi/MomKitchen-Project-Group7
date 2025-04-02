@@ -9,9 +9,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ReservationHandler {
 
@@ -256,7 +260,7 @@ public class ReservationHandler {
         }
     }
 
-
+/*
     public static String computeAlternativeTimes(Reservation reservation, SessionFactory sessionFactory) {
         Branch branch = reservation.getBranch();
         if (branch == null) {
@@ -288,5 +292,71 @@ public class ReservationHandler {
         }
 
         return String.join(", ", alternatives);
+    }*/
+public static String computeAlternativeTimes(Reservation reservation, SessionFactory sessionFactory) {
+    Branch branch = reservation.getBranch();
+    if (branch == null) {
+        return "Branch not specified";
     }
+
+    int maxCapacity = 25;
+    int newGuests = reservation.getGuests();
+    LocalTime openTime = branch.getOpenHour().plusMinutes(15);   // Skip first 15 min
+    LocalTime closeTime = branch.getCloseHour().minusMinutes(60); // Close 1 hour early
+
+    LocalDate reservationDate = reservation.getDate();
+    LocalDateTime requestedTime = LocalDateTime.of(reservationDate, reservation.getTime());
+
+    List<LocalDateTime> timeSlots = new ArrayList<>();
+    LocalDateTime slot = LocalDateTime.of(reservationDate, openTime);
+    LocalDateTime end = LocalDateTime.of(reservationDate, closeTime);
+
+    while (!slot.isAfter(end)) {
+        timeSlots.add(slot);
+        slot = slot.plusMinutes(15);
+    }
+
+    List<LocalDateTime> availableTimes = new ArrayList<>();
+
+    try (Session session = sessionFactory.openSession()) {
+        // Load all reservations for that day in one query (for performance)
+        List<Reservation> sameDayReservations = session.createQuery(
+                        "FROM Reservation r WHERE r.branch.id = :branchId AND r.date = :date", Reservation.class)
+                .setParameter("branchId", branch.getId())
+                .setParameter("date", reservationDate)
+                .getResultList();
+
+        for (LocalDateTime time : timeSlots) {
+            LocalDateTime slotStart = time;
+            LocalDateTime slotEnd = time.plusMinutes(90);
+
+            int totalGuests = 0;
+
+            for (Reservation r : sameDayReservations) {
+                LocalDateTime resStart = LocalDateTime.of(r.getDate(), r.getTime());
+                LocalDateTime resEnd = resStart.plusMinutes(90);
+
+                if (slotStart.isBefore(resEnd) && resStart.isBefore(slotEnd)) {
+                    totalGuests += r.getGuests();
+                }
+            }
+
+            if (totalGuests + newGuests <= maxCapacity) {
+                availableTimes.add(time);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "Error retrieving available times";
+    }
+
+    // Sort available times by closeness to requested time
+    availableTimes.sort(Comparator.comparingLong(t -> Math.abs(Duration.between(requestedTime, t).toMinutes())));
+
+    return availableTimes.stream()
+            .limit(4)
+            .map(dt -> dt.toLocalTime().toString())
+            .collect(Collectors.joining(", "));
+}
+
 }
