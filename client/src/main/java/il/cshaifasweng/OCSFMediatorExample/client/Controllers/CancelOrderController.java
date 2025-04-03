@@ -33,7 +33,8 @@ public class CancelOrderController {
     @FXML
     public void initialize() {
         BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         ordersListView.getItems().clear();
 
         if (Orders != null) {
@@ -142,6 +143,7 @@ public class CancelOrderController {
 
     @FXML
     void handleBack() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
     }
 

@@ -53,7 +53,8 @@ public class MealViewController {
 
     @FXML
     void initialize() {
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
 
         toggleMealTypeBtn.setVisible(false);
         deleteMealBtn.setVisible(false);
@@ -210,25 +211,28 @@ public class MealViewController {
             }
         });
     }
-
     @Subscribe
     public void onMealDeletionResponse(Message message) {
-        Platform.runLater(() -> {
-            if (message.toString().equals("#MealDeleted")) {
+        if (message.toString().equals("#MealDeleted")) {
+            // Unregister right away before UI update
+            EventBus.getDefault().unregister(this);
+
+            Platform.runLater(() -> {
                 showConfirmationAlert("Success", "Meal has been successfully deleted.");
-                ScreenManager.switchScreen("Menu List"); // Go back to menu after deletion
-            }
-            if (message.toString().equals("#MealDeletionFailed"))
-            {
+                ScreenManager.switchScreen("Menu List");
+            });
+
+        }  if (message.toString().equals("#MealDeletionFailed")) {
+            Platform.runLater(() -> {
                 showErrorAlert("Error", "Failed to delete the meal.");
-            }
-        });
+            });
+        }
     }
 
 
     @FXML
     void btnCartHandler(ActionEvent event) {
-
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Cart"));
     }
 
@@ -356,6 +360,7 @@ public class MealViewController {
     }
 
     public void btnBackHandler(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() ->ScreenManager.switchScreen("Menu List"));
     }
 
@@ -460,6 +465,7 @@ public class MealViewController {
         CartSession.getCart().addMeal(meal);
 
         showConfirmationAlert("Order", "Order Has been added to your cart.");
+        EventBus.getDefault().unregister(this);
         ScreenManager.switchScreen("Menu List");
     }
 

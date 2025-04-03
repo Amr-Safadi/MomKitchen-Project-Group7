@@ -34,6 +34,7 @@ public class ValidateUserController {
 
     @FXML
     void backHandler(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
     }
     @FXML
@@ -65,7 +66,7 @@ public class ValidateUserController {
                     return;
                 }
 
-                // Move to the order cancellation screen
+                EventBus.getDefault().unregister(this);
                 Platform.runLater(() ->  ScreenManager.switchScreen("Cancel Order"));
                 CancelOrderController.Orders = userOrders;
             }
@@ -82,7 +83,8 @@ public class ValidateUserController {
     @FXML
     void initialize() {
         BackgroundUtil.setPaneBackground(validatePane, "/Images/NEWBACKGRND.jpg");
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         assert emailField != null : "fx:id=\"emailField\" was not injected: check your FXML file 'ValidateUser.fxml'.";
         assert phoneField != null : "fx:id=\"phoneField\" was not injected: check your FXML file 'ValidateUser.fxml'.";
         assert validateBtn != null : "fx:id=\"validateBtn\" was not injected: check your FXML file 'ValidateUser.fxml'.";

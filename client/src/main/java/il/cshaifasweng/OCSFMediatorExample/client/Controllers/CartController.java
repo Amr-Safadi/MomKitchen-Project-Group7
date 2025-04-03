@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import org.greenrobot.eventbus.EventBus;
 
 public class CartController {
 
@@ -65,6 +66,7 @@ public class CartController {
 
     @FXML
     void backHandler() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
@@ -164,6 +166,7 @@ public class CartController {
                 }
 
                 CheckOutController.setOrderPreferences(result[0], result[1], timeInput);
+                EventBus.getDefault().unregister(this);
                 Platform.runLater(() -> ScreenManager.switchScreen("check out"));
 
             } catch (Exception e) {

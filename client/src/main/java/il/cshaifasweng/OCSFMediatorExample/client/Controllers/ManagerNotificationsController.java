@@ -42,6 +42,7 @@ public class ManagerNotificationsController {
 
         if (user == null || (user.getRole() != User.Role.BRANCH_MANAGER && user.getRole() != User.Role.GENERAL_MANAGER)) {
             showAlert("Access Denied", "You do not have permission to access this page.");
+            EventBus.getDefault().unregister(this);
             ScreenManager.switchScreen("Primary");
             return;
         }
@@ -57,7 +58,8 @@ public class ManagerNotificationsController {
             branchFilterComboBox.setVisible(false);
         }
 
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
 
         mealNameCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getMeal().getName()));
         oldPriceCol.setCellValueFactory(data -> new javafx.beans.property.SimpleDoubleProperty(data.getValue().getMeal().getPrice()).asObject());
@@ -160,6 +162,7 @@ public class ManagerNotificationsController {
 
     @FXML
     void handleBack() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
     }
 

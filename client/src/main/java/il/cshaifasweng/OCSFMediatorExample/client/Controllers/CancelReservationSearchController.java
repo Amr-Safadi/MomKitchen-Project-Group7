@@ -56,6 +56,7 @@ public class CancelReservationSearchController {
 
     @FXML
     public void handleBack(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() ->  ScreenManager.switchScreen("Reservation"));
     }
 }

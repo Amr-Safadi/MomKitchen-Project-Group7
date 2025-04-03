@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import org.greenrobot.eventbus.EventBus;
 
 public class CategoriesController {
 
@@ -38,6 +39,7 @@ public class CategoriesController {
 
     @FXML
     void handleDrinksBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> {
             MenuByCatService.setCurrentCategory("Drinks");
             ScreenManager.switchScreen("MenuByCategory");
@@ -47,6 +49,7 @@ public class CategoriesController {
 
     @FXML
     void handleItalianBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> {
             MenuByCatService.setCurrentCategory("Italian");
             ScreenManager.switchScreen("MenuByCategory");
@@ -56,6 +59,7 @@ public class CategoriesController {
 
     @FXML
     void HandleMeatBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> {
             MenuByCatService.setCurrentCategory("Meat");
             ScreenManager.switchScreen("MenuByCategory");
@@ -65,6 +69,7 @@ public class CategoriesController {
 
     @FXML
     void handleBackBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 

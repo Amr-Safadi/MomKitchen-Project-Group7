@@ -68,11 +68,12 @@ public class CancelReservationListController {
         if ("#CancelReservationSuccess".equals(message.toString())) {
             Platform.runLater(() -> {
                 String responseDetail = (String) message.getObject();
+                System.out.println(responseDetail + "on cancel reservation");
                 String alertContent = "Reservation canceled successfully.";
                 if ("CancellationSuccessWithFee".equals(responseDetail)) {
-                    alertContent += " Note: Your card was billed 10 shekels for canceling within 1 hour of the reservation time.";
+                    alertContent += " Note: Your card was billed 10$ for canceling within 1 hour of the reservation time.";
                 }
-               showAlert("Cancellation","Reservation canceled successfully.");
+               showAlert("Cancellation",alertContent);
 
                 EventBus.getDefault().unregister(this);
 
@@ -83,6 +84,7 @@ public class CancelReservationListController {
 
     @FXML
     public void handleBack(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() ->ScreenManager.switchScreen("CancelReservationSearch"));
     }
 
