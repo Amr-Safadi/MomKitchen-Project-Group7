@@ -114,7 +114,7 @@ public class SimpleServer extends AbstractServer {
 
 				if (!pendingRequests.isEmpty()) {
 					try {
-						client.sendToClient(new Message("#ManagerHasNotifications"));
+						client.sendToClient(new Message(pendingRequests,"#ManagerHasNotifications"));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -176,6 +176,7 @@ public class SimpleServer extends AbstractServer {
 				User dietitian = (User) requestData[2];
 
 				boolean requestSaved = MealHandler.savePriceChangeRequest(mealForPriceChange, newPrice, dietitian, sessionFactory);
+
 
 				try {
 					if (requestSaved) {

@@ -160,6 +160,9 @@ public class SimpleClient extends AbstractClient {
 	public static User getUser() {
 		return user;
 	}
+	public static void setUser(User user) {
+		SimpleClient.user = user;
+	}
 	public static SimpleClient getClient() {
 		if (client == null) {
 			client = new SimpleClient("localhost", 3000);

@@ -57,7 +57,7 @@ public class TableHandler {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 1/*90*/, TimeUnit.MINUTES);
+        }, 90, TimeUnit.MINUTES);
     }
 
     public static void cancelTableReservation(RestaurantTable tableToCancel, SessionFactory sessionFactory) {
