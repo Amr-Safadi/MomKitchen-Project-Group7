@@ -45,20 +45,11 @@ public class SimpleClient extends AbstractClient {
 				break;
 
 
-			case "#PriceChangeApproved","#PriceChangeRejected","#PriceChangeRequestSent","#PriceChangeRequestFailed","Meal Updated Successfully":
-				EventBus.getDefault().post(message);
-				break;
-
-			case "#PriceRequestsList":
-				EventBus.getDefault().post(message);
-				break;
-
-			case "#ManagerHasNotifications":
-				EventBus.getDefault().post(message);
-				break;
-
-			case "#MealAddedSuccessfully", "#UserValidated", "#ValidationFailed", "OrderCanceled",
-                 "#MealAdditionFailed" ,"#MealDeleted", "#MealDeletionFailed", "#Update Complaints", "#ReservationSuccess":
+			case "#PriceChangeApproved", "#PriceChangeRejected", "#PriceChangeRequestSent", "#PriceChangeRequestFailed", "Meal Updated Successfully",
+                 "#MealAddedSuccessfully", "#UserValidated", "#ValidationFailed", "OrderCanceled",
+                 "#MealAdditionFailed", "#MealDeleted", "#MealDeletionFailed", "#Update Complaints",
+                 "#ReservationSuccess", "#ManagerHasNotifications", "#PriceRequestsList", "#UserReservations",
+                 "#CancelReservationSuccess", "#OrdersReport", "#ReservationsReport", "#ComplaintsReport":
 				EventBus.getDefault().post(message);
 				break;
             case "#OrderPlacedSuccessfully":
@@ -75,8 +66,7 @@ public class SimpleClient extends AbstractClient {
 				System.out.println(" simple client to  category fetched - handle message");
 				EventBus.getDefault().post(message);
 				break;
-			case "#ReservationSuccess":
-				EventBus.getDefault().post(message);
+
 			case "#Update All Meals":
 				System.out.println(" simple client to update meal - handle message");
 				EventBus.getDefault().post(message);
@@ -137,20 +127,8 @@ public class SimpleClient extends AbstractClient {
 				EventBus.getDefault().post(message);
 				break;
 
-			case "#UserReservations":
-				EventBus.getDefault().post(message);
-				break;
-			case "#CancelReservationSuccess":
-				EventBus.getDefault().post(message);
-				break;
-			case "#OrdersReport":
-			case "#ReservationsReport":
-			case "#ComplaintsReport":
-				EventBus.getDefault().post(message);
-				break;
 
-
-			default:
+            default:
 				System.out.println("Simple Client - Unknown message received: " + message.toString());
 				break;
 		}

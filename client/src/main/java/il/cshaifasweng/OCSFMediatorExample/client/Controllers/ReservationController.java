@@ -122,7 +122,13 @@ public class ReservationController {
                 handleBack(null);
             } else if ("#NoAvailability".equals(msgText)) {
                 String alternatives = (String) message.getObject();
-                showAlert("No Availability", "No reservation available at requested time. Alternatives: " + alternatives);
+                if (alternatives.isEmpty())
+                {
+                    showAlert("No Availability", "No reservation for this day try a different date");
+                }
+                else {
+                    showAlert("No Availability", "No reservation available at requested time. Alternatives: " + alternatives);
+                }
             }
         });
     }

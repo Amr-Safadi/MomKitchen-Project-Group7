@@ -260,39 +260,6 @@ public class ReservationHandler {
         }
     }
 
-/*
-    public static String computeAlternativeTimes(Reservation reservation, SessionFactory sessionFactory) {
-        Branch branch = reservation.getBranch();
-        if (branch == null) {
-            return "Branch not specified";
-        }
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime branchOpenDT = LocalDateTime.of(now.toLocalDate(), branch.getOpenHour()).plusMinutes(15);
-        LocalDateTime branchCloseDT = LocalDateTime.of(now.toLocalDate(), branch.getCloseHour()).minusMinutes(60);
-        List<String> alternatives = new ArrayList<>();
-        LocalDateTime slot = branchOpenDT;
-        while (!slot.isAfter(branchCloseDT)) {
-            alternatives.add(slot.toLocalTime().toString());
-            slot = slot.plusMinutes(15);
-        }
-
-        String requestedSeating = reservation.getSeatingArea();
-        String oppositeSeating = requestedSeating.equalsIgnoreCase("Indoor") ? "Outdoor" : "Indoor";
-        try (Session session = sessionFactory.openSession()) {
-            List<RestaurantTable> alternativeTables = session.createQuery(
-                            "FROM RestaurantTable t WHERE t.branch.id = :branchId AND t.seatingArea = :seating AND t.reserved = false", RestaurantTable.class)
-                    .setParameter("branchId", branch.getId())
-                    .setParameter("seating", oppositeSeating)
-                    .getResultList();
-            if (!alternativeTables.isEmpty()) {
-                alternatives.add("Alternative " + oppositeSeating + " tables available");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return String.join(", ", alternatives);
-    }*/
 public static String computeAlternativeTimes(Reservation reservation, SessionFactory sessionFactory) {
     Branch branch = reservation.getBranch();
     if (branch == null) {
@@ -301,7 +268,8 @@ public static String computeAlternativeTimes(Reservation reservation, SessionFac
 
     int maxCapacity = 25;
     int newGuests = reservation.getGuests();
-    LocalTime openTime = branch.getOpenHour().plusMinutes(15);   // Skip first 15 min
+    LocalTime openTime ;
+    openTime = branch.getOpenHour().plusMinutes(15).isAfter( LocalTime.now()) ? branch.getOpenHour().plusMinutes(15) : LocalTime.now();
     LocalTime closeTime = branch.getCloseHour().minusMinutes(60); // Close 1 hour early
 
     LocalDate reservationDate = reservation.getDate();

@@ -12,7 +12,7 @@ import java.time.LocalTime;
 public class DataInitializer {
     public static void populateInitialData(Session session) {
         try {
-            Branch branch1 = new Branch("Haifa", "Hanamal 16", LocalTime.of(8, 0), LocalTime.of(23, 0));
+            Branch branch1 = new Branch("Haifa", "Hanamal 16", LocalTime.of(8, 0), LocalTime.of(23, 50));
             Branch branch2 = new Branch("Acre", "Main St. 13", LocalTime.of(9, 0), LocalTime.of(21, 0));
             Branch branch3 = new Branch("Tel-Aviv", "Rothschild st. 11", LocalTime.of(10, 0), LocalTime.of(22, 0));
             Branch branch4 = new Branch("Netanya", "Hagefen st. 14", LocalTime.of(10, 0), LocalTime.of(21, 0));
