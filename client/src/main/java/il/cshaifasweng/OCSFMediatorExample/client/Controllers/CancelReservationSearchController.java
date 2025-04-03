@@ -2,11 +2,13 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -17,11 +19,13 @@ public class CancelReservationSearchController {
 
     @FXML
     private TextField fullNameField;
+    @FXML private AnchorPane pane;
     @FXML
     private TextField phoneField;
 
     @FXML
     public void initialize() {
+        BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
     }

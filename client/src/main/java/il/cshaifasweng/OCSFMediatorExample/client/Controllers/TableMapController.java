@@ -57,16 +57,25 @@ public class TableMapController {
     }
 
     private VBox createTableBox(RestaurantTable table) {
-        VBox box = new VBox(5);
-        box.setStyle("-fx-padding: 10; -fx-border-color: gray; -fx-border-width: 1; -fx-background-color: #f0f0f0;");
+        VBox box = new VBox(9);
+        box.setPrefSize(150,130);
+        box.setStyle("-fx-padding: 15; -fx-border-color: green; -fx-border-width: 2; -fx-background-color: \" + (table.isReserved() ? \"#ffcccc;\" : \"#ccffcc; -fx-background-radius: 10;");
 
-        Label tableLabel = new Label("Table " + table.getTableNumber() + " (" + table.getCapacity() + " ppl)");
+        Label tableLabel = new Label("Table " + table.getTableNumber() + " (" + table.getCapacity() + " guests)");
+        tableLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
+
         Label seatingLabel = new Label("Seating: " + table.getSeatingArea());
         Label statusLabel = new Label(table.isReserved() ? "Reserved" : "Available");
+        statusLabel.setStyle("-fx-text-fill: " + (table.isReserved() ? "red;" : "green;"));
 
         Button toggleBtn = new Button();
         toggleBtn.setText(table.isReserved() ? "Cancel Reservation" : "Reserve");
-
+        toggleBtn.setStyle(
+                "-fx-background-color: " + (table.isReserved() ? "#ff6666;" : "#66cc66;") +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-background-radius: 8;"
+        );
         toggleBtn.setOnAction(e -> {
             if (!table.isReserved()) {
                 reserveTable(table);

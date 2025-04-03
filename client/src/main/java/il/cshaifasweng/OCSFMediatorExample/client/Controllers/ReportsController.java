@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client.Controllers;
 import il.cshaifasweng.OCSFMediatorExample.client.Main.ScreenManager;
 import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
+import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,6 +16,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -33,7 +35,7 @@ public class ReportsController {
     @FXML private TableColumn<Orders, Integer> orderIdColumn;
     @FXML private TableColumn<Orders, String> orderDateColumn;
     @FXML private TableColumn<Orders, String> orderTotalPriceColumn;
-
+    @FXML private AnchorPane rootPane;
     @FXML private TableView<Object[]> reservationsTable;
     @FXML private TableColumn<Object[], String> reservationDateColumn;
     @FXML private TableColumn<Object[], String> reservationCountColumn;
@@ -45,7 +47,7 @@ public class ReportsController {
     @FXML private Button backButton;
     @FXML private ComboBox<String> branchFilterComboBox;
     @FXML private Label branchFilterLabel;
-
+    @FXML private ScrollPane scrollPane;
     private String selectedBranch = null;
     private List<Orders> orders;
     private List<Reservation> allReservations;
@@ -53,6 +55,8 @@ public class ReportsController {
 
     @FXML
     public void initialize() {
+        BackgroundUtil.setPaneBackground(rootPane, "/Images/NEWBACKGRND.jpg");
+
         if (UserSession.getUser() == null ||
                 !(UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER ||
                         UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER)) {

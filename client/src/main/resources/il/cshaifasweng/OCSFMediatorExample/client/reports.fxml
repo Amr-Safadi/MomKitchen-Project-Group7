@@ -11,22 +11,23 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover; -fx-padding: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ReportsController">
+<ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" style="-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover; -fx-padding: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ReportsController">
 
 
     <content>
-        <AnchorPane fx:id="rootPane" prefHeight="900.0" prefWidth="800.0" style="-fx-background-color: transparent;">
+        <AnchorPane fx:id="rootPane" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color: #bfe4bf;">
 
-            <!-- Title -->
-            <Label layoutX="20" layoutY="20" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Monthly Reports" />
-
-            <Label fx:id="branchFilterLabel" layoutX="400.0" layoutY="20.0" text="Filter by Branch:" />
-            <ComboBox fx:id="branchFilterComboBox" layoutX="507.0" layoutY="16.0" prefWidth="150" />
+            <Label fx:id="branchFilterLabel" layoutX="381.0" layoutY="16.0" prefHeight="26.0" prefWidth="119.0" text="Filter by Branch:" textFill="#31b539">
+            <font>
+               <Font name="Bauhaus 93" size="14.0" />
+            </font></Label>
+            <ComboBox fx:id="branchFilterComboBox" layoutX="507.0" layoutY="16.0" prefWidth="150" style="-fx-background-color: #ffffff;" />
 
             
             <!-- Delivery Orders Table -->
-            <TableView fx:id="ordersTable" layoutX="20" layoutY="70" prefHeight="150.0" prefWidth="750.0">
+            <TableView fx:id="ordersTable" layoutX="20" layoutY="70" prefHeight="150.0" prefWidth="750.0" stylesheets="@table-style.css">
                 <columns>
                     <TableColumn fx:id="orderIdColumn" text="Order ID" />
                     <TableColumn fx:id="orderDateColumn" text="Date" />
@@ -35,7 +36,7 @@
             </TableView>
 
             <!-- Table Reservations Per Day -->
-            <TableView fx:id="reservationsTable" layoutX="20" layoutY="250" prefHeight="150.0" prefWidth="750.0">
+            <TableView fx:id="reservationsTable" layoutX="20" layoutY="250" prefHeight="150.0" prefWidth="750.0" stylesheets="@table-style.css">
                 <columns>
                     <TableColumn fx:id="reservationDateColumn" text="Date" />
                     <TableColumn fx:id="reservationCountColumn" text="Reservations Count" />
@@ -55,8 +56,17 @@
             <!-- Buttons -->
             <HBox layoutX="20" layoutY="780" spacing="15">
                 <Button fx:id="exportCsvButton" onAction="#handleExportCsv" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" text="Export to CSV" />
-                <Button fx:id="backButton" onAction="#handleBackToMain" style="-fx-background-color: #FF5733; -fx-text-fill: white; -fx-font-size: 14px;" text="Back to Main" />
             </HBox>
+         <Label layoutX="20.0" layoutY="37.0" prefHeight="31.0" prefWidth="232.0" text="Monthly Reports:" textFill="#46ac46">
+            <font>
+               <Font name="Bauhaus 93" size="25.0" />
+            </font>
+         </Label>
+             <Button fx:id="backButton" layoutX="14.0" layoutY="1.0" onAction="#handleBackToMain" prefHeight="20.0" prefWidth="47.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" text="Back">
+            <font>
+               <Font name="Bauhaus 93" size="15.0" />
+            </font>
+         </Button>
 
         </AnchorPane>
     </content>
