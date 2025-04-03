@@ -81,9 +81,8 @@ public class ReportsController {
         if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
 
-        // --- Added to help with overlapping dates ---
-        xAxis.setTickLabelRotation(45);       // Rotate labels 45 degrees
-        complaintsChart.setCategoryGap(20);     // Add space between bars
+
+        complaintsChart.setAnimated(false);
 
         ordersTable.setRowFactory(tv -> {
             TableRow<Orders> row = new TableRow<>();
