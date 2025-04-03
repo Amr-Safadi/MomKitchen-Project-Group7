@@ -19,7 +19,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
+import java.util.TreeMap;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -61,6 +61,7 @@ public class ReportsController {
                 !(UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER ||
                         UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER)) {
             showAlert("Access Denied", "You do not have permission to access this page.");
+            EventBus.getDefault().unregister(this);
             Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
             return;
         }
@@ -77,7 +78,12 @@ public class ReportsController {
             selectedBranch = UserSession.getUser().getBranch();
         }
         branchFilterComboBox.setOnAction(e -> handleBranchComboBoxChange());
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+
+        // --- Added to help with overlapping dates ---
+        xAxis.setTickLabelRotation(45);       // Rotate labels 45 degrees
+        complaintsChart.setCategoryGap(20);     // Add space between bars
 
         ordersTable.setRowFactory(tv -> {
             TableRow<Orders> row = new TableRow<>();
@@ -101,9 +107,6 @@ public class ReportsController {
             return row;
         });
 
-
-
-
         setupTables();
         fetchReports();
     }
@@ -119,7 +122,6 @@ public class ReportsController {
         alert.setContentText("Total reservations: " + count);
         alert.showAndWait();
     }
-
 
     private void showOrderDetails(Orders order) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -193,16 +195,15 @@ public class ReportsController {
         }
         return allOrders;
     }
+
     @Subscribe
     public void handleOrdersReport(Message message) {
         if ("#OrdersReport".equals(message.getText())) {
             orders = (List<Orders>) message.getObject();
 
             if (UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER) {
-                // For General Manager, use ComboBox to filter based on selected branch
                 Platform.runLater(() -> handleBranchComboBoxChange());
             } else if (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER) {
-                // For Branch Manager, filter orders based on their branch directly
                 List<Orders> filteredOrders = filterOrdersByUserBranch(orders);
                 deliveryOrders.setAll(filteredOrders);
                 ordersTable.setItems(deliveryOrders);
@@ -216,10 +217,8 @@ public class ReportsController {
             allReservations = (List<Reservation>) message.getObject();
 
             if (UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER) {
-                // For General Manager, use ComboBox to filter based on selected branch
                 Platform.runLater(() -> handleBranchComboBoxChange());
             } else if (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER) {
-                // For Branch Manager, filter reservations based on their branch directly
                 List<Reservation> filteredReservations = filterReservationsByBranch(allReservations);
                 List<Object[]> groupedReservations = groupReservationsByDate(filteredReservations);
                 reservationsData.setAll(groupedReservations);
@@ -234,15 +233,12 @@ public class ReportsController {
             complaints = (List<ContactRequest>) message.getObject();
 
             if (UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER) {
-                // For General Manager, use ComboBox to filter based on selected branch
                 Platform.runLater(() -> handleBranchComboBoxChange());
             } else if (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER) {
-                // For Branch Manager, filter complaints based on their branch directly
                 List<ContactRequest> filteredComplaints = filterComplaintsByBranch(complaints);
                 List<Object[]> groupedComplaints = groupComplaintsByDate(filteredComplaints);
                 complaintsData.setAll(groupedComplaints);
                 Platform.runLater(() -> updateComplaintsChart());
-
             }
         }
     }
@@ -277,10 +273,13 @@ public class ReportsController {
 
     private List<Object[]> groupComplaintsByDate(List<ContactRequest> list) {
         return list.stream()
-                .collect(Collectors.groupingBy(c -> c.getSubmittedAt().toLocalDate(), Collectors.counting()))
+                .collect(Collectors.groupingBy(
+                        c -> c.getSubmittedAt().toLocalDate(),
+                        TreeMap::new, // Using TreeMap to keep dates in order
+                        Collectors.counting()))
                 .entrySet().stream()
                 .map(e -> new Object[]{e.getKey().toString(), e.getValue().toString()})
-                .toList();
+                .collect(Collectors.toList());
     }
 
     private void updateComplaintsChart() {
@@ -291,8 +290,10 @@ public class ReportsController {
         }
         complaintsChart.getData().add(series);
     }
+
     @FXML
     private void handleBackToMain() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
     }
 

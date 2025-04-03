@@ -60,13 +60,14 @@ public class ReservationController {
         indoorRadio.setToggleGroup(seatingToggleGroup);
         outdoorRadio.setToggleGroup(seatingToggleGroup);
 
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
     }
 
     private List<String> computeTimeSlots(LocalTime open, LocalTime close) {
         List<String> slots = new ArrayList<>();
         LocalTime start = open.plusMinutes(15);
-        LocalTime end = close.minusMinutes(60);
+        LocalTime end = close.minusMinutes(10);/****/ //come back and fix!!
         while (!start.isAfter(end)) {
             slots.add(start.toString());
             start = start.plusMinutes(15);
@@ -135,11 +136,13 @@ public class ReservationController {
 
     @FXML
     public void handleCancelReservation(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("CancelReservationSearch"));
     }
 
     @FXML
     public void handleBack(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 

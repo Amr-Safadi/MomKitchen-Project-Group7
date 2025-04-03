@@ -97,10 +97,12 @@ public class ComplaintManageController {
                         UserSession.getUser().getRole() == User.Role.SERVICE_EMPLOYEE)) {
 
             showAlert("Access Denied", "You do not have permission to access this page.");
+            EventBus.getDefault().unregister(this);
             Platform.runLater(() ->  ScreenManager.switchScreen("Primary"));  // Redirect unauthorized users
             return;
         }
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         setupTables();
 
         rootPane.setStyle("-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover;");
@@ -353,6 +355,7 @@ public class ComplaintManageController {
     // Navigate Back to Main Screen
     @FXML
     private void handleBackToMain() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() ->ScreenManager.switchScreen("Primary"));
     }
 

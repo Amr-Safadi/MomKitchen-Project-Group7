@@ -39,6 +39,7 @@ public class LoginController {
 
     @FXML
     void handleBackBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
     }
 
@@ -70,6 +71,7 @@ public class LoginController {
                     User loggedInUser = (User) message.getObject();
                     System.out.println("Login successful: " + loggedInUser.getEmail() + " | Role: " + loggedInUser.getRole());
                     UserSession.setUser(loggedInUser);
+                    EventBus.getDefault().unregister(this);
                     ScreenManager.switchScreen("Primary");
                     break;
 
@@ -98,7 +100,8 @@ public class LoginController {
     }
     @FXML
     void initialize() {
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         BackgroundUtil.setPaneBackground(logpane, "/Images/NEWBACKGRND.jpg");
 
     }

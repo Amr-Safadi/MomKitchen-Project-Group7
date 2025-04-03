@@ -134,10 +134,12 @@ public class SecondaryController {
 
     @FXML
     public void handleAddMeal(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("AddMeal"));
     }
     @FXML
     public void handleSearchBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("categories"));
     }
 
@@ -159,6 +161,7 @@ public class SecondaryController {
 
     @FXML
     public void handleReservation(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Reservation"));
     }
 
@@ -216,11 +219,13 @@ public class SecondaryController {
 
     @FXML
     void handleCartBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Cart"));
     }
 
     @FXML
     void handleBackBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() ->   ScreenManager.switchScreen("Primary"));
         CartSession.clearCart();
         System.out.println("Cart cleared after navigating back from the branch.");
@@ -228,6 +233,7 @@ public class SecondaryController {
 
     @FXML
     void handleManageTables() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("TableMap"));
     }
 

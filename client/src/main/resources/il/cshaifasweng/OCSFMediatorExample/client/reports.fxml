@@ -53,10 +53,6 @@
                 </yAxis>
             </BarChart>
 
-            <!-- Buttons -->
-            <HBox layoutX="20" layoutY="780" spacing="15">
-                <Button fx:id="exportCsvButton" onAction="#handleExportCsv" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" text="Export to CSV" />
-            </HBox>
          <Label layoutX="20.0" layoutY="37.0" prefHeight="31.0" prefWidth="232.0" text="Monthly Reports:" textFill="#46ac46">
             <font>
                <Font name="Bauhaus 93" size="25.0" />

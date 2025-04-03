@@ -6,7 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-
+import org.greenrobot.eventbus.EventBus;
 
 
 public class ConnectionSetupController {
@@ -40,7 +40,7 @@ public class ConnectionSetupController {
 
             SimpleClient.getClient().openConnection();
 
-            // ✅ Switch to your main screen here
+            EventBus.getDefault().unregister(this);
             ScreenManager.switchScreen("Primary"); // or whatever your first screen is
         } catch (NumberFormatException e) {
             errorLabel.setText("Port must be a valid number.");

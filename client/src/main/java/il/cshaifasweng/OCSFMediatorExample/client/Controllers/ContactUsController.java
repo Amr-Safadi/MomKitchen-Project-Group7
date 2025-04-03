@@ -36,7 +36,8 @@ public class ContactUsController {
         branchComboBox.setItems(FXCollections.observableArrayList("Haifa", "Acre", "Netanya", "Tel Aviv"));
 
         // Register to listen for events
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
     }
 
     @FXML
@@ -62,19 +63,22 @@ public class ContactUsController {
     @Subscribe
     public void onComplaintSuccess(Message message) {
         if (message.toString().equals("#ComplaintSubmissionSuccess")) {
-        Platform.runLater(() -> { // Ensure UI updates run on the JavaFX thread
-
-                showAlert("Success", "Your complaint has been submitted!");
-            ScreenManager.switchScreen("Primary");
-            }
-        );}
+            EventBus.getDefault().unregister(this);
+            Platform.runLater(() -> {
+                showAlert("Success", "Your complaint has been submitted! ");
+                ScreenManager.switchScreen("Primary");
+            });
+        }
     }
+
 
 
     @FXML
     void handleBack() {
+        EventBus.getDefault().unregister(this);
         // Switch back to the main screen
         Platform.runLater(() ->  ScreenManager.switchScreen("Primary"));
+
     }
 
     private void showAlert(String title, String message) {

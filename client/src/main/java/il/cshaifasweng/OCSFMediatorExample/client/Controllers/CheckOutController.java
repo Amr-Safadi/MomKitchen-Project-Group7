@@ -67,6 +67,7 @@ public class CheckOutController {
 
     @FXML
     void backHandler() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() ->ScreenManager.switchScreen("Cart"));
     }
     @FXML
@@ -126,6 +127,7 @@ public class CheckOutController {
             showAlert("Connection Error", "Failed to send order to the server. Please check your connection.");
         }
 
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
         showAlert("Order Placed", "Your order has been placed successfully!");
         CartSession.getCart().clearCart();
@@ -139,6 +141,7 @@ public class CheckOutController {
                 case "#OrderSuccess":
                     showAlert("Order Success", "Your order has been placed successfully!");
                     CartSession.getCart().clearCart();
+                    EventBus.getDefault().unregister(this);
                     ScreenManager.switchScreen("Primary");
                     break;
 

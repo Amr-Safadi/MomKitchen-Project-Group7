@@ -83,12 +83,14 @@ public class PrimaryController {
 
     @FXML
     private void handleCancelOrder() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Validate User"));
     }
 
     @FXML
     private void handleHaifaBtn() {
         SecondaryService.setBranch("Haifa");
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
 
     }
@@ -96,28 +98,33 @@ public class PrimaryController {
     @FXML
     private void handleAcreBtn() {
         SecondaryService.setBranch("Acre");
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
     @FXML
     private void handleTelavivBtn() {
         SecondaryService.setBranch("Tel-Aviv");
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
     @FXML
     private void handleNetanyaBtn() {
         SecondaryService.setBranch("Netanya");
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Menu List"));
     }
 
     @FXML
     private void handleContactUsBtn() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() ->  ScreenManager.switchScreen("Contact Us"));
     }
 
     @FXML
     private void handleLOGINBtn() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() ->   ScreenManager.switchScreen("Login"));
     }
     @FXML
@@ -147,6 +154,7 @@ public class PrimaryController {
                 (UserSession.getUser().getRole() == User.Role.BRANCH_MANAGER ||
                         UserSession.getUser().getRole() == User.Role.GENERAL_MANAGER ||
                         UserSession.getUser().getRole() == User.Role.SERVICE_EMPLOYEE)) {
+            EventBus.getDefault().unregister(this);
             Platform.runLater(() ->  ScreenManager.switchScreen("Manage Complaints"));
         } else {
             showAlert("Access Denied", "You do not have permission to access this page.");
@@ -154,6 +162,7 @@ public class PrimaryController {
     }
     @FXML
     private void handleReports() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Reports"));
     }
 
@@ -227,6 +236,7 @@ public void onManagerNotificationStatus(Message message) {
 
     @FXML
     private void handleManagerNotifications() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Notifications"));
     }
 
@@ -272,7 +282,7 @@ public void onManagerNotificationStatus(Message message) {
                     loggedInUser.getRole() == User.Role.SERVICE_EMPLOYEE) {
                 complaintsButton.setVisible(true);
             }
-            if (/*loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||*/
+            if ( loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
                     loggedInUser.getRole() == User.Role.GENERAL_MANAGER) {
                 reportsButton.setVisible(true);
                 managerNotificationsBtn.setVisible(true); // Show the button

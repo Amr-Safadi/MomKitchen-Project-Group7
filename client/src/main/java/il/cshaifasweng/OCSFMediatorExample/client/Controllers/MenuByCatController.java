@@ -88,11 +88,13 @@ public class MenuByCatController {
 
     @FXML
     void handleBackBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("categories"));
     }
 
     @FXML
     void handleCartBtn(ActionEvent event) {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() ->  ScreenManager.switchScreen("Cart"));
     }
 
@@ -136,8 +138,8 @@ public class MenuByCatController {
 
     @FXML
     void initialize() {
+        if (!EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().register(this);
-
         if (MenuByCatService.getCurrentCategory() != null) {
             mealsLabel.setText(MenuByCatService.getCurrentCategory());
         }

@@ -68,7 +68,8 @@ public class AddMealController {
     @FXML
     public void initialize() {
         BackgroundUtil.setPaneBackground(pane, "/Images/NEWBACKGRND.jpg");
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         // Populate category dropdown using Enum values
         mealCategoryComboBox.setItems(FXCollections.observableArrayList(Meals.Category.values()));
     }
@@ -76,6 +77,7 @@ public class AddMealController {
     @Subscribe
     public void onMessageReceived(Message message) {
         if (message.toString().equals("#MealAddedSuccessfully")) {
+            EventBus.getDefault().unregister(this);
             Platform.runLater(() -> {
                 showAlert("Success", "Meal added successfully!");
                 ScreenManager.switchScreen("Menu List"); // Switch back to the main screen
@@ -156,6 +158,7 @@ public class AddMealController {
 
     @FXML
     void handleBack() {
+        EventBus.getDefault().unregister(this);
         Platform.runLater(() -> ScreenManager.switchScreen("Primary"));
 
     }
