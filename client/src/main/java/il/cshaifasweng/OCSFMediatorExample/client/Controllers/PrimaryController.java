@@ -272,7 +272,7 @@ public void onManagerNotificationStatus(Message message) {
                     loggedInUser.getRole() == User.Role.SERVICE_EMPLOYEE) {
                 complaintsButton.setVisible(true);
             }
-            if (loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
+            if (/*loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||*/
                     loggedInUser.getRole() == User.Role.GENERAL_MANAGER) {
                 reportsButton.setVisible(true);
                 managerNotificationsBtn.setVisible(true); // Show the button
