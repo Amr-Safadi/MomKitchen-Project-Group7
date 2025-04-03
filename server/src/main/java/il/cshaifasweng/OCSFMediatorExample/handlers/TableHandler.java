@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.handlers;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
 import il.cshaifasweng.OCSFMediatorExample.server.SimpleServer;
@@ -39,7 +40,7 @@ public class TableHandler {
         }
     }
 
-    static void scheduleAutoRelease(int tableId, SessionFactory sessionFactory) {
+    public static void scheduleAutoRelease(int tableId, SessionFactory sessionFactory) {
         scheduler.schedule(() -> {
             try (Session session = sessionFactory.openSession()) {
                 Transaction transaction = session.beginTransaction();
@@ -50,7 +51,7 @@ public class TableHandler {
                     transaction.commit();
                     System.out.println("Auto-released table " + table.getTableNumber() + " after 90 minutes.");
                     SimpleServer.getInstance().sendToAllClients(
-                            new il.cshaifasweng.OCSFMediatorExample.entities.Message(table, "#TableReservationCanceledSuccess")
+                            new Message(table, "#TableReservationCanceledSuccess")
                     );
                 }
             } catch (Exception e) {

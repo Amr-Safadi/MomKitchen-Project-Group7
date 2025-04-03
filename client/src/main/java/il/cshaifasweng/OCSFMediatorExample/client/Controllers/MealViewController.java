@@ -399,34 +399,35 @@ public class MealViewController {
 
     @Subscribe
     public void onImageMessageReceived(Message message) {
-        if (!"receivedImage".equals(message.toString())) return;
+        if ("receivedImage".equals(message.toString())) {
 
-        Object[] data = (Object[]) message.getObject();
+            Object[] data = (Object[]) message.getObject();
 
-        if (data.length != 2 || !(data[0] instanceof String) || !(data[1] instanceof Image)) {
-            System.out.println("❌ Invalid image data received.");
-            return;
-        }
-
-        String receivedMealName = (String) data[0];
-        Image image = (Image) data[1];
-
-        if (!receivedMealName.equals(meal.getName())) return; // Make sure it's the same meal
-
-        AnchorPane imagePane = BackgroundUtil.createMealImagePaneFromImage(image);
-
-        Platform.runLater(() -> {
-            if (!gridMeal.getChildren().isEmpty()) {
-                gridMeal.getChildren().remove(0); // assumes image is always first
+            if (data.length != 2 || !(data[0] instanceof String) || !(data[1] instanceof Image)) {
+                System.out.println(" Invalid image data received.");
+                return;
             }
 
-            gridMeal.getChildren().addFirst(imagePane);
-            gridMeal.setStyle("-fx-background-color: transparent;");
-            gridMeal.setBackground(BackgroundUtil.createTransparentBackground());
-            System.out.println("✅ Image displayed for " + receivedMealName);
-        });
+            String receivedMealName = (String) data[0];
+            Image image = (Image) data[1];
 
-        System.out.println("✅ Image displayed for " + receivedMealName);
+            if (!receivedMealName.equals(meal.getName())) return; // Make sure it's the same meal
+
+            AnchorPane imagePane = BackgroundUtil.createMealImagePaneFromImage(image);
+
+            Platform.runLater(() -> {
+                if (!gridMeal.getChildren().isEmpty()) {
+                    gridMeal.getChildren().remove(0); // assumes image is always first
+                }
+
+                gridMeal.getChildren().addFirst(imagePane);
+                gridMeal.setStyle("-fx-background-color: transparent;");
+                gridMeal.setBackground(BackgroundUtil.createTransparentBackground());
+                System.out.println(" Image displayed for " + receivedMealName);
+            });
+
+            System.out.println(" Image displayed for " + receivedMealName);
+        }
     }
 
 
@@ -460,6 +461,12 @@ public class MealViewController {
 
         showConfirmationAlert("Order", "Order Has been added to your cart.");
         ScreenManager.switchScreen("Menu List");
+    }
+
+    @Subscribe
+    public void mealupdatesuccesfully (Message message) {
+        if (message.toString().equals("Meal Updated Successfully"))
+            showConfirmationAlert("Success", "Meal Has been updated successfully.");
     }
 
     @Subscribe

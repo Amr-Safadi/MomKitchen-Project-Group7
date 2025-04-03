@@ -5,8 +5,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.Network.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.client.Sessions.UserSession;
 import il.cshaifasweng.OCSFMediatorExample.client.Services.SecondaryService;
 import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -19,6 +18,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class PrimaryController {
@@ -79,6 +79,8 @@ public class PrimaryController {
     @FXML
     private Button logOutBtn;
 
+    private String loggedInUserBranch;
+
     @FXML
     private void handleCancelOrder() {
         Platform.runLater(() -> ScreenManager.switchScreen("Validate User"));
@@ -128,7 +130,7 @@ public class PrimaryController {
         }
 
         UserSession.logout();  // Clears locally
-
+        SimpleClient.setUser(null);
         // Reset UI
         complaintsButton.setVisible(false);
         reportsButton.setVisible(false);
@@ -167,20 +169,61 @@ public class PrimaryController {
         }
     }
 
-    @Subscribe
-    public void onManagerNotificationStatus(Message message) {
-        if ("#ManagerHasNotifications".equals(message.toString())) {
-            Platform.runLater(() -> {
-                managerNotificationsBtn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
-                managerNotificationsBtn.setText("Notifications ");
-            });
-        } else if ("#ManagerClear".equals(message.toString())) {
-            Platform.runLater(() -> {
-                managerNotificationsBtn.setStyle(""); // default style
-                managerNotificationsBtn.setText("Notifications");
-            });
+@Subscribe
+public void onManagerNotificationStatus(Message message) {
+    if (message.getObject() instanceof List<?>) {
+        List<?> list = (List<?>) message.getObject();
+
+        if (!list.isEmpty() && list.get(0) instanceof PriceChangeRequest) {
+            List<PriceChangeRequest> requests = (List<PriceChangeRequest>) list;
+
+            boolean hasRelevantNotifications = false;
+            User currentUser = SimpleClient.getUser();
+
+            for (PriceChangeRequest request : requests) {
+                Meals meal = request.getMeal();
+                if (meal == null || currentUser == null) continue;
+
+                // ✅ General Manager sees all requests (branch and non-branch)
+                if (currentUser.getRole() == User.Role.GENERAL_MANAGER) {
+                    hasRelevantNotifications = true;
+                    break;
+                }
+
+                // ✅ Branch Manager sees only if the meal is branch-specific and belongs to their branch
+                if (currentUser.getRole() == User.Role.BRANCH_MANAGER && meal.getisBranchMeal()) {
+                    if (meal.getBranches() != null) {
+                        for (Branch b : meal.getBranches()) {
+                            if (b.getName().equalsIgnoreCase(loggedInUserBranch)) {
+                                hasRelevantNotifications = true;
+                                break;
+                            }
+                        }
+                        if (hasRelevantNotifications) break;
+                    }
+                }
+            }
+
+            // 🎯 Update the button style if any relevant requests exist
+            if (hasRelevantNotifications) {
+                Platform.runLater(() -> {
+                    managerNotificationsBtn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                    managerNotificationsBtn.setText("Notifications ");
+                });
+            } else {
+                Platform.runLater(() -> {
+                    managerNotificationsBtn.setStyle("");
+                    managerNotificationsBtn.setText("Notifications");
+                });
+            }
         }
+    } else if ("#ManagerClear".equals(message.toString())) {
+        Platform.runLater(() -> {
+            managerNotificationsBtn.setStyle("");
+            managerNotificationsBtn.setText("Notifications");
+        });
     }
+}
 
     @FXML
     private void handleManagerNotifications() {
@@ -204,13 +247,21 @@ public class PrimaryController {
         assert complaintsButton != null : "fx:id=\"complaintsButton\" was not injected: check your FXML file 'primary.fxml'.";
 
         User loggedInUser = SimpleClient.getUser();
+        if(loggedInUser == null) {
+
+            logOutBtn.setVisible(false);
+            LOGINBtn.setVisible(true);
+        }
+
         complaintsButton.setVisible(false);
         reportsButton.setVisible(false);
         managerNotificationsBtn.setVisible(false);
         userRec.setVisible(false);
-        logOutBtn.setVisible(false);
+
 
         if (loggedInUser != null) {
+            loggedInUserBranch = loggedInUser.getBranch();
+
             LOGINBtn.setDisable(true);
             LOGINBtn.setVisible(false);
             logOutBtn.setVisible(true);

@@ -84,9 +84,9 @@ public class ReservationController {
             return;
         }
 
-       if (!isReservationInputValid())
+       if (isReservationInputValid() == false) {
            return;
-
+       }
         Reservation reservation = new Reservation();
         Branch persistentBranch = SecondaryService.getBranchObj();
         if (persistentBranch == null) {
@@ -118,10 +118,17 @@ public class ReservationController {
         String msgText = message.toString();
         Platform.runLater(() -> {
             if ("#ReservationSuccess".equals(msgText)) {
-                showAlert("Reservation Success", "Your reservation was successful!");
+                showInfoAlert("Reservation Success", "Your reservation was successful!");
+                handleBack(null);
             } else if ("#NoAvailability".equals(msgText)) {
                 String alternatives = (String) message.getObject();
-                showAlert("No Availability", "No reservation available at requested time. Alternatives: " + alternatives);
+                if (alternatives.isEmpty())
+                {
+                    showAlert("No Availability", "No reservation for this day try a different date");
+                }
+                else {
+                    showAlert("No Availability", "No reservation available at requested time. Alternatives: " + alternatives);
+                }
             }
         });
     }
@@ -166,9 +173,10 @@ public class ReservationController {
                 showAlert("Validation Error", "Number of people must be greater than zero.");
                 return false;
             }
-            if (people > 26)
+            if (people > 25)
             {
                 showAlert("Validation Error" , "Maximum of 25 people at a time");
+                return false;
             }
         } catch (NumberFormatException e) {
             showAlert("Validation Error", "Please enter a valid number of guests.");
@@ -183,6 +191,13 @@ public class ReservationController {
         if (date.isBefore(LocalDate.now())) {
             showAlert("Validation Error", "The reservation date cannot be in the past.");
             return false;
+        }
+
+        if (date.equals(LocalDate.now())) {
+            if (LocalTime.parse(timeText).isBefore(LocalTime.now())) {
+                showAlert("Validation Error", "The reservation date cannot be in the past.");
+                return false;
+            }
         }
 
         if (timeText == null || timeText.trim().isEmpty()) {
@@ -208,6 +223,14 @@ public class ReservationController {
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showInfoAlert(String title, String message) {
+        Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);

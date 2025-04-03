@@ -4,6 +4,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Meals;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.PriceChangeRequest;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import il.cshaifasweng.OCSFMediatorExample.server.SimpleServer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -117,7 +118,7 @@ public class MealHandler {
 
             PriceChangeRequest request = new PriceChangeRequest(dbMeal, requestedPrice, dbUser);
 
-            session.save(request);
+            session.saveOrUpdate(request);
             tx.commit();
 
             System.out.println("✅ Price change request saved.");
@@ -142,12 +143,10 @@ public class MealHandler {
         }
     }
 
-
     public static boolean approvePriceChangeRequest(PriceChangeRequest request, SessionFactory sessionFactory) {
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
 
-            // Fetch from DB using ID
             PriceChangeRequest dbRequest = session.get(PriceChangeRequest.class, request.getId());
             if (dbRequest == null || dbRequest.isResolved()) {
                 System.out.println("❌ Request not found or already resolved.");
@@ -165,6 +164,7 @@ public class MealHandler {
             session.update(dbRequest);
 
             tx.commit();
+
             System.out.println("✅ Price change approved and applied.");
             return true;
         } catch (Exception e) {

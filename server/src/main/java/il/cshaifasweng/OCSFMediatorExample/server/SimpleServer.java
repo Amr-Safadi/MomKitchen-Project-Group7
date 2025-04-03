@@ -14,10 +14,14 @@ import org.hibernate.Transaction;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static il.cshaifasweng.OCSFMediatorExample.util.HibernateUtil.getSessionFactory;
 
@@ -26,6 +30,7 @@ public class SimpleServer extends AbstractServer {
 	private static final ConcurrentHashMap<ConnectionToClient, String> onlineUsers = new ConcurrentHashMap<>();
 	private static SessionFactory sessionFactory = getSessionFactory();
     private static Session session;
+	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	private ArrayList<Meals> mealsArrayList;
 	private ArrayList<Meals> mealsByCategories;
@@ -109,7 +114,7 @@ public class SimpleServer extends AbstractServer {
 
 				if (!pendingRequests.isEmpty()) {
 					try {
-						client.sendToClient(new Message("#ManagerHasNotifications"));
+						client.sendToClient(new Message(pendingRequests,"#ManagerHasNotifications"));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -172,9 +177,10 @@ public class SimpleServer extends AbstractServer {
 
 				boolean requestSaved = MealHandler.savePriceChangeRequest(mealForPriceChange, newPrice, dietitian, sessionFactory);
 
+
 				try {
 					if (requestSaved) {
-						//client.sendToClient(new Message("#PriceChangeRequestSent"));
+
 						sendToAllClients(new Message("#PriceChangeRequestSent"));
 					} else {
 						client.sendToClient(new Message("#PriceChangeRequestFailed"));
@@ -329,6 +335,7 @@ public class SimpleServer extends AbstractServer {
 				MealHandler.updateMeal(updatedMeal, sessionFactory);
 				try {
 					sendToAllClients(new Message("#Update All Meals"));
+					client.sendToClient(new Message("Meal Updated Successfully"));
 					System.out.println("Meal updated and sent to clients.");
 				} catch (Exception e) {
 					System.out.println("Error updating the meal");
@@ -356,14 +363,35 @@ public class SimpleServer extends AbstractServer {
 			case "#ReservationRequest":
 				Reservation reservationRequest = (Reservation) message.getObject();
 				List<RestaurantTable> allocatedTables = ReservationHandler.saveReservation(reservationRequest, sessionFactory);
+
 				if (allocatedTables != null && !allocatedTables.isEmpty()) {
-					for (RestaurantTable table : allocatedTables) {
-						sendToAllClients(new Message(table, "#TableReservedSuccess"));
-					}
+					// Calculate the delay for scheduling the reservation confirmation
+					LocalDateTime reservationTime = LocalDateTime.of(reservationRequest.getDate(), reservationRequest.getTime());
+					LocalDateTime now = LocalDateTime.now();
+					long delayMillis = Duration.between(now, reservationTime).toMillis()  ;  // Calculate delay in milliseconds
+
 					try {
 						client.sendToClient(new Message(reservationRequest, "#ReservationSuccess"));
 					} catch (Exception e) {
 						e.printStackTrace();
+					}
+
+					if (delayMillis > 0) {
+						// Schedule the task to send confirmation at the requested reservation time
+						scheduler.schedule(() -> {
+							for (RestaurantTable table : allocatedTables) {
+								sendToAllClients(new Message(table, "#TableReservedSuccess"));
+								TableHandler.scheduleAutoRelease(table.getId(), sessionFactory);
+							}
+						}, delayMillis, TimeUnit.MILLISECONDS);
+						System.out.println("Scheduled reservation confirmation for table(s) at " + reservationTime);
+
+					} else {
+						// If reservation time is in the past, send confirmation immediately
+						for (RestaurantTable table : allocatedTables) {
+							sendToAllClients(new Message(table, "#TableReservedSuccess"));
+							TableHandler.scheduleAutoRelease(table.getId(), sessionFactory);
+						}
 					}
 				} else {
 					try {
@@ -527,8 +555,6 @@ public class SimpleServer extends AbstractServer {
 			e.printStackTrace();
 		}
 	}
-
-
 
 
 	@Override
