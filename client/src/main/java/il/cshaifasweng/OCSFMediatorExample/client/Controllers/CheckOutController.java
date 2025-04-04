@@ -85,24 +85,16 @@ public class CheckOutController {
         String creditCard = paymentMethod.equals("Cash") ? "Cash Payment" : cardTxt.getText();
 
         LocalDateTime deliveryTime;
-        if (orderType.equals("Pickup")) {
-            deliveryTime = LocalDateTime.now();
-        } else {
-            try {
-                String[] timeParts = preferredTime.split(":");
-                int hour = Integer.parseInt(timeParts[0].trim());
-                int minute = Integer.parseInt(timeParts[1].trim());
+        String[] timeParts = preferredTime.split(":");
+        int hour = Integer.parseInt(timeParts[0].trim());
+        int minute = Integer.parseInt(timeParts[1].trim());
 
-                LocalDateTime now = LocalDateTime.now();
-                deliveryTime = now.withHour(hour).withMinute(minute);
+        LocalDateTime now = LocalDateTime.now();
+        deliveryTime = now.withHour(hour).withMinute(minute);
                 if (deliveryTime.isBefore(now)) {
-                    deliveryTime = deliveryTime.plusDays(1); // if time has passed, schedule for next day
+                    showAlert("Invalid time", "time has already passed");
                 }
-            } catch (Exception e) {
-                showAlert("Invalid Time", "Please enter delivery time in HH:MM format.");
-                return;
-            }
-        }
+
 
 
         // Validate input fields
