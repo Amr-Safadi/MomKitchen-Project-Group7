@@ -35,16 +35,21 @@ public class ConnectionSetupController {
 
         try {
             int port = Integer.parseInt(portText);
+
             SimpleClient.HOST = host;
             SimpleClient.PORT = port;
 
-            SimpleClient.getClient().openConnection();
+            System.out.println("host " + host);
+            System.out.println("port " + port);
+            SimpleClient.getClient(host,port).openConnection();
 
-            EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
             ScreenManager.switchScreen("Primary"); // or whatever your first screen is
         } catch (NumberFormatException e) {
+            System.out.println(e.getMessage());
             errorLabel.setText("Port must be a valid number.");
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             errorLabel.setText("Failed to connect to server.");
             e.printStackTrace();
         }

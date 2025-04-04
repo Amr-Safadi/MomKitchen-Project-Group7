@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class App extends Application {
-    private SimpleClient client;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -24,9 +23,9 @@ public class App extends Application {
             System.out.println("User " + UserSession.getUser().getEmail() + " disconnected.");
             UserSession.logout();
         }
-        if (client != null && client.isConnected()) {
+        if (SimpleClient.getClient() != null && SimpleClient.getClient().isConnected()) {
             try {
-                client.closeConnection();
+               SimpleClient.getClient().closeConnection();
             } catch (IOException e) {
                 e.printStackTrace();
             }

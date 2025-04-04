@@ -19,6 +19,8 @@ public class SimpleClient extends AbstractClient {
 
 	private SimpleClient(String host, int port) {
 		super(host, port);
+		System.out.println(host + ":" + port);
+
 	}
 
 	private static User user = null ; //to detrmine which role the current user
@@ -145,6 +147,13 @@ public class SimpleClient extends AbstractClient {
 	public static SimpleClient getClient() {
 		if (client == null) {
 			client = new SimpleClient("localhost", 3000);
+		}
+		return client;
+	}
+
+	public static SimpleClient getClient(String host, int port) {
+		if (client == null) {
+			client = new SimpleClient(host, port);
 		}
 		return client;
 	}
