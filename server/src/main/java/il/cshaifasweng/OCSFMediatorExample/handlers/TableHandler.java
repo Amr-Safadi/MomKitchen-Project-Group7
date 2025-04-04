@@ -65,6 +65,23 @@ public class TableHandler {
             Transaction transaction = session.beginTransaction();
             RestaurantTable table = session.get(RestaurantTable.class, tableToCancel.getId());
             if (table != null && table.isReserved()) {
+                Reservation reservation = session.createQuery(
+                                "SELECT r FROM Reservation r JOIN r.tables t WHERE t.id = :tableId AND r.date = :date",
+                                Reservation.class)
+                        .setParameter("tableId", table.getId())
+                        .setParameter("date", LocalDate.now())
+                        .uniqueResult();
+
+                if (reservation != null) {
+                    reservation.getTables().remove(table);
+                    if (reservation.getTables().isEmpty()) {
+                        session.delete(reservation);
+                        System.out.println("Reservation deleted for table " + table.getTableNumber());
+                    } else {
+                        session.update(reservation);
+                        System.out.println("Reservation updated for table " + table.getTableNumber());
+                    }
+                }
                 table.setReserved(false);
                 session.update(table);
                 transaction.commit();
