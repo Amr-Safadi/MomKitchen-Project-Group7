@@ -48,10 +48,12 @@ public class ConnectionSetupController {
         } catch (NumberFormatException e) {
             System.out.println(e.getMessage());
             errorLabel.setText("Port must be a valid number.");
+            SimpleClient.deleteClient();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             errorLabel.setText("Failed to connect to server.");
             e.printStackTrace();
+            SimpleClient.deleteClient();
         }
     }
     @FXML
