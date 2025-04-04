@@ -90,10 +90,9 @@ public class TableMapController {
 
     private void reserveTable(RestaurantTable table) {
         try {
-            table.setReserved(true);
             SimpleClient.getClient().sendToServer(new Message(table, "#ReserveTable"));
             System.out.println("ReserveTable message sent for Table " + table.getTableNumber());
-            Platform.runLater(() -> populateTableGrid());
+            // Platform.runLater(() -> populateTableGrid());
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -114,6 +113,7 @@ public class TableMapController {
     public void onTableReservationUpdate(Message message) {
         String msg = message.toString();
         System.out.println("Received broadcast message: " + msg);
+
         if (msg.equals("#TableReservedSuccess") || msg.equals("#TableReservationCanceledSuccess")) {
             RestaurantTable updatedTable = (RestaurantTable) message.getObject();
             for (RestaurantTable t : SecondaryService.getBranchObj().getTables()) {
@@ -124,8 +124,18 @@ public class TableMapController {
                 }
             }
             Platform.runLater(this::populateTableGrid);
+        } else if (msg.equals("#ReserveTableFailed")) {
+            Platform.runLater(() -> {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                alert.setTitle("Reservation Failed");
+                alert.setHeaderText(null);
+                alert.setContentText("This table already has a reservation scheduled within the next 90 minutes.");
+                alert.showAndWait();
+                populateTableGrid();
+            });
         }
     }
+
 
     @FXML
     void handleBack(ActionEvent event) {

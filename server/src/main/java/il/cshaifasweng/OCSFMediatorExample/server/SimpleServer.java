@@ -405,9 +405,17 @@ public class SimpleServer extends AbstractServer {
 				break;
 
 			case "#ReserveTable":
-				RestaurantTable table = (RestaurantTable) message.getObject();
-				TableHandler.reserveTable(table, sessionFactory);
-				sendToAllClients(new Message(table, "#TableReservedSuccess"));
+				RestaurantTable tableFromClient = (RestaurantTable) message.getObject();
+				RestaurantTable updatedTable = TableHandler.reserveTable(tableFromClient, sessionFactory);
+				if (updatedTable != null) {
+					sendToAllClients(new Message(updatedTable, "#TableReservedSuccess"));
+				} else {
+					try {
+						client.sendToClient(new Message(tableFromClient, "#ReserveTableFailed"));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 				break;
 
 			case "#CancelTableReservation":
