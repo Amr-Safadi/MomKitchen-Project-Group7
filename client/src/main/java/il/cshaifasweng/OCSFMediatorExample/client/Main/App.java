@@ -12,8 +12,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        client = SimpleClient.getClient();
-        client.openConnection();
+      /*  client = SimpleClient.getClient();
+        client.openConnection();*/
         System.out.println("client connected");
         ScreenManager.init(stage);
     }
