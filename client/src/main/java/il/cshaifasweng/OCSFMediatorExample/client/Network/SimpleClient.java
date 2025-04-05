@@ -84,6 +84,8 @@ public class SimpleClient extends AbstractClient {
 				EventBus.getDefault().post(message);  // Notify UI about login success
 				break;
 
+
+
 			case "#EmailNotFound":
 				System.out.println("Login failed: Email not found.");
 				EventBus.getDefault().post(message);
