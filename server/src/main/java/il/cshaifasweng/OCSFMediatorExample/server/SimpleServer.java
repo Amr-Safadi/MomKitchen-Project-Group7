@@ -373,7 +373,7 @@ public class SimpleServer extends AbstractServer {
 					long delayMillis = Duration.between(now, reservationTime).toMillis()  ;  // Calculate delay in milliseconds
 
 					try {
-						client.sendToClient(new Message(reservationRequest, "#ReservationSuccess"));
+						client.sendToClient(new Message(allocatedTables, "#ReservationSuccess"));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
