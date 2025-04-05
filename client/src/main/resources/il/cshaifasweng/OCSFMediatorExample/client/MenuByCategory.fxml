@@ -6,13 +6,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.MenuByCatController">
+<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" stylesheets="@listview-style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.MenuByCatController">
    <children>
       <Button fx:id="backBtn" layoutX="60.0" layoutY="48.0" mnemonicParsing="false" onAction="#handleBackBtn" style="-fx-background-color: #8ad4a8;" text="Back" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="15.0" />
          </font></Button>
-      <ListView fx:id="mealsList" layoutX="60.0" layoutY="161.0" onMouseClicked="#handleMenuBtn" prefHeight="367.0" prefWidth="305.0" style="-fx-background-color: transparent;                        -fx-border-color: transparent;                        -fx-control-inner-background: transparent;" stylesheets="/il/cshaifasweng/OCSFMediatorExample/client/listview-style.css" />
+      <ListView fx:id="mealsList" layoutX="60.0" layoutY="161.0" onMouseClicked="#handleMenuBtn" prefHeight="367.0" prefWidth="305.0" style="-fx-background-color: transparent;                        -fx-border-color: transparent;                        -fx-control-inner-background: transparent;" />
       <Label fx:id="mealsLabel" layoutX="69.0" layoutY="116.0" prefHeight="28.0" prefWidth="203.0" text="Category meals:" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Bauhaus 93" size="26.0" />

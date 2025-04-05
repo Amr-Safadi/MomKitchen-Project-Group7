@@ -39,6 +39,7 @@ public class SimpleClient extends AbstractClient {
 				String mealName = msgStr.split(":")[1];  // Extract the meal name
 				byte[] imageData = (byte[]) message.getObject();
 
+
 				// Create the image
 				Image receivedImage = new Image(new ByteArrayInputStream(imageData));
 

@@ -77,7 +77,7 @@ public class MealViewController {
 
 
 
-        Image bgImage = new Image(getClass().getResource("/images/NEWBACKGRND.jpg").toExternalForm());
+        Image bgImage = new Image(getClass().getResource("/Images/NEWBACKGRND.jpg").toExternalForm());
         BackgroundImage background = new BackgroundImage(
                 bgImage,
                 BackgroundRepeat.NO_REPEAT,
@@ -464,7 +464,7 @@ public class MealViewController {
         // Add meal to cart
         CartSession.getCart().addMeal(meal);
 
-        showConfirmationAlert("Order", "Order Has been added to your cart.");
+        showConfirmationAlert("Success", "Meal Has been added to your cart.");
         EventBus.getDefault().unregister(this);
         ScreenManager.switchScreen("Menu List");
     }
