@@ -140,6 +140,7 @@ public class SimpleServer extends AbstractServer {
 						tx.commit();
 
 						client.sendToClient(new Message("#PriceChangeRejected"));
+						sendToAllClients(new Message("#PriceChangeRequestSent"));
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -155,6 +156,7 @@ public class SimpleServer extends AbstractServer {
 					try {
 						client.sendToClient(new Message("#PriceChangeApproved"));
 						sendToAllClients(new Message("#Update All Meals")); // optional
+						sendToAllClients(new Message("#PriceChangeRequestSent"));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -181,7 +183,6 @@ public class SimpleServer extends AbstractServer {
 
 				try {
 					if (requestSaved) {
-
 						sendToAllClients(new Message("#PriceChangeRequestSent"));
 					} else {
 						client.sendToClient(new Message("#PriceChangeRequestFailed"));
