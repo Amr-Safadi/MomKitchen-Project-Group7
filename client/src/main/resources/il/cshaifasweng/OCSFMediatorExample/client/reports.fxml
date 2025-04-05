@@ -10,7 +10,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" style="-fx-background-image: url('/Images/NEWBACKGRND.jpg'); -fx-background-size: cover; -fx-padding: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.Controllers.ReportsController">
@@ -27,7 +26,7 @@
 
             
             <!-- Delivery Orders Table -->
-            <TableView fx:id="ordersTable" layoutX="20" layoutY="70" prefHeight="150.0" prefWidth="750.0" stylesheets="@table-style.css">
+            <TableView fx:id="ordersTable" layoutX="157.0" layoutY="83.0" prefHeight="150.0" prefWidth="267.0" stylesheets="@table-style.css">
                 <columns>
                     <TableColumn fx:id="orderIdColumn" text="Order ID" />
                     <TableColumn fx:id="orderDateColumn" text="Date" />
@@ -36,15 +35,15 @@
             </TableView>
 
             <!-- Table Reservations Per Day -->
-            <TableView fx:id="reservationsTable" layoutX="20" layoutY="250" prefHeight="150.0" prefWidth="750.0" stylesheets="@table-style.css">
+            <TableView fx:id="reservationsTable" layoutX="136.0" layoutY="273.0" prefHeight="150.0" prefWidth="310.0" stylesheets="@table-style.css">
                 <columns>
                     <TableColumn fx:id="reservationDateColumn" text="Date" />
-                    <TableColumn fx:id="reservationCountColumn" text="Reservations Count" />
+                    <TableColumn fx:id="reservationCountColumn" prefWidth="208.66668701171875" text="Reservations Count" />
                 </columns>
             </TableView>
 
             <!-- Complaints Histogram -->
-            <BarChart fx:id="complaintsChart" layoutX="20" layoutY="450" prefHeight="300.0" prefWidth="750.0">
+            <BarChart fx:id="complaintsChart" layoutX="14.0" layoutY="423.0" prefHeight="273.0" prefWidth="677.0">
                 <xAxis>
                     <CategoryAxis endMargin="20.0" label="Days" fx:id="xAxis" />
                 </xAxis>
