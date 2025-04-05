@@ -13,6 +13,7 @@ import org.hibernate.Transaction;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -76,7 +77,8 @@ public class SimpleServer extends AbstractServer {
 				String imageMealName = (String) imagePayload[0];
 				byte[] uploadedImageBytes = (byte[]) imagePayload[1];
 
-				File uploadPath = new File("src/main/resources/Images/" + imageMealName + ".jpg");
+				File uploadPath = new File("src/main/resources/ImagesSer/" + imageMealName + ".jpg");
+
 				try {
 					Files.write(uploadPath.toPath(), uploadedImageBytes);
 					client.sendToClient(new Message("#ImageUploadSuccess:" + imageMealName));
@@ -94,7 +96,9 @@ public class SimpleServer extends AbstractServer {
 
 			case "#RequestMealImage":
 				String mealName = (String) message.getObject();
-				File imageFile = new File("src/main/resources/Images/" + mealName + ".jpg");
+				File imageFile = new File("src/main/resources/ImagesSer/" + mealName + ".jpg");
+
+				System.out.println("Looking for image at: " + imageFile.getAbsolutePath());
 
 				if (!imageFile.exists()) {
 					System.out.println("❌ Image not found for meal: " + mealName);
@@ -103,13 +107,29 @@ public class SimpleServer extends AbstractServer {
 
 				try {
 					byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+					System.out.println("Image size in bytes: " + imageBytes.length);  // add this
+
 					client.sendToClient(new Message(imageBytes, "#MealImageResponse:" + mealName));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				break;
+/*
+				String mealName = (String) message.getObject();
+				InputStream is = getClass().getResourceAsStream("/ImagesSer/" + mealName + ".jpg");
+				if (is == null) {
+					System.out.println("❌ Image resource not found in jar: " + mealName);
+					break;
+				}
+				try {
+					byte[] imageBytes = is.readAllBytes();
+					System.out.println("Image size in bytes: " + imageBytes.length);
+					client.sendToClient(new Message(imageBytes, "#MealImageResponse:" + mealName));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 
-
+				break;*/
 			case "#CheckPendingNotifications":
 				List<PriceChangeRequest> pendingRequests = MealHandler.getUnresolvedRequests(sessionFactory);
 
