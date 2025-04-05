@@ -294,6 +294,11 @@ public class ComplaintManageController {
 
         if (refundIssued) {
             try {
+                if (Double.parseDouble(refundAmountField.getText().trim()) < 1)
+                {
+                    showAlert("Error", "Illegal Refund Amount.");
+                    return;
+                }
                 selectedComplaint.setRefundAmount(Double.parseDouble(refundAmountField.getText().trim()));
             } catch (NumberFormatException e) {
                 showAlert("Error", "Invalid refund amount.");

@@ -86,12 +86,12 @@ public class SimpleClient extends AbstractClient {
 
 			case "#EmailNotFound":
 				System.out.println("Login failed: Email not found.");
-				EventBus.getDefault().post(new Message(null, "#ShowLoginError: Email not found."));
+				EventBus.getDefault().post(message);
 				break;
 
 			case "#IncorrectPassword":
 				System.out.println("Login failed: Incorrect password.");
-				EventBus.getDefault().post(new Message(null, "#ShowLoginError: Incorrect password."));
+				EventBus.getDefault().post(message);
 				break;
 
 			case "#AlreadyLoggedIn":

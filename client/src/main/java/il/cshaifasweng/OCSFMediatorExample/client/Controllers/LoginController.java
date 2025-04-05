@@ -55,6 +55,7 @@ public class LoginController {
 
         try {
             // Sending login request to the server
+
             Message loginMessage = new Message(new User(email, password, null), "#LoginRequest");
             SimpleClient.getClient().sendToServer(loginMessage);
         } catch (IOException e) {
