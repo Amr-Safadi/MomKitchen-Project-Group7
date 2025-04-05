@@ -111,16 +111,18 @@ public class ReportsController {
     }
 
     private void showReservationDetails(Object[] entry) {
-        // entry[0] = date, entry[1] = count
         String date = entry[0].toString();
-        String count = entry[1].toString();
+        String reservationsCount = entry[1].toString();
+        String guestsCount = entry[2].toString();
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Reservation Details");
         alert.setHeaderText("Reservations on " + date);
-        alert.setContentText("Total reservations: " + count);
+        alert.setContentText("Number of reservations: " + reservationsCount + "\n" +
+                "Total number of guests: " + guestsCount);
         alert.showAndWait();
     }
+
 
     private void showOrderDetails(Orders order) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -154,6 +156,10 @@ public class ReportsController {
 
         reservationDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[0].toString()));
         reservationCountColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[1].toString()));
+        reservationDateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[0].toString()));
+        reservationCountColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+                "Reservations: " + cellData.getValue()[1] + ", Guests: " + cellData.getValue()[2]));
+
     }
 
     private void fetchReports() {
@@ -264,11 +270,23 @@ public class ReportsController {
 
     private List<Object[]> groupReservationsByDate(List<Reservation> list) {
         return list.stream()
-                .collect(Collectors.groupingBy(r -> r.getDate(), Collectors.counting()))
+                .collect(Collectors.groupingBy(
+                        Reservation::getDate,
+                        Collectors.collectingAndThen(Collectors.toList(), reservations -> new Object[]{
+                                reservations.size(), // number of reservations
+                                reservations.stream().mapToInt(Reservation::getGuests).sum() // total guests
+                        })
+                ))
                 .entrySet().stream()
-                .map(e -> new Object[]{e.getKey().toString(), e.getValue().toString()})
+                .map(e -> new Object[]{
+                        e.getKey().toString(),             // Date
+                        e.getValue()[0].toString(),        // Reservations count
+                        e.getValue()[1].toString()         // Guests count
+                })
                 .toList();
     }
+
+
 
     private List<Object[]> groupComplaintsByDate(List<ContactRequest> list) {
         return list.stream()

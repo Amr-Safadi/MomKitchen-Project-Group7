@@ -333,10 +333,6 @@ public class ComplaintManageController {
     }
 
 
-
-
-
-
     // Receive Complaint Resolution Confirmation
     @Subscribe
     public void onComplaintResolved(Message message) {
