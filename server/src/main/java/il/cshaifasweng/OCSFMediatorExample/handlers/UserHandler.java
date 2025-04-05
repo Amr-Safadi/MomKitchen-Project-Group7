@@ -52,7 +52,7 @@ public class UserHandler {
         User Amr = new User("amr", EncryptionUtil.passwordEncrypt("Amr123"), "Amr Safadi", User.Role.GENERAL_MANAGER , "All");
         User Marian = new User("marian", EncryptionUtil.passwordEncrypt("Marian123"), "Marian Dahmoush", User.Role.BRANCH_MANAGER, "Haifa");
         User Kanar = new User("kanar", EncryptionUtil.passwordEncrypt("Kanar123"), "Kanar Arrabi", User.Role.DIETITIAN,"All");
-        User Abdallah = new User("abdallah", EncryptionUtil.passwordEncrypt("abdallah123"), "Abdallah Khaldi", User.Role.SERVICE_EMPLOYEE,"All");
+        User Abdallah = new User("abdallah", EncryptionUtil.passwordEncrypt("Abdallah123"), "Abdallah Khaldi", User.Role.SERVICE_EMPLOYEE,"All");
         User Selan = new User("Selan", EncryptionUtil.passwordEncrypt("Selan123"), "Selan Abo Saleh", User.Role.REGULAR_EMPLOYEE,"Acre");
         User Eman = new User("Eman", EncryptionUtil.passwordEncrypt("Eman123"), "Eman Serhan", User.Role.BRANCH_MANAGER,"Acre");
 

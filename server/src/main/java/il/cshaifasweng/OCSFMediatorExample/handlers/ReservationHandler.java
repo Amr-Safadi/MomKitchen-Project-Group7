@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.handlers;
 import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
 import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
+import il.cshaifasweng.OCSFMediatorExample.server.SimpleServer;
 import il.cshaifasweng.OCSFMediatorExample.util.EmailSender;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -131,6 +132,7 @@ public class ReservationHandler {
         // if none, combine with other tables.
         List<RestaurantTable> allocated = findTableCombination(matchingTables, reservation.getGuests());
         if (allocated == null) {
+
             List<RestaurantTable> combined = new ArrayList<>();
             combined.addAll(matchingTables);
             combined.addAll(otherTables);
@@ -267,6 +269,7 @@ public class ReservationHandler {
             return null;
         }
     }
+
     public static String computeAlternativeTimes(Reservation reservation, SessionFactory sessionFactory) {
         Branch branch = reservation.getBranch();
         if (branch == null) return "Branch not specified";

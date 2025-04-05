@@ -7,6 +7,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.util.BackgroundUtil;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Reservation;
 import il.cshaifasweng.OCSFMediatorExample.entities.Branch;
+import il.cshaifasweng.OCSFMediatorExample.entities.RestaurantTable;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -119,15 +120,36 @@ public class ReservationController {
         String msgText = message.toString();
         Platform.runLater(() -> {
             if ("#ReservationSuccess".equals(msgText)) {
-                showInfoAlert("Reservation Success", "Your reservation was successful!");
+                List<RestaurantTable> allocated = (List<RestaurantTable>) message.getObject();
+
+                if (allocated.isEmpty()) {
+                    showAlert("Reservation Error", "No tables were allocated. Please try again.");
+                    return;
+                }
+
+                boolean sameSeatingArea = true;
+                String firstSeatingArea = allocated.get(0).getSeatingArea();
+
+                for (RestaurantTable table : allocated) {
+                    if (!table.getSeatingArea().equals(firstSeatingArea)) {
+                        sameSeatingArea = false;
+                        break;
+                    }
+                }
+
+                if (sameSeatingArea) {
+                    showInfoAlert("Reservation Success", "Your reservation was successful!");
+                } else {
+                    showInfoAlert("Reservation Success", "We didn't find enough space in your preferred area, so we had to seat you in multiple areas.");
+                }
+
                 handleBack(null);
+
             } else if ("#NoAvailability".equals(msgText)) {
                 String alternatives = (String) message.getObject();
-                if (alternatives.isEmpty())
-                {
-                    showAlert("No Availability", "No reservation for this day try a different date");
-                }
-                else {
+                if (alternatives.isEmpty()) {
+                    showAlert("No Availability", "No reservation available for this day. Try another date.");
+                } else {
                     showAlert("No Availability", "No reservation available at requested time. Alternatives: " + alternatives);
                 }
             }

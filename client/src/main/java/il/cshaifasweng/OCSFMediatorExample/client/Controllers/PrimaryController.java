@@ -277,9 +277,7 @@ public void onManagerNotificationStatus(Message message) {
             logOutBtn.setVisible(true);
 
 
-            if (loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
-                    loggedInUser.getRole() == User.Role.GENERAL_MANAGER ||
-                    loggedInUser.getRole() == User.Role.SERVICE_EMPLOYEE) {
+            if(loggedInUser.getRole() == User.Role.SERVICE_EMPLOYEE) {
                 complaintsButton.setVisible(true);
             }
             if ( loggedInUser.getRole() == User.Role.BRANCH_MANAGER ||
