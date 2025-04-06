@@ -151,6 +151,7 @@ public class SimpleClient extends AbstractClient {
 	public static void deleteClient() {
 		client = null;
 	}
+
 	public static SimpleClient getClient() {
 		if (client == null) {
 			client = new SimpleClient("localhost", 3000);
